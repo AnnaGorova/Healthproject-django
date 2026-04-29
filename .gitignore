@@ -1,0 +1,19 @@
+# Django & Python
+*.log
+*.pyc
+__pycache__/
+db.sqlite3
+migrations/
+
+# Virtual Environment
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Secrets
+.env
+local_settings.py
