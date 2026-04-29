@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Всі  записи про самопочуття</title>
+    
+
+     
+</head>
+<body>
+    <p> <strong>Користувач:</strong> {{user.username}}</p>
+    <p><strong>Всього записів:</strong> {{ records|length }}</p>
+
+    <hr>
+
+    {% for record in records  %}
+        <p>
+            <strong>ID: {{record.id}} </strong><br>
+            Самопочуття: {{record.well_being|upper}} <br>
+            Скарги: {{record.complaints|truncatewords:5}} <br>
+            Дата: {{record.date|date:"d.m.Y"}} <br>
+            Аритеріальний тиск: {{record.pressure}} <br>
+            Температура: {{record.temperature}}°C <br>
+            <a href="/record_detail/{{record.id}}">Детальніше</a>
+        </p>
+        <hr>
+
+    {% empty %}
+            <p>Записів поки що немає</p>
+    
+    {% endfor %}
+
+    <p> <a href="/">На головну</a></p>
+</body>
+</html>

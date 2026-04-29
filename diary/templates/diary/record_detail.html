@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ua">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деталі запису</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgb(99, 165, 104);
+        }
+        .container{
+            background: white;
+            border-radius: 10px;
+            padding: auto;
+        }
+          h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding: 10px;
+        }
+        .record-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .medicines-list {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .medicine-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #c3e6cb;
+        }
+        
+        hr {
+            margin: 20px 0;
+            border-top: 1px solid #ddd;
+        }
+
+
+    </style>
+
+
+</head>
+<body>
+    <div class="container">
+        <h1>Деталі запису</h1>
+
+        <div class="record-info">
+            <p>ID: {{ record.id}}</p>
+            <p>Самопочуття: {{ record.well_being|upper}}</p>
+            <p>Скарги: {{ record.complaints|truncatewords:5}}</p>
+            <p>Дата: {{ record_date|date:"d.m.Y"}}</p>
+            <p>Температура: {{ record.temperature}} °C</p>
+            <p>Тиск: {{ record.pressure}}</p>
+            <p>Коментар: {{ record.comment }}</p>
+ 
+        </div>
+        
+        <div class="medicines-list">
+            {% if related_medicines %}
+                {% for medicine in related_medicines %}
+                    <ul>
+                        <li> {{medicine.name}}  {{medicine.dosage}} - {{medicine.purpose}}</li>
+                    </ul>
+                {% endfor %}
+            {% else %}
+                    <p> Ліки не приймав </p>
+
+            {% endif %}
+
+
+            <hr>
+
+
+            <a href="/records/">Повернутися до списку записів</a>
+
+            <hr>
+
+            <a href="/">На головну</a>
+        </div>
+
+    </div>
+
+    
+</body>
+</html>
