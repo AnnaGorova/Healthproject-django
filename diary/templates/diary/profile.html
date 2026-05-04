@@ -1,0 +1,15 @@
+{% extends "diary/base.html" %}
+
+{% block title %} Профіль користувача{% endblock  %}
+
+{% block content %}
+     <h1>Профіль користувача</h1>
+        <p>HTTP Method: {{http_method}}</p>
+        
+        <p><strong>Ім'я: </strong> {{user.username}} </p>
+        <p><strong>Email: </strong> {{user.email}} </p>
+        <p><strong>Роль: </strong> {{user.role}} </p>
+        <p><strong>ID: </strong> {{user.id}} </p>
+        
+        <hr>
+{% endblock  %}o

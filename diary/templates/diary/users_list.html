@@ -1,0 +1,32 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Список користувачів{% endblock  %}
+
+{% block content %}
+<h1>Список користувачів</h1>
+    
+<p><strong>Всього користувачів:</strong> {{users_count}}</p>
+
+<hr>
+
+
+{% if users %}
+    {% for user in users %}
+        <p><strong>ID: </strong> {{user.id}} </p>
+        <p><strong>Ім'я: </strong> {{user.username}} </p>
+        <p><strong>Email: </strong> {{user.email}} </p>
+        <p>
+            <strong>Роль: </strong> {{user.role}} 
+            {% if user.role == 'patient' %} Пацієнт
+            {% elif user.role == 'doctor' %} Лікар
+            {% elif user.role == 'admin' %} Адміністратор
+            {% else %} {{user.role}}
+            {% endif %} 
+        </p>   
+    {% endfor %}
+{% else %}
+    <p> Користувачів ще немає </p>
+{% endif %}
+
+    
+{% endblock  %}

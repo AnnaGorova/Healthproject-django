@@ -1,0 +1,36 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Ліки{% endblock  %}
+
+{% block content %}
+  <h1>Список ліків</h1>
+         <p>HTTP Method: {{http_method}}</p>
+         
+         <form method="get">
+            <input type="text" name="search" placeholder="Пошук..."  value="{{ search_query }}">
+            
+            <button type="submit">Шукати</button>
+        </form>
+         
+         
+        <h2>Доступні ліки: </h2>
+
+        {% if medicines %}
+            {% for medicine in medicines %}
+            <div class="medicine-item">
+                <strong>{{medicine.name}}</strong> 
+                {{medicine.dosage}} - {{medicine.purpose}}
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Ліки не знайдено за такою назвою.</p>
+         
+        {% endif %}
+         
+   
+         
+         
+         <hr>
+
+{% endblock  %}

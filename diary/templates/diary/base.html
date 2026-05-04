@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Щоденник самопочуття {% endblock %}</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'diary/css/style.css' %}">
+
+
+</head>
+<body>
+
+    <div class="container">
+       
+        <header>
+            <img src="{%static 'diary/images/images_1.png'%}" alt="#">
+            <h1>Щоденник самопочуття</h1>
+
+              {% include "diary/includes/navbar.html" %}
+        </header>
+       
+    
+    
+   
+        <main>
+            {% block content%}
+
+            {% endblock %}
+        </main>
+
+        {% include "diary/includes/footer.html" %}
+    
+
+    </div>
+
+    <script src="{% static 'diary/js/main.js' %}"></script>
+
+
+</body>
+</html>

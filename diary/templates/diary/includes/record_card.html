@@ -1,0 +1,18 @@
+{% load static %}
+
+
+
+<div class="record-card">
+            <p>ID: {{ record.id}}</p>
+            <p>Самопочуття: {{ record.well_being|upper}}</p>
+            <p>Скарги: {{ record.complaints|truncatewords:5}}</p>
+            <p>Дата: {{ record.date|date:"d.m.Y"}}</p>
+            <p>Температура: {{ record.temperature}} °C</p>
+            <p>Тиск: {{ record.pressure}}</p>
+            <p>Коментар: {{ record.comment }}</p>
+
+
+            <a href="{% url 'record_detail' record.id %}">Детальніше</a>
+
+            <hr>
+</div>

@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="ua">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Деталі запису</title>
+{% extends "diary/base.html" %}
 
+   {% block title %}Деталі запису {% endblock title%} 
+
+   
+   {% block extra_css %}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,18 +46,20 @@
 
 
     </style>
+   
+   {% endblock  %}
+   
 
 
-</head>
-<body>
-    <div class="container">
-        <h1>Деталі запису</h1>
+{% block content %}
+     <div class="container">
+        <h1>Деталі запису № {{record.id}}</h1>
 
         <div class="record-info">
             <p>ID: {{ record.id}}</p>
             <p>Самопочуття: {{ record.well_being|upper}}</p>
             <p>Скарги: {{ record.complaints|truncatewords:5}}</p>
-            <p>Дата: {{ record_date|date:"d.m.Y"}}</p>
+            <p>Дата: {{ record.date|date:"d.m.Y"}}</p>
             <p>Температура: {{ record.temperature}} °C</p>
             <p>Тиск: {{ record.pressure}}</p>
             <p>Коментар: {{ record.comment }}</p>
@@ -81,15 +82,17 @@
             <hr>
 
 
-            <a href="/records/">Повернутися до списку записів</a>
+            <a href="{% url 'records' %}">Повернутися до списку записів</a>
 
             <hr>
 
-            <a href="/">На головну</a>
+            <a href="{% url 'home' %}">На головну</a>
         </div>
 
     </div>
 
     
-</body>
-</html>
+
+{% endblock %}
+
+   

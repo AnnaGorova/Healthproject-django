@@ -1,36 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Всі  записи про самопочуття</title>
+{% extends "diary/base.html" %}
+
+{% block title %} Всі  записи про самопочуття {% endblock  %}  
     
 
      
-</head>
-<body>
+{% block content %}
+    <h1> <strong>Всі  записи про самопочуття</strong><br></h1> 
     <p> <strong>Користувач:</strong> {{user.username}}</p>
     <p><strong>Всього записів:</strong> {{ records|length }}</p>
 
     <hr>
 
     {% for record in records  %}
-        <p>
-            <strong>ID: {{record.id}} </strong><br>
-            Самопочуття: {{record.well_being|upper}} <br>
-            Скарги: {{record.complaints|truncatewords:5}} <br>
-            Дата: {{record.date|date:"d.m.Y"}} <br>
-            Аритеріальний тиск: {{record.pressure}} <br>
-            Температура: {{record.temperature}}°C <br>
-            <a href="/record_detail/{{record.id}}">Детальніше</a>
-        </p>
-        <hr>
-
+        {% include "diary/includes/record_card.html" with record=record %}    
     {% empty %}
-            <p>Записів поки що немає</p>
-    
+        <p>Записів поки що немає</p>
     {% endfor %}
+    
 
-    <p> <a href="/">На головну</a></p>
-</body>
-</html>
+    <p> <a href="{% url "home" %}">На головну</a></p>
+
+{% endblock  %}
+
+   

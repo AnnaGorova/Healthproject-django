@@ -1,23 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Щоденник самопочуття</title>
-</head>
-<body>
-    <p>Щоденник самопочуття</p>
+{% extends "diary/base.html" %}
+
+{% block title  %} <title>Головна сторінка</title> {% endblock %}    
+
+
+{% block content %}
+    
+
+<p>Щоденник самопочуття</p>
 
     <h1>Система моніторигу здоров'я</h1>
 
     <p>Всього записів: {{records_count}}</p>
 
-    <hr>
-
-    <p> <a href="/records/">Всі записи</a></p>
-    <p> <a href="/medicines/">Список ліків</a></p>
-    <p> <a href="/administrator/">Адмін-панель</a></p>
+{% endblock %}
     
 
-</body>
-</html>
+    
+
+  

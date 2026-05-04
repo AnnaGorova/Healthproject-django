@@ -126,6 +126,58 @@ class HealthRecordRepository:
                 return user
         return None
 
+    def get_all_users(self):
+        return self._users.copy()
+    
+    def get_all_records(self):
+        return self._records.copy()
+
+    def get_all_medicines(self):
+        return self._medicines.copy()
+
+    def get_user(self, user_id: int):
+        for user in self._users:
+            if user.id == user_id:
+                return user
+        return None
+    
+    def get_record(self, record_id: int):
+        for record in self._records:
+            if record.id == record_id:
+                return record
+        return None
+
+    def get_medicine(self, medicine_id: int):
+        for medicine in self._medicines:
+            if medicine.id == medicine_id:
+                return medicine
+        return None
+    
+    
+    def get_users_count(self):
+        return len(self._users)
+
+    def get_records_count(self):
+        return len(self._records)
+    
+    def get_medicines_count(self):
+        return len(self._medicines)
+
+    def get_records_by_date(self, target_date):
+        result = []
+        for record in self._records:
+            if record.date.date() == target_date:
+                result.append(record)
+            
+        return result
+    
+    def search_medicines_by_name(self, query: str):
+       
+        if not query:
+            return self._medicines.copy()
+        return [m for m in self._medicines if query.lower() in m.name.lower()]
+
+
 
 
 
