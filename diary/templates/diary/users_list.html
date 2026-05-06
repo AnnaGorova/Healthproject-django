@@ -22,7 +22,8 @@
             {% elif user.role == 'admin' %} Адміністратор
             {% else %} {{user.role}}
             {% endif %} 
-        </p>   
+        </p> 
+        <hr>  
     {% endfor %}
 {% else %}
     <p> Користувачів ще немає </p>
