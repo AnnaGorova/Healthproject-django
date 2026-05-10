@@ -12,22 +12,14 @@
 
 {% if users %}
     {% for user in users %}
-        <p><strong>ID: </strong> {{user.id}} </p>
-        <p><strong>Ім'я: </strong> {{user.username}} </p>
-        <p><strong>Email: </strong> {{user.email}} </p>
-        <p>
-            <strong>Роль: </strong> {{user.role}} 
-            {% if user.role == 'patient' %} Пацієнт
-            {% elif user.role == 'doctor' %} Лікар
-            {% elif user.role == 'admin' %} Адміністратор
-            {% else %} {{user.role}}
-            {% endif %} 
-        </p> 
+        {% include "diary/includes/user_card.html" with user=user %}
         <hr>  
     {% endfor %}
+        
+   
 {% else %}
     <p> Користувачів ще немає </p>
 {% endif %}
 
-    
+    <p> <a href="{% url 'home' %}">На головну</a></p>
 {% endblock  %}

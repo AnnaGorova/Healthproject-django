@@ -1,0 +1,15 @@
+<div class="user-card">
+    <p><strong> ID:</strong> {{ user.id }}</p>
+    <p><strong> Ім'я:</strong> {{ user.username }}</p>
+    <p><strong> Email:</strong> {{ user.email }}</p>
+    <p>
+        <strong> Роль:</strong> 
+        {% if user.role == 'patient' %} Пацієнт
+        {% elif user.role == 'doctor' %} Лікар 
+        {% elif user.role == 'admin' %} Адміністратор
+        {% else %} {{ user.role }}
+        {% endif %}
+    </p>
+    <a href="{% url 'user_records' user.id %}" class="btn-detail"> Показати записи</a>
+</div>
+<hr>

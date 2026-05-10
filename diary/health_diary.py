@@ -47,18 +47,7 @@ class HealthRecord:
         self.medicines.append(medicine)
 
     def __str__(self):
-        medicines_str = ", ".join(str(m) for m in self.medicines)
-
-        date_str = self.date.strftime("%Y-%m-%d %H:%M:%S")
-
-        return (f"{date_str}: {self.user.username}  \n"
-                f"    Cамопочуття: {self.well_being};\n"
-                f"    Температура: {self.temperature}°C;\n"
-                f"    Артеріальний тиск: {self.pressure}мм.рт.ст; \n"
-                f"    Симптоми: {self.complaints};\n"
-                f"    Коментар: {self.comment};\n"
-                f"    \nЛіки: {medicines_str}")
-
+        return f"Запис #{self.id} - {self.user.username} ({self.date:%d.%m.%Y})"
 
 
 
