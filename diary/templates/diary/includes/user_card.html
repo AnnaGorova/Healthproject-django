@@ -1,15 +1,23 @@
-<div class="user-card">
+<div class="user-card
+    {% if user.role == 'patient' %}user-card-patient
+    {% elif user.role == 'doctor' %}user-card-doctor
+    {% elif user.role == 'admin' %}user-card-admin
+    {% endif %}">
+   
     <p><strong> ID:</strong> {{ user.id }}</p>
     <p><strong> Ім'я:</strong> {{ user.username }}</p>
     <p><strong> Email:</strong> {{ user.email }}</p>
     <p>
-        <strong> Роль:</strong> 
-        {% if user.role == 'patient' %} Пацієнт
+        
+        {% if user.role == 'patient' %} 
+            <a href="{% url 'user_records' user.id %}">Показати записи</a>
         {% elif user.role == 'doctor' %} Лікар 
+           <a href="{% url 'doctor_patients' user.id %}">Мої пацієнти</a>
         {% elif user.role == 'admin' %} Адміністратор
+        
         {% else %} {{ user.role }}
         {% endif %}
     </p>
-    <a href="{% url 'user_records' user.id %}" class="btn-detail"> Показати записи</a>
+   
 </div>
 <hr>

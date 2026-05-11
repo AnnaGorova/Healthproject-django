@@ -63,6 +63,14 @@ def record_detail(request, pk):
     return render(request, 'diary/record_detail.html', context)
 
 
+def doctor_patients(request, doctor_id):
+    doctor = get_object_or_404(UserProfile, id=doctor_id, role='doctor')
+    patients = doctor.patients.all()
+    context = {
+        'doctor' : doctor,
+        'patients' : patients,
+    }
+    return render(request, 'diary/doctor_patients.html', context)
 
 def medicines(request):
     http_method = request.method
@@ -100,11 +108,16 @@ def profile(request):
     return render(request, 'diary/profile.html', context)
    
 def users_list(request):
-    users = UserProfile.objects.all()
+    patients = UserProfile.objects.filter(role='patient')
+    doctors = UserProfile.objects.filter(role="doctor")
+    admins = UserProfile.objects.filter(role ='admin')
+    
 
     context = {
-        'users': users,
-        'users_count': users.count(),
+        'patients': patients,
+        'doctors': doctors,
+        'admins': admins,
+        'users_count': UserProfile.objects.count(),
     }
     
     return render(request, 'diary/users_list.html', context)     

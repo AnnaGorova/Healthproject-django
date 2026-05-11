@@ -1,0 +1,26 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Пацієнти лікаря {{ doctor.username }}{% endblock %}
+
+{% block content %}
+<h1> Лікар: {{ doctor.username }}</h1>
+<p> {{ doctor.email }}</p>
+
+<h2> Мої пацієнти</h2>
+
+{% if patients %}
+    
+        {% for patient in patients %}
+            
+                <p><strong> {{ patient.username }}</strong></p>
+                <p>{{ patient.email }}</p>
+                <a href="{% url 'user_records' patient.id %}">Показати записи</a>
+            
+        {% endfor %}
+    </div>
+{% else %}
+    <p> У вас ще немає прикріплених пацієнтів</p>
+{% endif %}
+
+<p><a href="{% url 'users_list' %}">← Назад до списку користувачів</a></p>
+{% endblock %}

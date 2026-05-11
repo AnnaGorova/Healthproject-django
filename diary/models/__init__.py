@@ -1,3 +1,4 @@
 from .user_profile import UserProfile
 from .medicine import Medicine
 from .healthRecord import HealthRecord
+from .doctor_profile import DoctorProfile

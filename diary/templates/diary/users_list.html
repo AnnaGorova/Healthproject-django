@@ -2,22 +2,107 @@
 
 {% block title %}Список користувачів{% endblock  %}
 
+{% block extra_css %}
+<style>
+    .section-title {
+        margin-top: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ddd;
+    }
+    
+    .patient-title { 
+        color: #3498db; 
+        border-bottom-color: #3498db; 
+    }
+    .doctor-title { 
+        color: #28a745; 
+        border-bottom-color: #28a745; 
+    }
+    .admin-title { 
+        color: #dc3545; 
+        border-bottom-color: #dc3545; 
+    }
+    
+    .patient-info{
+        background: #8fc8ef;
+        padding: 15px;
+        border: 2px solid gray;
+        border-radius: 5px;
+
+    }
+    .doctors-info {
+        background: #97ea93;
+        padding: 15px;
+        border: 2px solid gray;
+        border-radius: 5px;
+    }
+
+    .admins-info {
+        background: #e7e496;
+        padding: 15px;
+        border: 2px solid gray;
+        border-radius: 5px;
+    }
+    .stats {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+   
+</style>
+
+{% endblock %}
+
+
+
 {% block content %}
 <h1>Список користувачів</h1>
-    
-<p><strong>Всього користувачів:</strong> {{users_count}}</p>
+ <div class="stats">
+    <p><strong>Всього користувачів:</strong> {{users_count}}</p>
+    <p>Пацієнтів: {{patients|length}}</p>
+    <p>Лікарів: {{doctors|length}}</p>
+    <p>Адміністраторів: {{admins|length}}</p>
+
+ </div>   
 
 <hr>
 
 
-{% if users %}
-    {% for user in users %}
-        {% include "diary/includes/user_card.html" with user=user %}
-        <hr>  
-    {% endfor %}
-        
+{% if patients %}
+<h2 class="section-title patient-title">Пацієнти</h2>
+    <div class="patient-info">
+        {% for user in patients %}
+            {% include "diary/includes/user_card.html" with user=user %}
+            <hr>  
+        {% endfor %}
+       
+    </div>   
+{% endif %} 
    
-{% else %}
+
+{% if doctors %}
+<h2 class="section-title doctor-title">Лікарі</h2>
+   <div class="doctors-info"> 
+        {% for user in doctors %}
+            {% include "diary/includes/user_card.html" with user=user %}
+            <hr>  
+        {% endfor %}
+    </div>   
+ {% endif %}   
+
+ {% if admins %}
+<h2 class="section-title admin-title">Адміністратори</h2>
+   <div class="admins-info">       
+        {% for user in admins %}
+            {% include "diary/includes/user_card.html" with user=user %}
+        <hr>  
+        {% endfor %}
+    </div>   
+ {% endif %}   
+
+{% if not patients and not doctors and not admins %}
     <p> Користувачів ще немає </p>
 {% endif %}
 
