@@ -1,0 +1,13 @@
+{% extends 'diary/base.html' %}
+
+{% block title %}Питання Надіслано{% endblock %}
+
+{% block content %}
+
+    <h1>Отримали питання</h1>
+    
+    <p>Від: {{ data.name }}</p>
+    <p>Телефон: {{ data.phone }}</p>
+    <p>Питання: {{ data.question }}</p>
+
+{% endblock %}
