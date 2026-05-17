@@ -1,0 +1,28 @@
+{% extends "diary/base.html" %}
+
+{% block title %} Авторизація{% endblock  %}
+
+{% load static %}
+{% block  extra_css %}
+<link rel="stylesheet" href="{% static 'diary/css/login.css'%}">
+{% endblock  %}
+
+{% block content %}
+
+
+   <div class="login-page">
+         <h1>Вхід</h1>
+
+    {% if form.errors  %}
+        <p>Неправильний логін або пароль</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="nav-link">Увійти</button>
+    </form>
+   </div>
+   
+
+{% endblock  %}

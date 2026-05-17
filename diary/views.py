@@ -6,54 +6,69 @@ from datetime import datetime
 from .models import UserProfile, HealthRecord, Medicine
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
-from .form.doctor_question import DoctorQuestionForm
+from .forms.doctor_question import DoctorQuestionForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
+from .forms import HealthRecordForm
+
+
 
 def old_home(request):
     return redirect('/')
 
 
-def home(request):
-    user = UserProfile.objects.filter(id=1).first()
-    records_count = HealthRecord.objects.filter(user=user).count() if user else 0
-
-    context = {
-        'records_count': records_count,
-        'user': user,
-    }
-
-    return render(request, 'diary/home.html', context)
+class HomeView(TemplateView):
+    template_name = 'diary/home.html'
 
 class AboutView(TemplateView):
     template_name = "diary/about.html" 
 
 
-
+@login_required
 def records(request):
     http_method = request.method
 
+    user_profile = request.user.userprofile
 
-    user = UserProfile.objects.get(id=1)
-    all_records = HealthRecord.objects.filter(user=user)
+    if user_profile.role == 'patient':
+        all_records = HealthRecord.objects.filter(user=user_profile)
+    else:
+        all_records = HealthRecord.objects.all()
+    
+    
        
     context = {
         'records': all_records,
-        'user': user,
+        'user_profile': user_profile,
        
     }
     
     return render(request, 'diary/records.html', context)
 
+
+@login_required
 def user_records(request, user_id):
-    user = get_object_or_404(UserProfile, id=user_id)
-    all_records = HealthRecord.objects.filter(user=user)
+    targer_user = get_object_or_404(UserProfile, id=user_id)
+    current_user = request.user.userprofile
+
+    if current_user.role == 'patient' and current_user.id != targer_user.id:
+        raise PermissionDenied("Ви не маєте доступу до записів іншого користувача")
+    
+    if current_user.role == 'doctor' and targer_user.role == 'patient':
+        if targer_user.doctor != current_user:
+            raise PermissionDenied("Отримайте доступ")
+
+    all_records = HealthRecord.objects.filter(user=targer_user)
 
     context = {
         'records': all_records,
-        'user': user,
+        'user_profile': targer_user,
     }
 
     return render(request, 'diary/records.html', context)
 
+@login_required
 def record_detail(request, pk):
     record = get_object_or_404(HealthRecord, id=pk)
            
@@ -66,7 +81,7 @@ def record_detail(request, pk):
 
     return render(request, 'diary/record_detail.html', context)
 
-
+@login_required
 def doctor_patients(request, doctor_id):
     doctor = get_object_or_404(UserProfile, id=doctor_id, role='doctor')
     patients = doctor.patients.all()
@@ -76,6 +91,7 @@ def doctor_patients(request, doctor_id):
     }
     return render(request, 'diary/doctor_patients.html', context)
 
+@login_required
 def medicines(request):
     http_method = request.method
     search = request.GET.get('search', '')
@@ -95,22 +111,21 @@ def medicines(request):
  
 
 
+@login_required
 def profile(request):
     http_method = request.method
 
-    user = UserProfile.objects.filter(id=1).first()
-    if not user:
-        user = UserProfile.objects.create(
-            username="Olga Ivanova", 
-            email="olga_I@gmail.com", 
-            role="patient") 
+    user_profile = request.user.userprofile
+   
     
     context = {
-        'user': user,
+        'user_profile': user_profile,
         'http_method': http_method,
     }
     return render(request, 'diary/profile.html', context)
-   
+
+
+@login_required   
 def users_list(request):
     patients = UserProfile.objects.filter(role='patient')
     doctors = UserProfile.objects.filter(role="doctor")
@@ -127,12 +142,14 @@ def users_list(request):
     return render(request, 'diary/users_list.html', context)     
 
 
+def is_admin(user):
+  return user.is_authenticated and user.userprofile.role == 'admin'   
 
-
+@user_passes_test(is_admin)
 def administrator(request):
     return render(request, 'diary/administrator.html')
 
-
+@login_required
 def ask_question(request):
     if request.method == 'POST':
         form = DoctorQuestionForm(request.POST)
@@ -146,3 +163,26 @@ def ask_question(request):
     return render(request, 'diary/ask_question.html', {'form': form})
 
 
+
+@login_required
+def create_record(request):
+    if request.method == 'POST':
+        form = HealthRecordForm(request.POST)
+        if form.is_valid():
+            record = form.save(commit=False)
+            record.user = request.user.userprofile
+            record.save()
+            form.save_m2m() #для збереження ліків
+
+            messages.success(request, "Запис в щоденнику успішно створений!")
+            return redirect('records')
+    else:
+        form = HealthRecordForm()
+    return render (request, 'diary/create_record.html', {'form': form})
+        
+
+@login_required
+def my_records(request):
+    user_profile = request.user.userprofile
+    records = HealthRecord.objects.filter(user = user_profile)
+    return render(request, 'diary/my_records.html', {'records': records})

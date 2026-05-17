@@ -1,10 +1,42 @@
 <nav>
-    <a href="{% url "home" %}" class="nav-link">Головна</a>
-    <a href="{% url "records" %}" class="nav-link">Всі записи</a>
-    <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
-    <a href="{% url "profile" %}" class="nav-link">Профіль користувача</a>
-    <a href="{% url "users_list" %}" class="nav-link">Список користувачів</a>
-    <a href="{% url "about" %}" class="nav-link">Про нас</a>
-    <a href="{% url "ask_question" %}" class="nav-link">Задати питання лікарю</a>
-    <a href="{% url "administrator" %}" class="nav-link">Адмін</a>
+    <div class="nav-links">
+        <a href="{% url "home" %}" class="nav-link">Головна</a>
+        <a href="{% url "about" %}" class="nav-link">Про нас</a>
+
+        {% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
+            <a href="{% url "ask_question" %}" class="nav-link">Задати питання лікарю</a>
+            <a href="{% url "profile" %}" class="nav-link">Профіль користувача</a>
+            <a href="{% url "records" %}" class="nav-link">Всі записи</a>
+            <a href="{% url "my_records" %}" class="nav-link">Мої записи</a>     
+            <a href="{% url "create_record" %}" class="nav-link">Створити запис</a>
+            <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
+        {% endif %}
+
+        {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
+            <a href="{% url "users_list" %}" class="nav-link">Список користувачів</a>
+            <a href="{% url "records" %}" class="nav-link">Всі записи</a>
+            <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
+            <a href="{% url "profile" %}" class="nav-link">Профіль користувача</a>
+        {% endif %}
+
+        {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
+            <a href="{% url "administrator" %}" class="nav-link">Адмін</a>
+            <a href="{% url "users_list" %}" class="nav-link">Список користувачів</a>
+            <a href="{% url "records" %}" class="nav-link">Всі записи</a>
+            <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
+            <a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <div class="nav-right">
+                <span class="nav-user">Користувач: {{ request.user.username }}</span>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-logout-btn">Вийти</button>
+                </form>
+            </div>
+        {% else %}
+            <a href="{% url "login" %}" class="nav-login-btn">Увійти</a>
+        {% endif %}
+    </div>
 </nav>

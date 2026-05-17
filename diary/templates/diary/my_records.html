@@ -1,0 +1,16 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Мої записи{% endblock  %}
+
+{% block content %}
+
+    <h1>Мої записи</h1>
+    {% for record in records %}
+        {% include "diary/includes/record_card.html" with record=record %}
+    {% empty %}
+        <p>Записів поки що немає</p>
+    
+    {% endfor %}
+
+
+{% endblock  %}

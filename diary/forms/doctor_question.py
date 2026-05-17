@@ -15,9 +15,9 @@ class DoctorQuestionForm(forms.Form):
 
         
         if '???' in question:
-            return forms.ValidationError('Можна будь-ласка без трьох знаків питання?')
+            raise forms.ValidationError('Можна будь-ласка без трьох знаків питання?')
 
         if len(question) < 10:
-            return forms.ValidationError('Питання має містити не менше 10 символів')
+            raise forms.ValidationError('Питання має містити не менше 10 символів')
 
         return question

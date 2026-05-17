@@ -11,7 +11,7 @@ class HealthRecord(models.Model):
     complaints = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     medicines = models.ManyToManyField('Medicine', blank=True, related_name='records')
-
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
        return f"#{self.id}: {self.user.username} - {self.date:%d.%m.%Y}"

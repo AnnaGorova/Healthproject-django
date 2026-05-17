@@ -7,7 +7,9 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'diary/css/style.css' %}">
-    {% block extra_css %}{% endblock %}
+    
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 <body>
@@ -21,7 +23,11 @@
               {% include "diary/includes/navbar.html" %}
         </header>
        
-    
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
     
    
         <main>
