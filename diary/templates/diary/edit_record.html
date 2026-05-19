@@ -1,0 +1,26 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Редагувати запис{% endblock %}
+
+
+{% block content %}
+
+    <h1>Редагувати запис No{{ record.id}} </h1>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p}}
+
+            <button type="submit">Зберегти</button>
+
+        </form>
+
+
+
+        <a href="{% url 'record_detail' record.id %}">Скасувати</a>
+
+
+
+{% endblock  %}

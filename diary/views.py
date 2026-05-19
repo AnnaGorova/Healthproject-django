@@ -32,7 +32,7 @@ def records(request):
     user_profile = request.user.userprofile
 
     if user_profile.role == 'patient':
-        all_records = HealthRecord.objects.filter(user=user_profile)
+        all_records = HealthRecord.objects.filter(user=user_profile, is_active=True)
     else:
         all_records = HealthRecord.objects.all()
     
@@ -59,7 +59,7 @@ def user_records(request, user_id):
         if targer_user.doctor != current_user:
             raise PermissionDenied("Отримайте доступ")
 
-    all_records = HealthRecord.objects.filter(user=targer_user)
+    all_records = HealthRecord.objects.filter(user=targer_user, is_active=True)
 
     context = {
         'records': all_records,
@@ -90,6 +90,26 @@ def doctor_patients(request, doctor_id):
         'patients' : patients,
     }
     return render(request, 'diary/doctor_patients.html', context)
+
+def is_doctor(user):
+    return user.is_authenticated and user.userprofile.role == 'doctor'
+
+@user_passes_test(is_doctor)
+def doctor_dashboard(request):
+    doctor = request.user.userprofile
+    patients = doctor.patients.all()
+
+    context = {
+        'doctor': doctor,
+        'patients': patients,
+    }
+
+    return render(request, 'diary/doctor_patients.html', context)
+
+
+
+
+
 
 @login_required
 def medicines(request):
@@ -184,5 +204,52 @@ def create_record(request):
 @login_required
 def my_records(request):
     user_profile = request.user.userprofile
-    records = HealthRecord.objects.filter(user = user_profile)
+    records = HealthRecord.objects.filter(user = user_profile, is_active=True)
     return render(request, 'diary/my_records.html', {'records': records})
+
+
+
+
+@login_required
+def edit_record(request, pk):
+    record = get_object_or_404(HealthRecord, id=pk)
+    current_user = request.user.userprofile
+
+   
+    if record.user != current_user:
+        raise PermissionDenied("Ви не можете редагувати чужий запис")
+    
+    if request.method == 'POST':
+        form = HealthRecordForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Запис успішно оновлений!")
+            return redirect('record_detail', pk=record.id)
+    else:
+        form = HealthRecordForm(instance=record)
+
+    return render(request, 'diary/edit_record.html', {'form': form, 'record': record})
+
+
+
+
+@login_required
+def delete_record(request, pk):
+    record = get_object_or_404(HealthRecord, id=pk)
+   
+    if record.user != request.user.userprofile:
+        raise PermissionDenied("Ви не можете видалити чужий запис")
+    
+    if request.method == 'POST':
+        record.delete()
+        messages.success(request, "Запис успішно видалено!")
+        return redirect('my_records')
+    
+    return render(request, 'diary/delete_record.html', {'record': record})
+
+
+
+
+
+
+

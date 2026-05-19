@@ -80,7 +80,13 @@
 
 
             <hr>
-
+            {% if request.user.userprofile == record.user %}
+                <div class="action-buttons">
+                    <a href="{% url 'edit_record' record.id %}" class="btn-edit"> Редагувати</a>||  
+                    <a href="{% url 'delete_record' record.id %}" class="btn-delete"> Видалити</a>
+                </div>
+            {% endif %}
+            <hr>
 
             <a href="{% url 'records' %}">Повернутися до списку записів</a>
 

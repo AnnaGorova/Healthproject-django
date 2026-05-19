@@ -1,0 +1,18 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Видалити запис №{{ record.id }}{% endblock %}
+
+{% block content %}
+    <h1>Видалити запис №{{ record.id }}</h1>
+
+   
+    {% include "diary/includes/record_card.html" with record=record %}
+
+    <p> Ви впевнені, що хочете видалити цей запис?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger"> ТАК, видалити</button>
+        <a href="{% url 'record_detail' record.id %}" class="btn-back">Скасувати</a>
+    </form>
+{% endblock %}
