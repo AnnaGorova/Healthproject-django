@@ -1,8 +1,4 @@
-from re import search
-
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from datetime import datetime
 from .models import UserProfile, HealthRecord, Medicine
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
@@ -27,12 +23,13 @@ class AboutView(TemplateView):
 
 @login_required
 def records(request):
-    http_method = request.method
-
     user_profile = request.user.userprofile
 
     if user_profile.role == 'patient':
         all_records = HealthRecord.objects.filter(user=user_profile, is_active=True)
+    elif user_profile.role == 'doctor':
+        patient_ids = user_profile.patients.values_list('id', flat=True)
+        all_records = HealthRecord.objects.filter(user_id__in=patient_ids, is_active=True)
     else:
         all_records = HealthRecord.objects.all()
     
@@ -49,21 +46,21 @@ def records(request):
 
 @login_required
 def user_records(request, user_id):
-    targer_user = get_object_or_404(UserProfile, id=user_id)
+    target_user = get_object_or_404(UserProfile, id=user_id)
     current_user = request.user.userprofile
 
-    if current_user.role == 'patient' and current_user.id != targer_user.id:
+    if current_user.role == 'patient' and current_user.id != target_user.id:
         raise PermissionDenied("Ви не маєте доступу до записів іншого користувача")
     
-    if current_user.role == 'doctor' and targer_user.role == 'patient':
-        if targer_user.doctor != current_user:
+    if current_user.role == 'doctor' and target_user.role == 'patient':
+        if target_user.doctor != current_user:
             raise PermissionDenied("Отримайте доступ")
 
-    all_records = HealthRecord.objects.filter(user=targer_user, is_active=True)
+    all_records = HealthRecord.objects.filter(user=target_user, is_active=True)
 
     context = {
         'records': all_records,
-        'user_profile': targer_user,
+        'user_profile': target_user,
     }
 
     return render(request, 'diary/records.html', context)
@@ -71,8 +68,13 @@ def user_records(request, user_id):
 @login_required
 def record_detail(request, pk):
     record = get_object_or_404(HealthRecord, id=pk)
-           
+    user_profile = request.user.userprofile      
     
+    if user_profile.role == 'patient':
+        record = get_object_or_404(HealthRecord, id=pk, user=user_profile)
+    else: 
+        record = get_object_or_404(HealthRecord, id=pk)
+
     context = {
         'record': record,
         'related_medicines': record.medicines.all(),  
@@ -82,14 +84,26 @@ def record_detail(request, pk):
     return render(request, 'diary/record_detail.html', context)
 
 @login_required
-def doctor_patients(request, doctor_id):
-    doctor = get_object_or_404(UserProfile, id=doctor_id, role='doctor')
-    patients = doctor.patients.all()
+def doctor_patients(request):
+    current_user = request.user.userprofile
+
+    if current_user.role not in ['doctor', 'admin']:
+        raise PermissionDenied("Ця сторінка доступна тільки для лікаря або адміністратора")
+    
+    if current_user.role == 'doctor':
+        patients = current_user.patients.all()
+    else:  
+        patients = UserProfile.objects.filter(role='patient')
+
+        
+
     context = {
-        'doctor' : doctor,
+        'doctor' : current_user,
         'patients' : patients,
     }
     return render(request, 'diary/doctor_patients.html', context)
+
+
 
 def is_doctor(user):
     return user.is_authenticated and user.userprofile.role == 'doctor'
@@ -147,10 +161,20 @@ def profile(request):
 
 @login_required   
 def users_list(request):
-    patients = UserProfile.objects.filter(role='patient')
-    doctors = UserProfile.objects.filter(role="doctor")
-    admins = UserProfile.objects.filter(role ='admin')
-    
+    current_user = request.user.userprofile
+
+    if current_user.role == 'admin':
+        patients = UserProfile.objects.filter(role='patient')
+        doctors = UserProfile.objects.filter(role="doctor")
+        admins = UserProfile.objects.filter(role ='admin')
+    elif current_user.role == 'doctor':
+        patients = current_user.patients.all()
+        doctors = UserProfile.objects.filter(id=current_user.id) 
+        admins = []
+    else:
+        patients = UserProfile.objects.filter(id=current_user.id)
+        doctors = UserProfile.objects.filter(role='doctor')
+        admins = []
 
     context = {
         'patients': patients,

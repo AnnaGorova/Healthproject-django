@@ -7,17 +7,21 @@
     <p><strong> ID:</strong> {{ user.id }}</p>
     <p><strong> Ім'я:</strong> {{ user.username }}</p>
     <p><strong> Email:</strong> {{ user.email }}</p>
-    <p>
-        
+    <p>        
         {% if user.role == 'patient' %} 
             <a href="{% url 'user_records' user.id %}">Показати записи</a>
         {% elif user.role == 'doctor' %} Лікар 
-           <a href="{% url 'doctor_patients' user.id %}">Мої пацієнти</a>
+           <a href="{% url 'doctor_patients' %}">Мої пацієнти</a>
         {% elif user.role == 'admin' %} Адміністратор
         
         {% else %} {{ user.role }}
         {% endif %}
+
+        
     </p>
    
+    {% if user.role == 'patient' and user.doctor %}
+        <p><strong>Лікар: </strong>{{user.doctor.username}}</p>
+    {% endif %}
 </div>
 <hr>

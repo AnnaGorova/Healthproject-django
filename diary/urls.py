@@ -1,6 +1,7 @@
 from .views import HomeView
 from django.urls import path
 from . import views
+from .api_views import records_list_api
 
 
 urlpatterns = [
@@ -14,14 +15,17 @@ urlpatterns = [
     path('record_detail/<int:pk>/', views.record_detail, name='record_detail'),
     path('record_detail/<int:pk>/edit_records/', views.edit_record, name='edit_record'),
     path('record/<int:pk>/delete_record/', views.delete_record, name='delete_record'),
-    path('doctor/<int:doctor_id>/patients/', views.doctor_patients, name='doctor_patients'),
+    path('doctor/patients/', views.doctor_patients, name='doctor_patients'),
     path('doctor/dashboard/', views.doctor_dashboard, name='doctor_dashboard'),
     path('medicines/', views.medicines, name='medicines'),
     path('profile/', views.profile, name='profile'),
     path('users/', views.users_list, name='users_list'),
     path('ask_question/', views.ask_question, name='ask_question'),
     path('administrator/', views.administrator, name='administrator'),
+    # api views
+    path('api/diary/records_list_api/', records_list_api, name='records_list_api'),
     
+
 
 
     ]

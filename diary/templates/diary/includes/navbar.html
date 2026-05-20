@@ -27,6 +27,7 @@
             <a href="{% url "records" %}" class="nav-link">Всі записи</a>
             <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
             <a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a>
+            <a href="{% url 'records_list_api' %}" class="nav-link">API Записи</a>
         {% endif %}
 
         {% if user.is_authenticated %}

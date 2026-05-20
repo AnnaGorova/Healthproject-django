@@ -12,4 +12,11 @@
         <p><strong>ID: </strong> {{user_profile.id}} </p>
         
         <hr>
+
+        {% if user_profile.role == 'patient' and user_profile.doctor %}
+        <p><strong>Ваш лікар: </strong> {{ user_profile.doctor.username}}</p>
+        <p><strong>Email лікаря: </strong> {{ user_profile.doctor.email}}</p>
+        
+        {% endif %}
+
 {% endblock  %}

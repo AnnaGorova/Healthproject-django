@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'diary'
+    'diary',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -103,9 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-us'   #uk, але змінюється повністю адмін-панель - мені не подобається
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 
@@ -121,3 +122,13 @@ STATIC_URL = '/static/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+
+USE_I18N = True
+USE_L10N = False  # ← це обов'язково!
+USE_TZ = True
+
+DATE_FORMAT = 'd.m.Y'
+DATETIME_FORMAT = 'd.m.Y H:i'
+SHORT_DATE_FORMAT = 'd.m.Y'
+SHORT_DATETIME_FORMAT = 'd.m.Y H:i'

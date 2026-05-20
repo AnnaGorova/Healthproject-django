@@ -3,7 +3,7 @@
 {% block title %}Пацієнти лікаря {{ doctor.username }}{% endblock %}
 
 {% block content %}
-<h1> Лікар: {{ doctor.username }}</h1>
+<h1> {{ user.userprofile.role }} {{ doctor.username }}</h1>
 <p> {{ doctor.email }}</p>
 
 <h2> Мої пацієнти</h2>
@@ -17,7 +17,7 @@
                 <a href="{% url 'user_records' patient.id %}">Показати записи</a>
             
         {% endfor %}
-    </div>
+    
 {% else %}
     <p> У вас ще немає прикріплених пацієнтів</p>
 {% endif %}
