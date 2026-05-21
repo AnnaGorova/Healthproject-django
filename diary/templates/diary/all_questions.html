@@ -1,0 +1,39 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Всі питання{% endblock %}
+
+{% block content %}
+<h1>Питання від пацієнтів</h1>
+
+{% if questions %}
+    <div class="stats">
+        <p><strong>Всього питань:</strong> {{ questions|length }}</p>
+    </div>
+
+    <hr>
+
+    {% for q in questions %}
+        <div class="question-card">
+            <p><strong>Від:</strong> {{ q.patient.username|default:"Не вказано" }}</p>
+            <p><strong>Email:</strong> {{ q.patient.email|default:"Не вказано" }}</p>
+            <p><strong>Телефон:</strong> {{ q.phone|default:"Не вказано" }}</p>
+            <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>Питання:</strong></p>    
+            <div class="question-text">
+                {{ q.question|linebreaks }}
+            </div>
+            <p><strong>Статус:</strong> 
+                {% if q.is_answered %}
+                    <span style="color: green;">✓ Відповідь надіслано</span>
+                {% else %}
+                    <span style="color: orange;">⏳ Очікує відповіді</span>
+                {% endif %}
+            </p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Питань поки що немає</p>
+{% endif %}
+
+<p><a href="{% url 'home' %}">← На головну</a></p>
+{% endblock %}

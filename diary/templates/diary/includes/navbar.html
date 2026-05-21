@@ -10,6 +10,7 @@
             <a href="{% url "my_records" %}" class="nav-link">Мої записи</a>     
             <a href="{% url "create_record" %}" class="nav-link">Створити запис</a>
             <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
+             <a href="{% url 'my_questions' %}" class="nav-link">Мої питання</a>
            
         {% endif %}
 
@@ -19,7 +20,8 @@
             <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
             <a href="{% url "profile" %}" class="nav-link">Профіль користувача</a>
             <a href="{% url 'doctor_dashboard' %}" class="nav-link">Мої пацієнти</a>
-        {% endif %}
+            <a href="{% url 'all_questions' %}" class="nav-link">Питання</a>
+            {% endif %}
 
         {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
             <a href="{% url "administrator" %}" class="nav-link">Адмін</a>
@@ -28,6 +30,7 @@
             <a href="{% url "medicines" %}" class="nav-link">Ліки</a>
             <a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a>
             <a href="{% url 'records_list_api' %}" class="nav-link">API Записи</a>
+            <a href="{% url 'all_questions' %}" class="nav-link">Питання</a>
         {% endif %}
 
         {% if user.is_authenticated %}

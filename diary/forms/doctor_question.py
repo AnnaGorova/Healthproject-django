@@ -1,14 +1,12 @@
 from django import forms
+from ..models import Question   
 
+class DoctorQuestionForm(forms.ModelForm):
+    class Meta: 
+        model = Question
+        fields = ['phone', 'question']
 
-class DoctorQuestionForm(forms.Form):
-    name = forms.CharField(label="Ім'я")
-    
-    email = forms.EmailField(label="Email")
-    phone = forms.CharField(max_length=15, label='Телефон')
-  
-    question = forms.CharField(label="Питання")
-
+        
     def clean_question(self):
        
         question = self.cleaned_data.get('question')

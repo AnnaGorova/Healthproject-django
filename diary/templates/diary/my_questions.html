@@ -1,0 +1,29 @@
+{% extends 'diary/base.html' %}
+
+{% block title %}Мої питання{% endblock %}
+
+{% block content %}
+    <h1>Мої питання лікарю</h1>
+
+    {% if questions %}
+        {% for q in questions %}
+            <div class="record-card">
+                <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>Телефон:</strong> {{ q.phone }}</p>
+                <p><strong>Питання:</strong> {{ q.question }}</p>
+                <p><strong>Статус:</strong> 
+                    {% if q.is_answered %}
+                        ✅ Відповідь надана
+                    {% else %}
+                        ⏳ Очікує відповіді
+                    {% endif %}
+                </p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>Ви ще не задавали питань лікарю</p>
+    {% endif %}
+
+    <a href="{% url 'ask_question' %}">Задати нове питання</a>
+{% endblock %}

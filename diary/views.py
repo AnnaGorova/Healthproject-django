@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import UserProfile, HealthRecord, Medicine
+from .models import UserProfile, HealthRecord, Medicine, Question
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from .forms.doctor_question import DoctorQuestionForm
@@ -198,13 +198,38 @@ def ask_question(request):
     if request.method == 'POST':
         form = DoctorQuestionForm(request.POST)
         if form.is_valid():
-            context = {
-                'data': form.cleaned_data
-            }
-            return render(request, 'diary/question_sent.html', context)
+            question = form.save(commit=False)
+            question.patient = request.user.userprofile 
+            question.save()
+            return render(request, 'diary/question_sent.html', {
+                'data': form.cleaned_data,
+                'user_profile': request.user.userprofile,
+            })
     else:
         form = DoctorQuestionForm()
     return render(request, 'diary/ask_question.html', {'form': form})
+
+@login_required
+def my_questions(request):
+    user_profile = request.user.userprofile
+    questions = Question.objects.filter(patient=user_profile).order_by('-created_at')
+    return render(request, 'diary/my_questions.html', {'questions': questions})
+
+
+
+@login_required
+def all_questions(request):
+    current_user = request.user.userprofile
+    
+    if current_user.role not in ['doctor', 'admin']:
+        raise PermissionDenied("Доступ заборонено")
+    
+    questions = Question.objects.all().order_by('-created_at')
+    
+    context = {
+        'questions': questions,
+    }
+    return render(request, 'diary/all_questions.html', context)
 
 
 

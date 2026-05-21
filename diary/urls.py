@@ -21,9 +21,12 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('users/', views.users_list, name='users_list'),
     path('ask_question/', views.ask_question, name='ask_question'),
+    path('my_questions/', views.my_questions, name='my_questions'),
+    path('all_questions/', views.all_questions, name='all_questions'),
+   
     path('administrator/', views.administrator, name='administrator'),
     # api views
-    path('api/diary/records_list_api/', records_list_api, name='records_list_api'),
+    path('api/diary/records/', records_list_api, name='records_list_api'),
     
 
 

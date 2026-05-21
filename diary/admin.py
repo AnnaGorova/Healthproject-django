@@ -1,5 +1,5 @@
 from django.contrib import admin
-from diary.models import UserProfile, Medicine, HealthRecord, DoctorProfile
+from diary.models import UserProfile, Medicine, HealthRecord, DoctorProfile, Question
 
 # Register your models here.
 
@@ -35,3 +35,9 @@ class DoctorProfileAdmin(admin.ModelAdmin):
     list_filter = ['specialty', 'year_of_experience']
     search_fields = ['user__username', 'specialty', 'phone']
     raw_id_fields = ['user']
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ['patient', 'phone', 'created_at', 'is_answered']
+    search_fields = ['patient__username', 'phone']
