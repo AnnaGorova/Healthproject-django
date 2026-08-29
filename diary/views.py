@@ -238,13 +238,18 @@ def create_record(request):
     if request.method == 'POST':
         form = HealthRecordForm(request.POST)
         if form.is_valid():
-            record = form.save(commit=False)
-            record.user = request.user.userprofile
-            record.save()
-            form.save_m2m() #для збереження ліків
+            try:
+                record = form.save(commit=False)
+                record.user = request.user.userprofile
+                record.save()
+                form.save_m2m() #для збереження ліків
 
-            messages.success(request, "Запис в щоденнику успішно створений!")
-            return redirect('records')
+                messages.success(request, "Запис в щоденнику успішно створений!")
+                return redirect('records')
+            except Exception as e:
+                    messages.error(request, f"Помилка при збереженні: {e}")
+        else:
+            messages.error(request, "Будь ласка, виправте помилки у формі.")
     else:
         form = HealthRecordForm()
     return render (request, 'diary/create_record.html', {'form': form})

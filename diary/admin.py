@@ -20,11 +20,53 @@ class MedicineAdmin(admin.ModelAdmin):
 
 @admin.register(HealthRecord)
 class HealthRecordAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'complaints', 'date', 'well_being', 'temperature', 'is_active']
-    list_filter = ['well_being', 'is_active', 'date']
+    list_display = [
+        'id', 
+        'user', 
+        'complaints', 
+        'date', 
+        'well_being', 
+        'temperature', 
+        'heart_rate',      
+        'pressure',        
+        'mood',            
+        'sleep_hours',     
+        'steps',           
+        'is_active'
+        
+        ]
+    list_filter = [
+        'well_being', 
+        'mood', 
+        'is_active',
+        'date', 
+        'energy_level',    
+        'pain_level'       
+        ]
     search_fields = ['user__username', 'complaints']
     filter_horizontal = ['medicines']
     readonly_fields = ['date']
+
+    fieldsets = (
+        ('Основна інформація', {
+            'fields': ('user', 'date', 'is_active')
+        }),
+        ('Самопочуття', {
+            'fields': ('well_being', 'temperature', 'pressure', 'complaints')
+        }),
+        ('Показники здоров\'я', {
+            'fields': ('heart_rate', 'blood_sugar', 'weight', 'sleep_hours', 'steps')
+        }),
+        ('Емоційний стан', {
+            'fields': ('mood', 'energy_level', 'pain_level')
+        }),
+        ('Спосіб життя', {
+            'fields': ('water_intake', 'calories')
+        }),
+        ('Ліки та коментарі', {
+            'fields': ('medicines', 'comment')
+        }),
+    )
 
 
 
