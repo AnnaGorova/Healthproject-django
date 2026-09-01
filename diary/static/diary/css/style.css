@@ -591,8 +591,47 @@ nav {
     flex-wrap: wrap;
 }
 
+/* ВСІ кнопки та посилання - клікабельні */
+.record-card a,
+.record-card .btn-edit,
+.record-card .btn-delete,
+.record-card .btn-detail,
+.record-card .action-buttons a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 999 !important;
+}
+
+/* Вся картка - НЕ клікабельна */
+.record-card {
+    cursor: default !important;
+}
+
+/* Блок з кнопками - клікабельний */
+.record-card .action-buttons {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 999 !important;
+}
+
+/* ВСІ інші елементи картки - не клікабельні (крім кнопок) */
+.record-card p,
+.record-card .record-top,
+.record-card .record-metrics,
+.record-card .record-notes,
+.record-card .badge,
+.record-card .record-date,
+.record-card .metric,
+.record-card .metric-label,
+.record-card .metric-value {
+    pointer-events: none !important;
+}
+
+
+
 /* ============================================
-   ПОВІДОМЛЕННЯ
+   ПОВІДОМЛЕНН.
    ============================================ */
 .message {
     padding: 16px 24px;
@@ -840,4 +879,98 @@ footer {
     header h1 {
         font-size: 20px;
     }
+}
+
+
+/* ===== СТИЛІ ДЛЯ ДЕТАЛЬНОЇ СТОРІНКИ ===== */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Фіксуємо кольори при наведенні на картку */
+
+.record-card:hover .detail-label {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.record-card:hover .detail-value {
+    color: #FFFFFF !important;
+}
+
+.record-card:hover .section-header h3 {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.record-card:hover .note-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.record-card:hover .note-text {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Фіксуємо кольори в нотатках */
+.record-card .note-label {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.record-card .note-text {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== АДАПТИВНІСТЬ ДЕТАЛЕЙ ===== */
+.record-notes .note-text,
+.detail-item .detail-value {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+/* ===== СТОРІНКА ВИДАЛЕННЯ ===== */
+.page-header {
+    text-align: center;
+}
+
+.delete-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 48px 32px;
+    max-width: 480px;
+    margin: 40px auto 0 auto;  /* ← центрування по горизонталі + відступ зверху */
+    text-align: center;
 }

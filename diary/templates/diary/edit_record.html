@@ -2,25 +2,146 @@
 
 {% block title %}Редагувати запис{% endblock %}
 
-
 {% block content %}
+<div class="page-header">
+    <h2>✏️ Редагувати запис №{{ record.id }}</h2>
+    <p class="subtitle">{{ record.date|date:"d.m.Y H:i" }}</p>
+</div>
 
-    <h1>Редагувати запис No{{ record.id}} </h1>
-
-        <form method="post">
-
-            {% csrf_token %}
-
-            {{ form.as_p}}
-
-            <button type="submit">Зберегти</button>
-
-        </form>
-
-
-
-        <a href="{% url 'record_detail' record.id %}">Скасувати</a>
-
-
-
-{% endblock  %}
+<form method="post" class="record-form">
+    {% csrf_token %}
+    
+    <!-- БЛОК 1: САМОПОЧУТТЯ -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">😊</span>
+            <h3>Самопочуття</h3>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.well_being.id_for_label }}">Самопочуття</label>
+                {{ form.well_being }}
+            </div>
+           
+            <div class="form-group">
+                <label for="{{ form.mood.id_for_label }}">Настрій</label>
+                {{ form.mood }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- БЛОК 2: ПОКАЗНИКИ ЗДОРОВ'Я -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">❤️</span>
+            <h3>Показники здоров'я</h3>
+        </div>
+        <div class="form-grid">
+            
+           
+            <div class="form-group">
+                <label for="{{ form.pressure.id_for_label }}">Артеріальний тиск</label>
+                {{ form.pressure }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.heart_rate.id_for_label }}">Пульс (удари/хв)</label>
+                {{ form.heart_rate }}
+            </div>
+              <div class="form-group">
+                <label for="{{ form.temperature.id_for_label }}">Температура (°C)</label>
+                {{ form.temperature }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.spo2.id_for_label }}">Сатурація (SpO2) %</label>
+                {{ form.spo2 }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.blood_sugar.id_for_label }}">Рівень цукру (ммоль/л)</label>
+                {{ form.blood_sugar }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.weight.id_for_label }}">Вага (кг)</label>
+                {{ form.weight }}
+            </div>
+           
+        </div>
+    </div>
+    
+    <!-- БЛОК 3: ЕМОЦІЙНИЙ СТАН -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">🧠</span>
+            <h3>Емоційний стан</h3>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.energy_level.id_for_label }}">Рівень енергії (1-10)</label>
+                {{ form.energy_level }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.pain_level.id_for_label }}">Рівень болю (0-10)</label>
+                {{ form.pain_level }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- БЛОК 4: СПОСІБ ЖИТТЯ -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">💪</span>
+            <h3>Спосіб життя</h3>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.water_intake.id_for_label }}">Вода (мл за день)</label>
+                {{ form.water_intake }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.calories.id_for_label }}">Калорії за день</label>
+                {{ form.calories }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.steps.id_for_label }}">Кроки за день</label>
+                {{ form.steps }}
+            </div>
+             <div class="form-group">
+                <label for="{{ form.sleep_hours.id_for_label }}">Сон (години)</label>
+                {{ form.sleep_hours }}
+            </div>
+          
+        </div>
+    </div>
+    
+    <!-- БЛОК 5: ДОДАТКОВО -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h3>Додатково</h3>
+        </div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="{{ form.complaints.id_for_label }}">Скарги</label>
+                {{ form.complaints }}
+            </div>
+            <div class="form-group full-width">
+                <label for="{{ form.comment.id_for_label }}">Коментар</label>
+                {{ form.comment }}
+            </div>
+            <div class="form-group full-width">
+                <label for="{{ form.medicines.id_for_label }}">Ліки</label>
+                {{ form.medicines }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- КНОПКИ -->
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">
+            💾 Оновити запис
+        </button>
+        <a href="{% url 'record_detail' record.id %}" class="btn btn-outline btn-lg">
+            ↩ Назад
+        </a>
+    </div>
+</form>
+{% endblock %}

@@ -22,14 +22,7 @@
                 <label for="{{ form.well_being.id_for_label }}">Самопочуття</label>
                 {{ form.well_being }}
             </div>
-            <div class="form-group">
-                <label for="{{ form.temperature.id_for_label }}">Температура (°C)</label>
-                {{ form.temperature }}
-            </div>
-            <div class="form-group">
-                <label for="{{ form.pressure.id_for_label }}">Артеріальний тиск</label>
-                {{ form.pressure }}
-            </div>
+           
             <div class="form-group">
                 <label for="{{ form.mood.id_for_label }}">Настрій</label>
                 {{ form.mood }}
@@ -44,10 +37,25 @@
             <h3>Показники здоров'я</h3>
         </div>
         <div class="form-grid">
+            
+           
+            <div class="form-group">
+                <label for="{{ form.pressure.id_for_label }}">Артеріальний тиск</label>
+                {{ form.pressure }}
+            </div>
             <div class="form-group">
                 <label for="{{ form.heart_rate.id_for_label }}">Пульс (удари/хв)</label>
                 {{ form.heart_rate }}
             </div>
+            <div class="form-group">
+                <label for="{{ form.temperature.id_for_label }}">Температура (°C)</label>
+                {{ form.temperature }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.spo2.id_for_label }}">Сатурація (SpO2) %</label>
+                {{ form.spo2 }}
+            </div>
+            
             <div class="form-group">
                 <label for="{{ form.blood_sugar.id_for_label }}">Рівень цукру (ммоль/л)</label>
                 {{ form.blood_sugar }}
@@ -56,14 +64,7 @@
                 <label for="{{ form.weight.id_for_label }}">Вага (кг)</label>
                 {{ form.weight }}
             </div>
-            <div class="form-group">
-                <label for="{{ form.sleep_hours.id_for_label }}">Сон (години)</label>
-                {{ form.sleep_hours }}
-            </div>
-            <div class="form-group">
-                <label for="{{ form.steps.id_for_label }}">Кроки за день</label>
-                {{ form.steps }}
-            </div>
+           
         </div>
     </div>
     
@@ -100,6 +101,15 @@
                 <label for="{{ form.calories.id_for_label }}">Калорії за день</label>
                 {{ form.calories }}
             </div>
+              <div class="form-group">
+                <label for="{{ form.steps.id_for_label }}">Кроки за день</label>
+                {{ form.steps }}
+            </div>
+             <div class="form-group">
+                <label for="{{ form.sleep_hours.id_for_label }}">Сон (години)</label>
+                {{ form.sleep_hours }}
+            </div>
+          
         </div>
     </div>
     

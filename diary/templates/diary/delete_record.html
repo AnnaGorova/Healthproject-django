@@ -3,16 +3,27 @@
 {% block title %}Видалити запис №{{ record.id }}{% endblock %}
 
 {% block content %}
-    <h1>Видалити запис №{{ record.id }}</h1>
+<div class="page-header">
+    <h2>Видалення запису</h2>
+    <p class="subtitle">Запис №{{ record.id }} від {{ record.date|date:"d.m.Y H:i" }}</p>
+</div>
 
-   
-    {% include "diary/includes/record_card.html" with record=record %}
+<div class="delete-card">
+    <div class="delete-icon">⚠️</div>
+    
+    <h3 class="delete-title">Підтвердження видалення</h3>
+    <p class="delete-text">
+        Ви впевнені, що хочете видалити цей запис?
+        <br>
+        <span class="delete-highlight">Цю дію не можна буде скасувати.</span>
+    </p>
 
-    <p> Ви впевнені, що хочете видалити цей запис?</p>
-
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn-danger"> ТАК, видалити</button>
-        <a href="{% url 'record_detail' record.id %}" class="btn-back">Скасувати</a>
-    </form>
+    <div class="delete-actions">
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg">🗑️ Так, видалити</button>
+        </form>
+        <a href="{% url 'record_detail' record.id %}" class="btn btn-secondary btn-lg">↩ Скасувати</a>
+    </div>
+</div>
 {% endblock %}

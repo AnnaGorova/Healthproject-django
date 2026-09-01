@@ -9,18 +9,18 @@
             <p>Дата: {{ record.date|date:"d.m.Y H:i"}}</p>
             <p>Температура: {{ record.temperature}} °C</p>
             <p>Тиск: {{ record.pressure}}</p>
+            <p>Пульс: {{ record.pulse}}</p>
+            <p>Сатурація: {{ record.spo2|default:"" }}</p>
             <p>Коментар: {{ record.comment }}</p>
 
             <hr>
-            {% if request.user.is_authenticated and request.user.userprofile == record.user %}
-                <div class="action-buttons">
-                    <a href="{% url 'edit_record' record.id %}" class="btn-edit"> Редагувати</a>||
-                    <a href="{% url 'delete_record' record.id %}" class="btn-delete"> Видалити</a>
-                </div>
-            {% endif %}
-            <hr>
-
-            <a href="{% url 'record_detail' record.id %}">Детальніше</a>
-
-            <hr>
+             <div class="record-actions">
+                {% if request.user.is_authenticated and request.user.userprofile == record.user %}
+                    <a href="{% url 'edit_record' record.id %}" class="btn btn-warning">✏️ Редагувати</a>
+                    <a href="{% url 'delete_record' record.id %}" class="btn btn-danger" onclick="return confirm('Ви впевнені?')">🗑️ Видалити</a>
+                {% endif %}
+                <a href="{% url 'record_detail' record.id %}" class="btn btn-outline">👁️ Детальніше</a>
+            </div>
+            
+            
 </div>

@@ -1,16 +1,37 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Мої записи{% endblock  %}
+{% block title %}Мої записи{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h2>📋 Мої записи</h2>
+    <p class="subtitle">Всього записів: {{ records|length }}</p>
+</div>
 
-    <h1>Мої записи</h1>
-    {% for record in records %}
-        {% include "diary/includes/record_card.html" with record=record %}
-    {% empty %}
-        <p>Записів поки що немає</p>
-    
-    {% endfor %}
+<!-- Статистика -->
+<div class="stats-row">
+    <div class="stat-item">
+        <span class="stat-number">{{ records|length }}</span>
+        <span class="stat-label">Всього записів</span>
+    </div>
+</div>
 
+<!-- Список записів -->
+{% for record in records %}
+    {% include "diary/includes/record_card.html" with record=record %}
+{% empty %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>Ще немає записів</h3>
+        <p>Додайте свій перший запис</p>
+        <a href="{% url 'create_record' %}" class="btn btn-primary">➕ Створити запис</a>
+    </div>
+{% endfor %}
 
-{% endblock  %}
+<!-- Плаваюча кнопка -->
+<div class="create-float">
+    <a href="{% url 'create_record' %}" class="btn btn-primary btn-lg">
+        ➕ Новий запис
+    </a>
+</div>
+{% endblock %}

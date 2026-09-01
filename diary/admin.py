@@ -28,7 +28,8 @@ class HealthRecordAdmin(admin.ModelAdmin):
         'well_being', 
         'temperature', 
         'heart_rate',      
-        'pressure',        
+        'pressure', 
+        'spo2',       
         'mood',            
         'sleep_hours',     
         'steps',           
@@ -52,19 +53,22 @@ class HealthRecordAdmin(admin.ModelAdmin):
             'fields': ('user', 'date', 'is_active')
         }),
         ('Самопочуття', {
-            'fields': ('well_being', 'temperature', 'pressure', 'complaints')
+            'fields': ('well_being', 'mood')
         }),
         ('Показники здоров\'я', {
-            'fields': ('heart_rate', 'blood_sugar', 'weight', 'sleep_hours', 'steps')
+            'fields': ('heart_rate', 'pressure',  'temperature', 'spo2', 'blood_sugar', 'weight')
         }),
         ('Емоційний стан', {
-            'fields': ('mood', 'energy_level', 'pain_level')
+            'fields': ('energy_level', 'pain_level')
         }),
         ('Спосіб життя', {
-            'fields': ('water_intake', 'calories')
+            'fields': ('water_intake', 'calories', 'steps', 'sleep_hours')
         }),
-        ('Ліки та коментарі', {
-            'fields': ('medicines', 'comment')
+        ('Додатково', {
+            'fields': ( 'complaints', 'comment')
+        }),
+        ('Ліки', {
+            'fields': ('medicines',)
         }),
     )
 

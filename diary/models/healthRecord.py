@@ -13,6 +13,11 @@ class HealthRecord(models.Model):
         blank=True, 
         help_text="Пульс (удари за хвилину)"
     )
+    spo2 = models.IntegerField(
+        null=True, 
+        blank=True, 
+        help_text="Сатурація (SpO2) %"
+    )
     blood_sugar = models.FloatField(
         null=True, 
         blank=True, 
