@@ -14,6 +14,27 @@ class HealthRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthRecord
         fields = [
-            'id', 'user', 'user_name', 'date', 'well_being',
-            'temperature', 'pressure', 'complaints', 'comment', 'medicines'
-        ]   
+            'id', 
+            'user', 
+            'user_name', 
+            'date',
+            # === САМОПОЧУТТЯ ===
+            'well_being',
+            'temperature',
+            'pressure',
+            'heart_rate',
+            'spo2',
+            'blood_sugar',
+            'weight',
+            'sleep_hours',
+            'steps',
+            'mood',
+            'energy_level',
+            'pain_level',
+            'water_intake',
+            'calories',
+            'complaints',
+            'comment',
+            'medicines',
+            'is_active',
+        ]

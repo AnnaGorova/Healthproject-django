@@ -19,10 +19,29 @@
 
     <form method="post">
         {% csrf_token %}
-        {{form.as_p}}
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            
+            <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" required autofocus>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <div class="password-wrapper">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Введіть пароль" required>
+                <span class="toggle-password" onclick="togglePassword()"></span>
+        </div>
+</div>
+
+        
         <button type="submit" class="nav-link">Увійти</button>
     </form>
    </div>
    
 
 {% endblock  %}
+
+{% block extra_js %}
+<script src="{% static 'diary/js/login.js' %}"></script>
+{% endblock %}

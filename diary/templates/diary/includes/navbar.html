@@ -10,10 +10,8 @@
             <li><a href="{% url "about" %}" class="nav-link">Про нас</a></li>
 
             {% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
-                <li class="nav-divider">📋 Пацієнту</li>
                 <li><a href="{% url "ask_question" %}" class="nav-link">Задати питання лікарю</a></li>
                 <li><a href="{% url "profile" %}" class="nav-link">Профіль користувача</a></li>
-                <li><a href="{% url "records" %}" class="nav-link">Всі записи</a></li>
                 <li><a href="{% url "my_records" %}" class="nav-link">Мої записи</a></li>
                 <li><a href="{% url "create_record" %}" class="nav-link">Створити запис</a></li>
                 <li><a href="{% url "medicines" %}" class="nav-link">Ліки</a></li>
@@ -28,7 +26,7 @@
                 <li><a href="{% url "profile" %}" class="nav-link">Профіль користувача</a></li>
                 <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">Мої пацієнти</a></li>
                 <li><a href="{% url 'all_questions' %}" class="nav-link">Питання</a></li>
-                {% endif %}
+            {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
                 <li class="nav-divider">🔑 Адміну</li>
@@ -44,7 +42,7 @@
             {% if user.is_authenticated %}
                 <li class="nav-divider"></li>
                 <li class="nav-user-item">
-                    <span class="nav-user">👤 {{ request.user.username }}</span>
+                    <span class="nav-user">{{ request.user.username }}</span>
                 </li>
                 <li>
                     <form method="post" action="{% url 'logout' %}" style="width: 100%;">
