@@ -7,10 +7,10 @@
             <p>Самопочуття: {{ record.well_being|upper}}</p>
             <p>Скарги: {{ record.complaints|truncatewords:5}}</p>
             <p>Дата: {{ record.date|date:"d.m.Y H:i"}}</p>
-            <p>Температура: {{ record.temperature}} °C</p>
-            <p>Тиск: {{ record.pressure}}</p>
-            <p>Пульс: {{ record.pulse}}</p>
-            <p>Сатурація: {{ record.spo2|default:"" }}</p>
+            <p>Температура: {{ record.temperature|default:"—" }} °C</p>
+            <p>Тиск: {{ record.pressure_systolic|default:"—" }}/{{ record.pressure_diastolic|default:"—" }} мм рт.ст.</p>
+            <p>Пульс: {{ record.heart_rate|default:"—" }} уд/хв</p>
+            <p>Сатурація: {{ record.spo2|default:"—" }}%</p>
             <p>Коментар: {{ record.comment }}</p>
 
             <hr>

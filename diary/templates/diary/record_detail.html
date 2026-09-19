@@ -6,6 +6,10 @@
 <div class="page-header">
     <h2>📄 Запис №{{ record.id }}</h2>
     <p class="subtitle">{{ record.date|date:"d.m.Y H:i" }}</p>
+    
+    {% if record.updated_at %}
+        <p><strong>Оновлено:</strong> {{ record.updated_at|date:"d.m.Y H:i" }}</p>
+    {% endif %}
 </div>
 
 <div class="record-card" style="padding: 32px;">
@@ -38,8 +42,12 @@
 
              
             <div class="detail-item">
-                <span class="detail-label">Артеріальний тиск</span>
-                <span class="detail-value">{{ record.pressure|default:"—" }}</span>
+                <span class="detail-label">Артеріальний тиск (систолічний)</span>
+                <span class="detail-value">{{ record.pressure_systolic|default:"—" }} мм рт.ст.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Артеріальний тиск (діастолічний)</span>
+                <span class="detail-value">{{ record.pressure_diastolic|default:"—" }} мм рт.ст.</span>
             </div>
             
             <div class="detail-item">
@@ -133,16 +141,7 @@
                 <span class="note-text">{{ record.comment }}</span>
             </div>
             {% endif %}
-            {% if record.medicines.all %}
-            <div class="note">
-                <span class="note-label">💊 Ліки:</span>
-                <span class="note-text">
-                    {% for m in record.medicines.all %}
-                        {{ m.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </span>
-            </div>
-            {% endif %}
+           
         </div>
     </div>
 

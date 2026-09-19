@@ -8,6 +8,25 @@
     <p class="subtitle">Додайте свої показники здоров'я</p>
 </div>
 
+{% if form.errors %}
+<div class="message message-error">
+    <strong>Будь ласка, виправте помилки:</strong>
+    <ul style="margin: 8px 0 0 20px;">
+        {% for field in form %}
+            {% if field.errors %}
+                <li>
+                    <strong>{{ field.label }}:</strong>
+                    {% for error in field.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+
 <form method="post" class="record-form">
     {% csrf_token %}
     
@@ -40,8 +59,12 @@
             
            
             <div class="form-group">
-                <label for="{{ form.pressure.id_for_label }}">Артеріальний тиск</label>
-                {{ form.pressure }}
+                <label for="{{ form.pressure_systolic.id_for_label }}">Артеріальний тиск (систолічний) мм рт.ст.</label>
+                {{ form.pressure_systolic }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.pressure_diastolic.id_for_label }}">Артеріальний тиск (діастолічний) мм рт.ст.</label>
+                {{ form.pressure_diastolic }}
             </div>
             <div class="form-group">
                 <label for="{{ form.heart_rate.id_for_label }}">Пульс (удари/хв)</label>
@@ -128,10 +151,7 @@
                 <label for="{{ form.comment.id_for_label }}">Коментар</label>
                 {{ form.comment }}
             </div>
-            <div class="form-group full-width">
-                <label for="{{ form.medicines.id_for_label }}">Ліки</label>
-                {{ form.medicines }}
-            </div>
+            
         </div>
     </div>
     

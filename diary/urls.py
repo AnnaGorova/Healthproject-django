@@ -17,7 +17,7 @@ urlpatterns = [
     path('record/<int:pk>/delete_record/', views.delete_record, name='delete_record'),
     path('doctor/patients/', views.doctor_patients, name='doctor_patients'),
     path('doctor/dashboard/', views.doctor_dashboard, name='doctor_dashboard'),
-    path('medicines/', views.medicines, name='medicines'),
+    
     path('profile/', views.profile, name='profile'),
     path('users/', views.users_list, name='users_list'),
     path('ask_question/', views.ask_question, name='ask_question'),

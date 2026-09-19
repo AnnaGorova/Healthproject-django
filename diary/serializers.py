@@ -1,16 +1,11 @@
 from rest_framework import serializers
-from.models import HealthRecord, Medicine
+from .models import HealthRecord
 
-class MedicineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Medicine
-        fields = ['id', 'name', 'dosage', 'purpose']
 
 
 class HealthRecordSerializer(serializers.ModelSerializer): 
     user_name = serializers.CharField(source='user.username', read_only=True)
-    medicines = MedicineSerializer(many=True, read_only=True)
-
+   
     class Meta:
         model = HealthRecord
         fields = [
@@ -21,7 +16,8 @@ class HealthRecordSerializer(serializers.ModelSerializer):
             # === САМОПОЧУТТЯ ===
             'well_being',
             'temperature',
-            'pressure',
+            'pressure_systolic',
+            'pressure_diastolic',
             'heart_rate',
             'spo2',
             'blood_sugar',
@@ -35,6 +31,6 @@ class HealthRecordSerializer(serializers.ModelSerializer):
             'calories',
             'complaints',
             'comment',
-            'medicines',
+            
             'is_active',
         ]

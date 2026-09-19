@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import UserProfile, HealthRecord, Medicine, Question
+from .models import UserProfile, HealthRecord, Question
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from .forms.doctor_question import DoctorQuestionForm
@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from .forms import HealthRecordForm
-from . import views
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
@@ -80,7 +79,6 @@ def record_detail(request, pk):
 
     context = {
         'record': record,
-        'related_medicines': record.medicines.all(),  
         'record_date': record.date
     }
 
@@ -128,23 +126,7 @@ def doctor_dashboard(request):
 
 
 
-@login_required
-def medicines(request):
-    http_method = request.method
-    search = request.GET.get('search', '')
-    
-    if search:
-        medicines_list = Medicine.objects.filter(name__icontains=search)
-    else:
-        medicines_list = Medicine.objects.all()
-   
-    context = {
-        'medicines': medicines_list,
-        'search_query': search,
-        'http_method': http_method,
-    }
-      
-    return render(request, 'diary/medicines.html', context)
+
  
 
 
@@ -245,8 +227,7 @@ def create_record(request):
                 record = form.save(commit=False)
                 record.user = request.user.userprofile
                 record.save()
-                form.save_m2m() #для збереження ліків
-
+                
                 messages.success(request, "Запис в щоденнику успішно створений!")
                 return redirect('records')
             except Exception as e:

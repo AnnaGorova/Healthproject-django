@@ -1,5 +1,5 @@
 from django.contrib import admin
-from diary.models import UserProfile, Medicine, HealthRecord, DoctorProfile, Question
+from diary.models import UserProfile, HealthRecord, DoctorProfile, Question
 
 # Register your models here.
 
@@ -11,11 +11,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ['username', 'email']
     raw_id_fields = ['doctor']
 
-@admin.register(Medicine)
-class MedicineAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'dosage', 'purpose']
-    list_filter = ['purpose']
-    search_fields = ['name', 'purpose']
+
 
 
 @admin.register(HealthRecord)
@@ -28,7 +24,8 @@ class HealthRecordAdmin(admin.ModelAdmin):
         'well_being', 
         'temperature', 
         'heart_rate',      
-        'pressure', 
+        'pressure_systolic',  
+        'pressure_diastolic',
         'spo2',       
         'mood',            
         'sleep_hours',     
@@ -45,7 +42,7 @@ class HealthRecordAdmin(admin.ModelAdmin):
         'pain_level'       
         ]
     search_fields = ['user__username', 'complaints']
-    filter_horizontal = ['medicines']
+  
     readonly_fields = ['date']
 
     fieldsets = (
@@ -56,7 +53,8 @@ class HealthRecordAdmin(admin.ModelAdmin):
             'fields': ('well_being', 'mood')
         }),
         ('Показники здоров\'я', {
-            'fields': ('heart_rate', 'pressure',  'temperature', 'spo2', 'blood_sugar', 'weight')
+            'fields': ('heart_rate', 'pressure_systolic', 'pressure_diastolic', 
+                       'temperature', 'spo2', 'blood_sugar', 'weight')
         }),
         ('Емоційний стан', {
             'fields': ('energy_level', 'pain_level')
@@ -67,9 +65,7 @@ class HealthRecordAdmin(admin.ModelAdmin):
         ('Додатково', {
             'fields': ( 'complaints', 'comment')
         }),
-        ('Ліки', {
-            'fields': ('medicines',)
-        }),
+       
     )
 
 
