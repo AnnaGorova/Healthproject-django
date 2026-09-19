@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from .forms.user_profile import UserProfileForm
 
 def old_home(request):
     return redirect('/')
@@ -132,16 +133,33 @@ def doctor_dashboard(request):
 
 @login_required
 def profile(request):
-    http_method = request.method
-
+    
     user_profile = request.user.userprofile
    
     
     context = {
         'user_profile': user_profile,
-        'http_method': http_method,
     }
     return render(request, 'diary/profile.html', context)
+
+
+@login_required
+def edit_profile(request):
+    user_profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Профіль оновлено!")
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
+    
+    return render(request, 'diary/edit_profile.html', {
+        'user_profile': user_profile,
+        'form': form,
+    })
 
 
 @login_required   

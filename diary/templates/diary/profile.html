@@ -1,22 +1,48 @@
 {% extends "diary/base.html" %}
 
-{% block title %} Профіль користувача{% endblock  %}
+{% block title %}Профіль{% endblock %}
 
 {% block content %}
-     <h1>Профіль користувача</h1>
-        <p>HTTP Method: {{http_method}}</p>
-        
-        <p><strong>Ім'я: </strong> {{user_profile.username}} </p>
-        <p><strong>Email: </strong> {{user_profile.email}} </p>
-        <p><strong>Роль: </strong> {{user_profile.role}} </p>
-        <p><strong>ID: </strong> {{user_profile.id}} </p>
-        
-        <hr>
+<div class="page-header">
+    <h2>👤 Мій профіль</h2>
+    <p class="subtitle">{{ user_profile.username }}</p>
+</div>
 
-        {% if user_profile.role == 'patient' and user_profile.doctor %}
-        <p><strong>Ваш лікар: </strong> {{ user_profile.doctor.username}}</p>
-        <p><strong>Email лікаря: </strong> {{ user_profile.doctor.email}}</p>
-        
-        {% endif %}
-
-{% endblock  %}
+<div class="record-card" style="padding: 32px;">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">ПІБ</span>
+            <span class="detail-value">{{ user_profile.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ user_profile.email }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Телефон</span>
+            <span class="detail-value">{{ user_profile.phone|default:"—" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Стать</span>
+            <span class="detail-value">{{ user_profile.get_gender_display|default:"—" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Дата народження</span>
+            <span class="detail-value">{{ user_profile.date_of_birth|date:"d.m.Y"|default:"—" }}</span>
+        </div>
+        <div class="detail-item">
+                <span class="detail-label">Вік</span>
+                <span class="detail-value">{{ user_profile.age }} років</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Роль</span>
+            <span class="detail-value">{{ user_profile.get_role_display }}</span>
+        </div>
+    </div>
+    
+    <div class="record-actions" style="margin-top: 24px;">
+        <a href="{% url 'edit_profile' %}" class="btn btn-warning">✏️ Редагувати</a>
+        <a href="{% url 'home' %}" class="btn btn-outline">↩ Назад</a>
+    </div>
+</div>
+{% endblock %}

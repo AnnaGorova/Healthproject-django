@@ -6,10 +6,39 @@ from diary.models import UserProfile, HealthRecord, DoctorProfile, Question
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'username', 'email', 'role', 'doctor']
-    list_filter = ['role', 'doctor']
-    search_fields = ['username', 'email']
+    list_display = [
+        'id', 
+        'username', 
+        'email', 
+        'role', 
+        'phone',           
+        'gender',          
+        'date_of_birth',   
+        'doctor'
+    ]
+    list_filter = [
+        'role', 
+        'gender',          
+        'doctor'
+    ]
+    search_fields = [
+        'username', 
+        'email', 
+        'phone'            
+    ]
     raw_id_fields = ['doctor']
+    
+    fieldsets = (
+        ('Основна інформація', {
+            'fields': ('user', 'username', 'email', 'role')
+        }),
+        ('Особиста інформація', {
+            'fields': ('phone', 'gender', 'date_of_birth')
+        }),
+        ('Зв\'язки', {
+            'fields': ('doctor',)
+        }),
+    )
 
 
 

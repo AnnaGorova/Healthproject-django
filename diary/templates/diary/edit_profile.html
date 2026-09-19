@@ -1,0 +1,56 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Редагувати профіль{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>✏️ Редагувати профіль</h2>
+    <p class="subtitle">{{ user_profile.username }}</p>
+</div>
+
+<div class="record-card" style="padding: 32px;">
+    <form method="post" class="record-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-icon">👤</span>
+                <h3>Особиста інформація</h3>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">ПІБ</label>
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Телефон</label>
+                    {{ form.phone }}
+                    {% if form.phone.help_text %}
+                        <small class="form-text">{{ form.phone.help_text }}</small>
+                    {% endif %}
+                    {% if form.phone.errors %}
+                        <div class="error-message">
+                            {% for error in form.phone.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.gender.id_for_label }}">Стать</label>
+                    {{ form.gender }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.date_of_birth.id_for_label }}">Дата народження</label>
+                    {{ form.date_of_birth }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">💾 Зберегти</button>
+            <a href="{% url 'profile' %}" class="btn btn-outline btn-lg">↩ Назад</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

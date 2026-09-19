@@ -23,9 +23,23 @@
             <header class="top-header">
                 <!--<img src="{%static 'diary/images/images_1.png'%}" alt="#">-->
                 <h1>{% block page_title %}Головна {% endblock %}</h1>
+                
                 {% if user.is_authenticated %}
-                    <div class="header-user">👤 {{ user.username }}</div>
-                {% endif %}              
+                    
+                    <div class="nav-user-item">
+                        <span class="nav-user">{{ request.user.userprofile.username }}</span>
+                    </div>
+                    <div>
+                        <form method="post" action="{% url 'logout' %}" style="width: 100%;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-logout-btn">🚪 Вийти</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="nav-divider"></div>
+                    <div><a href="{% url "login" %}" class="nav-login-btn">🔑 Увійти</a></div>
+                {% endif %}   
+
             </header>
         
             {% if messages %}

@@ -42,7 +42,7 @@
             {% if user.is_authenticated %}
                 <li class="nav-divider"></li>
                 <li class="nav-user-item">
-                    <span class="nav-user">{{ request.user.username }}</span>
+                    <span class="nav-user">{{ request.user.userprofile.username }}</span>
                 </li>
                 <li>
                     <form method="post" action="{% url 'logout' %}" style="width: 100%;">
