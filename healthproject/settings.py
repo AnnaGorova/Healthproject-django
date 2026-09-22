@@ -104,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'   #uk, але змінюється повністю адмін-панель - мені не подобається
+LANGUAGE_CODE = 'en-us'   #en-us    uk, але змінюється повністю адмін-панель - мені не подобається
 
 TIME_ZONE = 'Europe/Kiev'
 

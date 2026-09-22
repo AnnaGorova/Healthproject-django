@@ -15,11 +15,25 @@ urlpatterns = [
     path('record_detail/<int:pk>/', views.record_detail, name='record_detail'),
     path('record_detail/<int:pk>/edit_records/', views.edit_record, name='edit_record'),
     path('record/<int:pk>/delete_record/', views.delete_record, name='delete_record'),
+
     path('doctor/patients/', views.doctor_patients, name='doctor_patients'),
     path('doctor/dashboard/', views.doctor_dashboard, name='doctor_dashboard'),
+    path('appointments/doctor/', views.doctor_appointments, name='doctor_appointments'),
+
     
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+
+    path('doctors/', views.doctors_list, name='doctors_list'),
+    path('appointments/book/<int:doctor_id>/', views.book_appointment, name='book_appointment'),
+    path('appointments/my/', views.my_appointments, name='my_appointments'),
+    path('appointments/cancel/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
+    path('appointments/reschedule/<int:appointment_id>/', views.reschedule_appointment, name='reschedule_appointment'),
+
+    path('schedule/', views.manage_schedule, name='manage_schedule'),
+    path('schedule/delete/<int:schedule_id>/', views.delete_schedule, name='delete_schedule'),
+
+    
     path('users/', views.users_list, name='users_list'),
     path('ask_question/', views.ask_question, name='ask_question'),
     path('my_questions/', views.my_questions, name='my_questions'),

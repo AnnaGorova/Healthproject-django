@@ -610,6 +610,7 @@ nav {
     background: linear-gradient(135deg, rgba(108, 92, 231, 0.03), rgba(253, 121, 168, 0.03));
     opacity: 0;
     transition: var(--transition);
+    pointer-events: none;
 }
 
 .record-card:hover::before {
@@ -985,7 +986,8 @@ nav {
 }
 
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(22, 21, 21, 0.5);
+    font-style: italic;
 }
 
 /* ============================================
@@ -1185,4 +1187,202 @@ footer {
     max-width: 480px;
     margin: 40px auto 0 auto;  /* ← центрування по горизонталі + відступ зверху */
     text-align: center;
+}
+
+
+/* ===== КАРТКИ ЛІКАРІВ ===== */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.doctor-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.doctor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow-pink);
+    border-color: rgba(253, 121, 168, 0.3);
+}
+
+.doctor-avatar {
+    font-size: 64px;
+    margin-bottom: 12px;
+}
+
+.doctor-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+}
+
+.doctor-specialty {
+    color: var(--primary-light);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.doctor-experience,
+.doctor-phone {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    margin: 4px 0;
+}
+
+.doctor-card .btn {
+    margin-top: 16px;
+}
+
+
+
+/* ===== СЛОТИ ДЛЯ ЗАПИСУ ===== */
+.day-slots {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.day-slots h4 {
+    color: #6C5CE7;
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 8px;
+}
+
+/* ===== КНОПКИ СЛОТІВ ===== */
+.slot-btn {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+/* Вільний слот (зелений) */
+.slot-free {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border-color: #10B981;
+}
+
+.slot-free:hover {
+    background: #10B981;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Зайнятий слот (сірий) */
+.slot-booked {
+    background: gray;
+    color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+/* Обраний слот (фіолетовий) */
+.slot-selected {
+    background: linear-gradient(135deg, #6C5CE7, #FD79A8) !important;
+    color: white !important;
+    border-color: transparent !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(108, 92, 231, 0.5);
+}
+
+/* Інформація про обраний слот */
+#selected-info {
+    background: rgba(108, 92, 231, 0.15);
+    border: 1px solid rgba(108, 92, 231, 0.4);
+    color: #A29BFE;
+    font-weight: 600;
+    padding: 14px 20px;
+    border-radius: 10px;
+}
+
+#selected-info strong {
+    color: #4a0a67;
+}
+
+#selected-info span {
+    color: #4a0a67;
+}
+
+
+
+.cancel-appointment-btn,
+.btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #F87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.cancel-appointment-btn:hover,
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #FCA5A5;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(167, 139, 250, 0.25);
+    border-color: rgba(167, 139, 250, 0.5);
+    color: #c4b5fd;
+    transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
 }

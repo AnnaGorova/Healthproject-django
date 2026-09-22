@@ -1,0 +1,76 @@
+{% extends "diary/base.html" %}
+
+{% load static %}
+
+{% block title %}Запис до лікаря{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📅 Запис до лікаря</h2>
+    <p class="subtitle">{{ doctor.username }} — {{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
+</div>
+
+<form method="post" class="record-form">
+    {% csrf_token %}
+    
+    <!-- БЛОК 1: ВИБІР ДАТИ ТА ЧАСУ -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">📅</span>
+            <h3>Оберіть дату та час</h3>
+        </div>
+        
+        {% for day in slots %}
+        <div class="day-slots">
+            <h4>{{ day.date|date:"d.m.Y" }} ({{ day.day_name }})</h4>
+            <div class="slots-grid">
+                {% for slot in day.slots %}
+                    {% if slot.is_booked %}
+                        <button type="button" class="slot-btn slot-booked" disabled>
+                            {{ slot.time }}
+                        </button>
+                    {% else %}
+                        <button type="button" class="slot-btn slot-free" 
+                                onclick="selectSlot('{{ day.date_str }}', '{{ slot.time }}', this)">
+                            {{ slot.time }}
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Приховані поля -->
+        <input type="hidden" name="date" id="selected-date" required>
+        <input type="hidden" name="time" id="selected-time" required>
+        
+        <div id="selected-info" style="margin-top: 16px; padding: 12px; background: rgba(79, 70, 229, 0.1); border-radius: 8px; display: none;">
+            <strong>Обрано:</strong> <span id="selected-text"></span>
+        </div>
+    </div>
+    
+    <!-- БЛОК 2: СКАРГИ -->
+    <div class="form-section">
+        <div class="section-header">
+            <span class="section-icon">📝</span>
+            <h3>Скарги</h3>
+        </div>
+        <div class="form-group full-width">
+            <textarea name="complaints" class="form-control" rows="3" 
+                      placeholder="Опишіть ваші скарги..."></textarea>
+        </div>
+    </div>
+    
+    <!-- КНОПКИ -->
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">📅 Записатися</button>
+        <a href="{% url 'doctors_list' %}" class="btn btn-outline btn-lg">↩ Назад</a>
+    </div>
+</form>
+
+
+{% endblock %}
+
+{% block extra_js %}  
+<script src="{% static 'diary/js/book_appointment.js' %}"></script>
+{% endblock %}

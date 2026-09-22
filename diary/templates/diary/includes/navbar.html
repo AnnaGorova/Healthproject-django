@@ -15,17 +15,20 @@
                 <li><a href="{% url "my_records" %}" class="nav-link">Мої записи</a></li>
                 <li><a href="{% url "create_record" %}" class="nav-link">Створити запис</a></li>
                
+                <li><a href="{% url 'doctors_list' %}" class="nav-link">📅 Записатися до лікаря</a></li>
+                <li><a href="{% url 'my_appointments' %}" class="nav-link">📋 Мої записи до лікаря</a></li>
+                
                 <li><a href="{% url 'my_questions' %}" class="nav-link">Мої питання</a></li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
                 <li class="nav-divider">👨‍⚕️ Лікарю</li>
-                <li><a href="{% url "users_list" %}" class="nav-link">Список користувачів</a></li>
-                <li><a href="{% url "records" %}" class="nav-link">Всі записи</a></li>
+                <li><a href="{% url 'manage_schedule' %}" class="nav-link">🗓️ Мій розклад</a></li>
+                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">👥 Мої пацієнти</a></li>
+                <li><a href="{% url 'doctor_appointments' %}" class="nav-link">📋 Мої прийоми</a></li>
+                <li><a href="{% url 'all_questions' %}" class="nav-link">💬 Питання пацієнтів</a></li>
                 
-                <li><a href="{% url "profile" %}" class="nav-link">Профіль користувача</a></li>
-                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">Мої пацієнти</a></li>
-                <li><a href="{% url 'all_questions' %}" class="nav-link">Питання</a></li>
+                <li><a href="{% url 'profile' %}" class="nav-link">👤 Профіль</a></li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}

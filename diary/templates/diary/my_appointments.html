@@ -1,0 +1,51 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Мої записи{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📋 Мої записи до лікаря</h2>
+    <p class="subtitle">Всього: {{ appointments|length }}</p>
+</div>
+
+{% for appointment in appointments %}
+<div class="record-card">
+    <div class="record-top">
+        <span class="badge">{{ appointment.get_status_display }}</span>
+        <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Лікар</span>
+            <span class="detail-value">{{ appointment.doctor.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Скарги</span>
+            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
+        </div>
+    </div>
+
+   {% if appointment.can_cancel %}
+    
+   <a href="{% url 'reschedule_appointment' appointment.id %}" 
+           class="btn btn-secondary">
+            📅 Перенести
+   </a>
+   <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-danger">
+        ❌ Скасувати
+    </a>
+    {% endif %}
+</div>
+{% empty %}
+<div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>Ще немає записів</h3>
+    <a href="{% url 'doctors_list' %}" class="btn btn-primary">📅 Записатися</a>
+</div>
+{% endfor %}
+
+<div class="form-actions" style="margin-top: 24px;">
+    <a href="{% url 'doctors_list' %}" class="btn btn-primary">➕ Новий запис</a>
+</div>
+{% endblock %}

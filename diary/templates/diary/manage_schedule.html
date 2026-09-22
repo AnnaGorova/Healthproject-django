@@ -1,0 +1,147 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Мій розклад{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>🗓️ Мій розклад</h2>
+    <p class="subtitle">Налаштуйте дати та години прийому</p>
+</div>
+
+<!-- Форма 1: Робочий день -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>➕ Додати робочий день</h3>
+    <form method="post" style="margin-top: 16px;">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Дата</label>
+            <input type="date" name="date" class="form-control" 
+                    min="{{ today|date:'Y-m-d' }}" required>
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+            <div class="form-group" style="flex: 1;">
+                <label>Час початку</label>
+                <select name="start_time" class="form-control" required>
+                    {% for hour in hours %}
+                        <option value="{{ hour }}" {% if hour == "09:00" %}selected{% endif %}>
+                            {{ hour }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label>Час кінця</label>
+                <select name="end_time" class="form-control" required>
+                    {% for hour in hours %}
+                        <option value="{{ hour }}" {% if hour == "17:00" %}selected{% endif %}>
+                            {{ hour }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Тривалість прийому (хв)</label>
+            <select name="slot_duration" class="form-control">
+                <option value="15">15 хвилин</option>
+                <option value="30" selected>30 хвилин</option>
+                <option value="45">45 хвилин</option>
+                <option value="60">60 хвилин</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">💾 Зберегти робочий день</button>
+    </form>
+</div>
+
+<!-- Форма 2: Вихідний -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>"Вихідний" - Додати вихідний</h3>
+    <form method="post" style="margin-top: 16px;">
+        {% csrf_token %}
+        <input type="hidden" name="is_day_off" value="on">
+        
+        <div class="form-group">
+            <label>Дата</label>
+            <input type="date" name="date" class="form-control" 
+                    min="{{ today|date:'Y-m-d' }}" required>
+        </div>
+        
+        <button type="submit" class="btn btn-danger"> Зберегти вихідний</button>
+    </form>
+</div>
+
+<!-- Список розкладів -->
+<div class="record-card">
+    <h3>📋 Поточний розклад</h3>
+    
+    {% if schedules %}
+        {% for schedule in schedules %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <strong style="color: #fff; font-size: 16px;">
+                        {{ schedule.date|date:"d.m.Y" }}
+                    </strong>
+                    <br>
+                    {% if schedule.is_day_off %}
+                        <span style="color: #F87171; font-size: 15px; font-weight: 600;">
+                            🚫 Вихідний
+                        </span>
+                    {% else %}
+                        <span style="color: #a78bfa; font-size: 15px; font-weight: 600;">
+                            🕐 {{ schedule.start_time|time:"H:i" }} — {{ schedule.end_time|time:"H:i" }}
+                        </span>
+                        <span style="color: rgba(255,255,255,0.5); margin-left: 12px; font-size: 13px;">
+                            ({{ schedule.slot_duration }} хв)
+                        </span>
+                    {% endif %}
+                </div>
+                <form method="post" action="{% url 'delete_schedule' schedule.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" title="Видалити">
+                        🗑️
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+        
+        <div style="padding: 16px; background: rgba(167, 139, 250, 0.08); border-radius: 12px; margin-top: 12px; border-left: 3px solid #a78bfa;">
+            <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">
+                ℹ️ Для інших днів використовується стандартний розклад:
+            </p>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <strong style="color: #fff;">📅 Пн, Вт, Ср, Чт, Пт</strong>
+                <span style="color: #a78bfa; font-weight: 600;">
+                    🕐 08:00 — 17:00
+                </span>
+                <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
+                    (30 хв)
+                </span>
+            </div>
+        </div>
+    
+    {% else %}
+        <div style="padding: 16px; background: rgba(167, 139, 250, 0.1); border-radius: 12px;">
+            <p style="color: #a78bfa; font-weight: 600; margin-bottom: 12px;">
+                ℹ️ Ви не налаштували розклад — використовується стандартний:
+            </p>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <strong style="color: #fff;">📅 Пн, Вт, Ср, Чт, Пт</strong>
+                <span style="color: #a78bfa; font-weight: 600;">
+                    🕐 08:00 — 17:00
+                </span>
+                <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
+                    (30 хв)
+                </span>
+            </div>
+            <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 12px;">
+                💡 Додайте свій розклад вище, щоб змінити його.
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

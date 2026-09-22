@@ -1,0 +1,34 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Мої прийоми{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📋 Мої прийоми</h2>
+    <p class="subtitle">Всього: {{ appointments|length }}</p>
+</div>
+
+{% for appointment in appointments %}
+<div class="record-card">
+    <div class="record-top">
+        <span class="badge">{{ appointment.get_status_display }}</span>
+        <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+    </div>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Пацієнт</span>
+            <span class="detail-value">{{ appointment.patient.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Скарги</span>
+            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>Ще немає записів</h3>
+</div>
+{% endfor %}
+{% endblock %}

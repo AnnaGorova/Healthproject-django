@@ -1,0 +1,39 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Скасувати запис?{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>⚠️ Скасувати запис?</h2>
+    <p class="subtitle">Цю дію не можна скасувати</p>
+</div>
+
+<div class="record-card" style="max-width: 500px; margin: 0 auto;">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Лікар</span>
+            <span class="detail-value">{{ appointment.doctor.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Дата</span>
+            <span class="detail-value">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Скарги</span>
+            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'cancel_appointment' appointment.id %}" style="margin-top: 24px;">
+        {% csrf_token %}
+        <div class="form-actions">
+            <a href="{% url 'my_appointments' %}" class="btn btn-secondary">
+                Ні, залишити
+            </a>
+            <button type="submit" class="btn btn-danger">
+                Так, скасувати
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

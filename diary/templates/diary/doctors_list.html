@@ -1,0 +1,27 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Лікарі{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>👨‍⚕️ Оберіть лікаря</h2>
+    <p class="subtitle">Натисніть на картку, щоб записатися</p>
+</div>
+
+<div class="doctors-grid">
+    {% for doctor in doctors %}
+    <a href="{% url 'book_appointment' doctor.id %}" class="doctor-card">
+        <div class="doctor-avatar">
+            {% if doctor.gender == 'M' %}👨‍⚕️{% else %}👩‍⚕️{% endif %}
+        </div>
+        <h3>{{ doctor.username }}</h3>
+        <p class="doctor-specialty">{{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
+        <p class="doctor-experience">Стаж: {{ doctor.doctorprofile.year_of_experience|default:"—" }} років</p>
+        
+        <button class="btn btn-primary btn-sm">📅 Записатися</button>
+    </a>
+    {% empty %}
+    <p>Немає доступних лікарів</p>
+    {% endfor %}
+</div>
+{% endblock %}
