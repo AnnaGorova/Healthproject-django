@@ -17,7 +17,7 @@ from .models import Appointment, Schedule
 from datetime import date, datetime, timedelta, time
 from django.utils import timezone
 from django.db import models
-
+from .models import QuestionMessage
 
 def old_home(request):
     return redirect('/')
@@ -233,12 +233,16 @@ def all_questions(request):
     if current_user.role not in ['doctor', 'admin']:
         raise PermissionDenied("Доступ заборонено")
     
-    questions = Question.objects.all().order_by('-created_at')
+    if current_user.role == 'doctor':
+        questions = Question.objects.filter(
+            doctor=current_user
+        ).order_by('-created_at')
+    else:
+        questions = Question.objects.all().order_by('-created_at')
     
-    context = {
+    return render(request, 'diary/all_questions.html', {
         'questions': questions,
-    }
-    return render(request, 'diary/all_questions.html', context)
+    })
 
 
 
@@ -652,4 +656,80 @@ def doctor_appointments(request):
     
     return render(request, 'diary/doctor_appointments.html', {
         'appointments': appointments,
+    })
+
+
+
+@login_required
+def answer_question(request, question_id):
+    """Відповідь лікаря"""
+    question = get_object_or_404(Question, id=question_id)
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть відповідати")
+
+    if question.doctor != user_profile:
+        raise PermissionDenied("Це питання адресовано іншому лікарю")
+    
+    if request.method == 'POST':
+        answer = request.POST.get('answer', '').strip()
+        close = request.POST.get('close') == 'on'
+        
+        if not answer:
+            messages.error(request, "⚠️ Введіть відповідь")
+        else:
+            # Створюємо повідомлення
+            QuestionMessage.objects.create(
+                question=question,
+                author=user_profile,
+                text=answer,
+            )
+            
+            question.doctor = user_profile
+            question.answered_at = timezone.now()
+            question.status = 'closed' if close else 'answered'
+            question.save()
+            
+            messages.success(request, "✅ Відповідь надіслано")
+            return redirect('all_questions')
+    
+    return render(request, 'diary/answer_question.html', {
+        'question': question,
+    })
+
+
+
+@login_required
+def reply_question(request, question_id):
+    """Пацієнт продовжує діалог"""
+    question = get_object_or_404(
+        Question, 
+        id=question_id, 
+        patient=request.user.userprofile
+    )
+    
+    if question.status == 'closed':
+        messages.error(request, "❌ Це питання закрито")
+        return redirect('my_questions')
+    
+    if request.method == 'POST':
+        text = request.POST.get('text', '').strip()
+        
+        if not text:
+            messages.error(request, "⚠️ Введіть повідомлення")
+        else:
+            QuestionMessage.objects.create(
+                question=question,
+                author=request.user.userprofile,
+                text=text,
+            )
+            question.status = 'new'  # знову нове
+            question.save()
+            
+            messages.success(request, "✅ Повідомлення надіслано")
+            return redirect('my_questions')
+    
+    return render(request, 'diary/reply_question.html', {
+        'question': question,
     })

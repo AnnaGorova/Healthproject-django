@@ -1,0 +1,57 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Відповідь на питання{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>💬 Відповісти на питання</h2>
+</div>
+
+<div class="record-card">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Пацієнт</span>
+            <span class="detail-value">{{ question.patient.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ question.patient.email }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Телефон</span>
+            <span class="detail-value">{{ question.phone }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Дата</span>
+            <span class="detail-value">{{ question.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px; background: rgba(167, 139, 250, 0.1); border-radius: 12px; border-left: 3px solid #a78bfa;">
+        <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">Питання:</p>
+        <p style="color: #fff;">{{ question.question|linebreaks }}</p>
+    </div>
+
+    <form method="post" style="margin-top: 24px;">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Ваша відповідь</label>
+            <textarea name="answer" class="form-control" rows="6" 
+                      placeholder="Введіть відповідь пацієнту..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="close" style="width: auto;">
+                <span>Закрити питання (не потребує подальшої відповіді)</span>
+            </label>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'all_questions' %}" class="btn btn-secondary">↩ Назад</a>
+            <button type="submit" class="btn btn-primary">💾 Надіслати відповідь</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

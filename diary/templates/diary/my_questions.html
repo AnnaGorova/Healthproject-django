@@ -3,27 +3,69 @@
 {% block title %}Мої питання{% endblock %}
 
 {% block content %}
-    <h1>Мої питання лікарю</h1>
+<h1>Мої питання лікарю</h1>
 
-    {% if questions %}
-        {% for q in questions %}
-            <div class="record-card">
+{% if questions %}
+    {% for q in questions %}
+        <div class="record-card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                 <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
-                <p><strong>Телефон:</strong> {{ q.phone }}</p>
-                <p><strong>Питання:</strong> {{ q.question }}</p>
                 <p><strong>Статус:</strong> 
-                    {% if q.is_answered %}
+                    {% if q.status == 'new' %}
+                        🆕 Нове
+                    {% elif q.status == 'answered' %}
                         ✅ Відповідь надана
                     {% else %}
-                        ⏳ Очікує відповіді
+                        ✓ Закрито
                     {% endif %}
                 </p>
             </div>
-            <hr>
-        {% endfor %}
-    {% else %}
-        <p>Ви ще не задавали питань лікарю</p>
-    {% endif %}
 
-    <a href="{% url 'ask_question' %}">Задати нове питання</a>
+            <!-- Історія діалогу -->
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px;">
+                <!-- Перше питання -->
+                <div style="margin-bottom: 16px;">
+                    <p style="color: #a78bfa; font-size: 13px; margin-bottom: 4px;">
+                        Ви, {{ q.created_at|date:"d.m.Y H:i" }}
+                    </p>
+                    <p style="color: #fff;">{{ q.question }}</p>
+                </div>
+                
+                <!-- Всі повідомлення -->
+                {% for msg in q.messages.all %}
+                    <div style="margin-bottom: 16px; {% if msg.author.role == 'doctor' %}padding-left: 20px; border-left: 2px solid #34D399;{% endif %}">
+                        <p style="color: {% if msg.author.role == 'doctor' %}#34D399{% else %}#a78bfa{% endif %}; font-size: 13px; margin-bottom: 4px;">
+                            {% if msg.author.role == 'doctor' %}
+                                Лікар {{ msg.author.username }}
+                            {% else %}
+                                Ви
+                            {% endif %}, {{ msg.created_at|date:"d.m.Y H:i" }}
+                        </p>
+                        <p style="color: #fff;">{{ msg.text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Форма продовження -->
+            {% if q.status == 'answered' %}
+                <form method="post" action="{% url 'reply_question' q.id %}" style="margin-top: 16px;">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="text" class="form-control" rows="3" 
+                                  placeholder="Продовжити діалог..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💬 Надіслати</button>
+                </form>
+            {% elif q.status == 'closed' %}
+                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 16px;">
+                    🔒 Питання закрито
+                </p>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Ви ще не задавали питань</p>
+{% endif %}
+
+<a href="{% url 'ask_question' %}" class="btn btn-primary">➕ Задати нове питання</a>
 {% endblock %}

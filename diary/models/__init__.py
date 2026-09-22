@@ -4,3 +4,4 @@ from .doctor_profile import DoctorProfile
 from .question import Question
 from .schedule import Schedule          
 from .appointment import Appointment    
+from .question_message import QuestionMessage 

@@ -18,17 +18,48 @@
             <p><strong>Email:</strong> {{ q.patient.email|default:"Не вказано" }}</p>
             <p><strong>Телефон:</strong> {{ q.phone|default:"Не вказано" }}</p>
             <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
-            <p><strong>Питання:</strong></p>    
-            <div class="question-text">
-                {{ q.question|linebreaks }}
-            </div>
             <p><strong>Статус:</strong> 
-                {% if q.is_answered %}
-                    <span style="color: green;">✓ Відповідь надіслано</span>
+                {% if q.status == 'new' %}
+                    <span style="color: #FBBF24;">🆕 Нове</span>
+                {% elif q.status == 'answered' %}
+                    <span style="color: #34D399;">✓ Відповідь надано</span>
                 {% else %}
-                    <span style="color: orange;">⏳ Очікує відповіді</span>
+                    <span style="color: rgba(255,255,255,0.5);">✓ Закрито</span>
                 {% endif %}
             </p>
+
+            <!-- ===== ІСТОРІЯ ДІАЛОГУ ===== -->
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-top: 16px;">
+                
+                <!-- Перше питання пацієнта -->
+                <div style="margin-bottom: 16px;">
+                    <p style="color: #a78bfa; font-size: 13px; margin-bottom: 4px;">
+                        {{ q.patient.username }}, {{ q.created_at|date:"d.m.Y H:i" }}
+                    </p>
+                    <p style="color: #fff;">{{ q.question|linebreaks }}</p>
+                </div>
+                
+                <!-- Всі повідомлення -->
+                {% for msg in q.messages.all %}
+                    <div style="margin-bottom: 16px; {% if msg.author.role == 'doctor' %}padding-left: 20px; border-left: 2px solid #34D399;{% endif %}">
+                        <p style="color: {% if msg.author.role == 'doctor' %}#34D399{% else %}#a78bfa{% endif %}; font-size: 13px; margin-bottom: 4px;">
+                            {% if msg.author.role == 'doctor' %}
+                                Лікар {{ msg.author.username }}
+                            {% else %}
+                                {{ msg.author.username }}
+                            {% endif %}, {{ msg.created_at|date:"d.m.Y H:i" }}
+                        </p>
+                        <p style="color: #fff;">{{ msg.text|linebreaks }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Кнопка відповіді -->
+            {% if q.status == 'new' %}
+                <a href="{% url 'answer_question' q.id %}" class="btn btn-primary" style="margin-top: 12px;">
+                    💬 Відповісти
+                </a>
+            {% endif %}
         </div>
     {% endfor %}
 {% else %}

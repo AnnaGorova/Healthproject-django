@@ -1,14 +1,23 @@
 {% extends 'diary/base.html' %}
 
-{% block title %}Питання Надіслано{% endblock %}
+{% block title %}Питання надіслано{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h2>✅ Питання надіслано</h2>
+</div>
 
-    <h1>Отримали питання</h1>
-    
-    <p>Від: {{ user_profile.username }}</p>
-    <p>Email: {{ user_profile.email }}</p>
-    <p>Телефон: {{ data.phone }}</p>
-    <p>Питання: {{ data.question }}</p>
+<div class="record-card">
+    <p><strong>Лікарю:</strong> {{ data.doctor.username }}</p>
+    <p><strong>Телефон:</strong> {{ data.phone }}</p>
+    <p><strong>Питання:</strong></p>
+    <p style="margin-top: 8px; color: rgba(255,255,255,0.85);">
+        {{ data.question|linebreaks }}
+    </p>
+</div>
 
+<div class="form-actions" style="margin-top: 24px;">
+    <a href="{% url 'my_questions' %}" class="btn btn-primary">Мої питання</a>
+    <a href="{% url 'home' %}" class="btn btn-secondary">На головну</a>
+</div>
 {% endblock %}

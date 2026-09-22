@@ -1,6 +1,6 @@
 from django.contrib import admin
-from diary.models import UserProfile, HealthRecord, DoctorProfile, Question
-from .models import Schedule, Appointment
+from diary.models import UserProfile, HealthRecord, DoctorProfile
+from .models import Schedule, Appointment, Question, QuestionMessage
 
 # Register your models here.
 
@@ -111,9 +111,10 @@ class DoctorProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['patient', 'phone', 'created_at', 'is_answered']
-    search_fields = ['patient__username', 'phone']
-
+    list_display = ['patient', 'phone', 'created_at', 'status']
+    list_filter = ['status', 'created_at']
+    search_fields = ['patient__username', 'phone', 'question']
+    readonly_fields = ['created_at', 'answered_at']
 
 
 @admin.register(Schedule)
@@ -128,3 +129,12 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_filter = ['status', 'date']
     search_fields = ['patient__username', 'doctor__username']
     raw_id_fields = ['patient', 'doctor']
+
+
+
+@admin.register(QuestionMessage)
+class QuestionMessageAdmin(admin.ModelAdmin):
+    list_display = ['question', 'author', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['text', 'author__username']
+    readonly_fields = ['created_at']

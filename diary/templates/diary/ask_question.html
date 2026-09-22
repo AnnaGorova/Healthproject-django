@@ -3,11 +3,68 @@
 {% block title %}Задати питання лікарю{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h2>❓ Задати питання лікарю</h2>
+</div>
 
+<!-- ПОПЕРЕДЖЕННЯ -->
+<div style="
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #EF4444;
+    border-radius: 12px;
+">
+    <p style="font-weight: 600; margin-bottom: 8px; color: #F87171;">
+        ⚠️ Важливо!
+    </p>
+    <p style="font-size: 14px; line-height: 1.6; color: #FCA5A5;">
+        Система <strong>не призначена для екстрених звернень</strong> 
+        і <strong>не замінює невідкладну медичну допомогу</strong>.
+    </p>
+    <p style="font-size: 14px; margin-top: 8px; color: #FCA5A5;">
+        У разі гострої потреби — телефонуйте <strong>103</strong>.
+    </p>
+</div>
+
+<!-- ФОРМА -->
+<div class="record-card">
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Надіслати</button>
-    </form>
 
+         <div class="form-group">
+            <label for="id_doctor">Оберіть лікаря</label>
+            <select name="doctor" id="id_doctor" class="form-control" required>
+                <option value="">-- Оберіть лікаря --</option>
+                {% for doctor in form.doctor.field.queryset %}
+                    <option value="{{ doctor.id }}">{{ doctor.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        
+        <div class="form-group">
+            <label for="id_phone">Телефон</label>
+            <input type="tel" 
+                   name="phone" 
+                   id="id_phone"
+                   class="form-control" 
+                   placeholder="+380..." 
+                   required
+                   value="{{ form.phone.value|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_question">Ваше питання</label>
+            <textarea name="question" 
+                      id="id_question"
+                      class="form-control" 
+                      rows="6" 
+                      placeholder="Опишіть ваше питання..." 
+                      required>{{ form.question.value|default:'' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">💬 Надіслати</button>
+    </form>
+</div>
 {% endblock %}

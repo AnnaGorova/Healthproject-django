@@ -29,6 +29,10 @@ urlpatterns = [
     path('appointments/my/', views.my_appointments, name='my_appointments'),
     path('appointments/cancel/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
     path('appointments/reschedule/<int:appointment_id>/', views.reschedule_appointment, name='reschedule_appointment'),
+    path('questions/answer/<int:question_id>/', views.answer_question, name='answer_question'),
+
+
+
 
     path('schedule/', views.manage_schedule, name='manage_schedule'),
     path('schedule/delete/<int:schedule_id>/', views.delete_schedule, name='delete_schedule'),
@@ -38,6 +42,8 @@ urlpatterns = [
     path('ask_question/', views.ask_question, name='ask_question'),
     path('my_questions/', views.my_questions, name='my_questions'),
     path('all_questions/', views.all_questions, name='all_questions'),
+    path('questions/reply/<int:question_id>/', views.reply_question, name='reply_question'),
+
    
     path('administrator/', views.administrator, name='administrator'),
     # api views
