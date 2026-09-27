@@ -18,6 +18,15 @@ from datetime import date, datetime, timedelta, time
 from django.utils import timezone
 from django.db import models
 from .models import QuestionMessage
+from .models import MedicalConclusion
+from .forms.doctor_profile import DoctorProfileForm
+from .models import DoctorProfile
+from .models import ICD10Code
+from dal import autocomplete
+from django.http import JsonResponse
+from django.db.models import Q
+from .forms.conclusion import MedicalConclusionForm
+
 
 def old_home(request):
     return redirect('/')
@@ -91,49 +100,104 @@ def record_detail(request, pk):
 
     return render(request, 'diary/record_detail.html', context)
 
-@login_required
-def doctor_patients(request):
-    current_user = request.user.userprofile
 
-    if current_user.role not in ['doctor', 'admin']:
-        raise PermissionDenied("Ця сторінка доступна тільки для лікаря або адміністратора")
-    
-    if current_user.role == 'doctor':
-        patients = current_user.patients.all()
-    else:  
-        patients = UserProfile.objects.filter(role='patient')
-
-        
-
-    context = {
-        'doctor' : current_user,
-        'patients' : patients,
-    }
-    return render(request, 'diary/doctor_patients.html', context)
 
 
 
 def is_doctor(user):
     return user.is_authenticated and user.userprofile.role == 'doctor'
 
-@user_passes_test(is_doctor)
+@login_required
 def doctor_dashboard(request):
-    doctor = request.user.userprofile
-    patients = doctor.patients.all()
+    """Дашборд лікаря"""
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть бачити дашборд")
+    
+    today = date.today()
+    
+    # Пацієнти на сьогодні
+    today_appointments = Appointment.objects.filter(
+        doctor=user_profile,
+        date__date=today,
+        status='scheduled'
+    ).order_by('date')
+    
+    # Нові звернення
+    new_questions = Question.objects.filter(
+        doctor=user_profile,
+        status='new'
+    ).order_by('-created_at')
+    
+    # ТІЛЬКИ КІЛЬКІСТЬ
+    patients_count = UserProfile.objects.filter(
+        role='patient',
+        appointments__doctor=user_profile
+    ).distinct().count()
+    
+    return render(request, 'diary/doctor_dashboard.html', {
+        'today_appointments': today_appointments,
+        'new_questions': new_questions,
+        'patients_count': patients_count,
+    })
 
-    context = {
-        'doctor': doctor,
+
+
+
+
+@login_required
+def doctor_patients(request):
+    """Список пацієнтів лікаря з пошуком"""
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть бачити пацієнтів")
+    
+    patients = UserProfile.objects.filter(
+        role='patient',
+        appointments__doctor=user_profile
+    ).distinct().order_by('username')
+    
+    search = request.GET.get('search', '').strip()
+    if search:
+        patients = patients.filter(
+            models.Q(username__icontains=search) |
+            models.Q(phone__icontains=search)
+        )
+
+    # Фільтр: стать
+    gender = request.GET.get('gender', '').strip()
+    if gender:
+        patients = patients.filter(gender=gender)
+    
+    # Фільтр: вік
+    age_from = request.GET.get('age_from', '').strip()
+    age_to = request.GET.get('age_to', '').strip()
+    
+    today = date.today()
+    
+    if age_from:
+        try:
+            max_date = today.replace(year=today.year - int(age_from))
+            patients = patients.filter(date_of_birth__lte=max_date)
+        except ValueError:
+            pass
+    
+    if age_to:
+        try:
+            min_date = today.replace(year=today.year - int(age_to) - 1)
+            patients = patients.filter(date_of_birth__gte=min_date)
+        except ValueError:
+            pass
+    
+    return render(request, 'diary/doctor_patients.html', {
         'patients': patients,
-    }
-
-    return render(request, 'diary/doctor_patients.html', context)
-
-
-
-
-
-
-
+        'search': search,
+        'gender': gender,
+        'age_from': age_from,
+        'age_to': age_to,
+    })
  
 
 
@@ -575,19 +639,34 @@ def manage_schedule(request):
           # чи вже є запис на цю дату
         elif Schedule.objects.filter(doctor=user_profile, date=date_str).exists():
             messages.error(request, "⚠️ На цю дату вже є запис. Спочатку видаліть його.")
-
         elif is_day_off:
-            # ===== ВИХІДНИЙ =====
-            Schedule.objects.create(
+            # ===== ПЕРЕВІРКА: чи є активні записи на цю дату =====
+            existing_appointments = Appointment.objects.filter(
                 doctor=user_profile,
-                date=date_str,
-                is_day_off=True,
-                start_time=None,
-                end_time=None,
-                slot_duration=0,
+                date__date=date_str,
+                status='scheduled'
             )
-            messages.success(request, "✅ Вихідний додано")
-            return redirect('manage_schedule')
+
+            if existing_appointments.exists():
+                count = existing_appointments.count()
+                word = "запис" if count == 1 else "записи"
+                messages.error(
+                    request,
+                    f"⚠️ На цю дату вже є {count} активний(і) {word}. "
+                    f"Спочатку скасуйте або перенесіть їх, а потім додайте вихідний."
+                )
+            else:
+                # ===== ВИХІДНИЙ =====
+                Schedule.objects.create(
+                    doctor=user_profile,
+                    date=date_str,
+                    is_day_off=True,
+                    start_time=None,
+                    end_time=None,
+                    slot_duration=0,
+                )
+                messages.success(request, "✅ Вихідний додано")
+                return redirect('manage_schedule')
         elif not start or not end:
             messages.error(request, "⚠️ Заповніть час початку і кінця")
         elif start >= end:
@@ -732,4 +811,286 @@ def reply_question(request, question_id):
     
     return render(request, 'diary/reply_question.html', {
         'question': question,
+    })
+
+
+
+
+@login_required
+def patient_card(request, patient_id):
+    """Картка пацієнта (для лікаря)"""
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть переглядати картки")
+    
+    patient = get_object_or_404(UserProfile, id=patient_id, role='patient')
+    
+    # Перевірка: чи має лікар доступ до цього пацієнта
+    # (пацієнт звертався до нього або  лікар має прийом)
+    has_appointment = Appointment.objects.filter(
+        doctor=user_profile,
+        patient=patient
+    ).exists()
+    
+    if not has_appointment:
+        raise PermissionDenied("Ви не маєте доступу до цього пацієнта")
+    
+    # Дані пацієнта
+    records = HealthRecord.objects.filter(user=patient, is_active=True).order_by('date')[:10]
+    appointments = Appointment.objects.filter(
+        doctor=user_profile,
+        patient=patient
+    ).order_by('date')
+    conclusions = MedicalConclusion.objects.filter(patient=patient).order_by('created_at')
+    
+    return render(request, 'diary/patient_card.html', {
+        'patient': patient,
+        'records': records,
+        'appointments': appointments,
+        'conclusions': conclusions,
+    })
+
+
+
+@login_required
+def create_conclusion(request, appointment_id):
+    """Створення висновку після прийому"""
+    user_profile = request.user.userprofile
+
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть створювати висновки")
+
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id,
+        doctor=user_profile
+    )
+    # Перевірка: чи прийом уже відбувся
+    if appointment.date > timezone.now():
+        messages.error(request, "⚠️ Не можна створити висновок до початку прийому")
+        return redirect('patient_card', patient_id=appointment.patient.id)
+
+    # Перевірка: чи вже є висновок
+    if hasattr(appointment, 'conclusion'):
+        messages.warning(request, "⚠️ Висновок вже створено")
+        return redirect('patient_card', patient_id=appointment.patient.id)
+
+    # Перевірка: чи прийом не скасовано
+    if appointment.status == 'cancelled':
+        messages.error(request, "❌ Не можна створити висновок для скасованого прийому")
+        return redirect('patient_card', patient_id=appointment.patient.id)
+
+
+    if request.method == 'POST':
+        form = MedicalConclusionForm(request.POST)
+        if form.is_valid():
+            conclusion = form.save(commit=False)
+            conclusion.appointment = appointment
+            conclusion.doctor = user_profile
+            conclusion.patient = appointment.patient
+            conclusion.save()
+
+            appointment.status = 'completed'
+            appointment.save()
+
+            messages.success(request, "✅ Висновок створено")
+            return redirect('patient_card', patient_id=appointment.patient.id)
+    else:
+        form = MedicalConclusionForm()
+
+    return render(request, 'diary/create_conclusion.html', {
+        'appointment': appointment,
+        'form': form,
+    })
+
+
+
+
+@login_required
+def edit_doctor_profile(request):
+    """Редагування профілю лікаря"""
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть редагувати цей профіль")
+    
+    # Отримуємо або створюємо DoctorProfile
+    doctor_profile, created = DoctorProfile.objects.get_or_create(
+        user=user_profile,
+        defaults={
+            'specialty': 'Терапевт',
+            'year_of_experience': 0,
+            'phone': '',
+        }
+    )
+    
+    if request.method == 'POST':
+        form = DoctorProfileForm(request.POST, instance=doctor_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Профіль оновлено")
+            return redirect('profile')
+    else:
+        form = DoctorProfileForm(instance=doctor_profile)
+    
+    return render(request, 'diary/edit_doctor_profile.html', {
+        'form': form,
+        'doctor_profile': doctor_profile,
+    })
+
+
+
+
+
+@login_required
+def view_conclusion(request, appointment_id):
+    """Перегляд висновку пацієнтом"""
+    user_profile = request.user.userprofile
+    
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    
+    # Перевірка: пацієнт — власник, або лікар цього прийому
+    if user_profile.role == 'patient':
+        if appointment.patient != user_profile:
+            raise PermissionDenied("Це не ваш прийом")
+    elif user_profile.role == 'doctor':
+        if appointment.doctor != user_profile:
+            raise PermissionDenied("Це не ваш прийом")
+    else:
+        raise PermissionDenied("Доступ заборонено")
+    
+    # Перевірка: чи є висновок
+    if not hasattr(appointment, 'conclusion'):
+        messages.error(request, "❌ Висновок ще не створено")
+        return redirect('my_appointments')
+    
+    return render(request, 'diary/view_conclusion.html', {
+        'appointment': appointment,
+        'conclusion': appointment.conclusion,
+    })
+
+
+
+@login_required
+def my_conclusions(request):
+    """Всі висновки пацієнта"""
+    user_profile = request.user.userprofile
+    
+    if user_profile.role != 'patient':
+        raise PermissionDenied("Тільки пацієнти можуть бачити цю сторінку")
+    
+    conclusions = MedicalConclusion.objects.filter(
+        patient=user_profile
+    ).select_related('doctor', 'appointment').order_by('created_at')
+    
+    return render(request, 'diary/my_conclusions.html', {
+        'conclusions': conclusions,
+    })
+
+
+@login_required
+def icd10_autocomplete(request):
+    """Пошук кодів МКХ-10 за кодом або назвою (JSON)"""
+    user_profile = getattr(request.user, 'userprofile', None)
+
+    if not user_profile or user_profile.role != 'doctor':
+        return JsonResponse({'results': [], 'pagination': {'more': False}})
+
+    q = request.GET.get('q', '').strip()
+
+    qs = ICD10Code.objects.all()
+    if q:
+        qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)).distinct()
+
+    qs = qs.order_by('code')[:50]
+
+    results = [
+        {'id': item.id, 'text': f"{item.code} — {item.name}"}
+        for item in qs
+    ]
+
+    return JsonResponse({
+        'results': results,
+        'pagination': {'more': False},
+    })
+
+
+
+
+
+@login_required
+def appointment_detail(request, appointment_id):
+    """Деталі прийому для лікаря"""
+    user_profile = request.user.userprofile
+
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть переглядати деталі прийому")
+
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id,
+        doctor=user_profile
+    )
+
+    return render(request, 'diary/appointment_detail.html', {
+        'appointment': appointment,
+    })
+
+
+@login_required
+def doctor_cancel_appointment(request, appointment_id):
+    """Скасування прийому лікарем"""
+    user_profile = request.user.userprofile
+
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть скасовувати прийоми")
+
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id,
+        doctor=user_profile
+    )
+
+    if appointment.status != 'scheduled':
+        messages.error(request, "❌ Цей прийом вже не активний")
+        return redirect('appointment_detail', appointment_id=appointment.id)
+
+    if request.method == 'POST':
+        appointment.status = 'cancelled'
+        appointment.save()
+        messages.success(request, "✅ Прийом скасовано")
+        return redirect('doctor_appointments')
+
+    return render(request, 'diary/doctor_cancel_confirm.html', {
+        'appointment': appointment,
+    })
+
+
+@login_required
+def edit_conclusion(request, conclusion_id):
+    """Редагування вже створеного висновку"""
+    user_profile = request.user.userprofile
+
+    if user_profile.role != 'doctor':
+        raise PermissionDenied("Тільки лікарі можуть редагувати висновки")
+
+    conclusion = get_object_or_404(
+        MedicalConclusion,
+        id=conclusion_id,
+        doctor=user_profile
+    )
+
+    if request.method == 'POST':
+        form = MedicalConclusionForm(request.POST, instance=conclusion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Висновок оновлено")
+            return redirect('view_conclusion', appointment_id=conclusion.appointment.id)
+    else:
+        form = MedicalConclusionForm(instance=conclusion)
+
+    return render(request, 'diary/edit_conclusion.html', {
+        'form': form,
+        'conclusion': conclusion,
     })

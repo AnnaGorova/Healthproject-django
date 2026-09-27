@@ -1,0 +1,87 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Висновок лікаря{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📄 Висновок лікаря</h2>
+    <p class="subtitle">Форма № 028/о</p>
+</div>
+
+<!-- Інформація про прийом -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3 style="margin-bottom: 16px;">📋 Інформація про прийом</h3>
+    
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Лікар</span>
+            <span class="detail-value">{{ appointment.doctor.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Спеціалізація</span>
+            <span class="detail-value">
+                {{ appointment.doctor.doctor_profile.specialty|default:"—" }}
+            </span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Пацієнт</span>
+            <span class="detail-value">{{ appointment.patient.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Дата народження</span>
+            <span class="detail-value">
+                {{ appointment.patient.date_of_birth|date:"d.m.Y"|default:"—" }}
+            </span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Вік</span>
+            <span class="detail-value">
+                {% if appointment.patient.age %}{{ appointment.patient.age }} років{% else %}—{% endif %}
+            </span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Дата та час прийому</span>
+            <span class="detail-value">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Висновок -->
+<div class="record-card">
+    <h3 style="margin-bottom: 16px;">📄 Висновок</h3>
+    
+    {% if conclusion.icd10 %}
+    <div style="padding: 16px; margin-bottom: 16px; background: rgba(79, 70, 229, 0.08); border-radius: 12px;">
+        <p style="color: #4F46E5; font-weight: 600; margin-bottom: 8px;">🔖 Шифр МКХ-10</p>
+        <p style="color: #fff; line-height: 1.6;">{{ conclusion.icd10.code }} — {{ conclusion.icd10.name }}</p>
+    </div>
+    {% endif %}
+
+    <div style="padding: 16px; margin-bottom: 16px; background: rgba(167, 139, 250, 0.08); border-radius: 12px;">
+        <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">🔍 Діагноз</p>
+        <p style="color: #fff; line-height: 1.6;">{{ conclusion.diagnosis|linebreaks }}</p>
+    </div>
+    
+    <div style="padding: 16px; margin-bottom: 16px; background: rgba(52, 211, 153, 0.08); border-radius: 12px;">
+        <p style="color: #34D399; font-weight: 600; margin-bottom: 8px;">💊 Призначення</p>
+        <p style="color: #fff; line-height: 1.6;">{{ conclusion.prescriptions|linebreaks }}</p>
+    </div>
+    
+    <div style="padding: 16px; background: rgba(251, 191, 36, 0.08); border-radius: 12px;">
+        <p style="color: #FBBF24; font-weight: 600; margin-bottom: 8px;">📝 Рекомендації</p>
+        <p style="color: #fff; line-height: 1.6;">{{ conclusion.recommendations|linebreaks }}</p>
+    </div>
+    
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 24px; text-align: right;">
+        Висновок створено: {{ conclusion.created_at|date:"d.m.Y H:i" }}
+    </p>
+</div>
+
+<div class="form-actions" style="margin-top: 24px;">
+    {% if request.user.userprofile.role == 'patient' %}
+        <a href="{% url 'my_conclusions' %}" class="btn btn-secondary">← Назад до висновків</a>
+    {% else %}
+        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-secondary">← Назад до прийому</a>
+    {% endif %}
+</div>
+{% endblock %}

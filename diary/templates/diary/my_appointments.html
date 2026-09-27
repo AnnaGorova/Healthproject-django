@@ -26,6 +26,30 @@
         </div>
     </div>
 
+    <!-- ===== ВИСНОВОК (якщо є) ===== -->
+    {% if appointment.conclusion %}
+        <div style="margin-top: 16px; padding: 12px 16px; background: rgba(52, 211, 153, 0.1); border-left: 3px solid #34D399; border-radius: 8px;">
+            <p style="color: #34D399; font-weight: 600; margin-bottom: 8px;">
+                📄 Висновок лікаря
+            </p>
+
+            {% if appointment.conclusion.icd10 %}
+                <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin-bottom: 4px;">
+                    <strong>Шифр МКХ-10:</strong> {{ appointment.conclusion.icd10.code }} — {{ appointment.conclusion.icd10.name }}
+                </p>
+            {% endif %}
+
+            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 12px;">
+                {{ appointment.conclusion.diagnosis|truncatechars:100 }}
+            </p>
+            <a href="{% url 'view_conclusion' appointment.id %}" 
+            class="btn btn-primary" 
+            style="padding: 8px 16px; font-size: 14px;">
+                Переглянути висновок →
+            </a>
+        </div>
+    {% endif %}
+
    {% if appointment.can_cancel %}
     
    <a href="{% url 'reschedule_appointment' appointment.id %}" 

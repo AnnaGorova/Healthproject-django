@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'diary',
-    'rest_framework'
+    'rest_framework',
+    'dal',
+    'dal_select2',
 ]
 
 MIDDLEWARE = [

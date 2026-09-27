@@ -5,3 +5,5 @@ from .question import Question
 from .schedule import Schedule          
 from .appointment import Appointment    
 from .question_message import QuestionMessage 
+from .medical_conclusion import MedicalConclusion
+from .ICD10Code import ICD10Code

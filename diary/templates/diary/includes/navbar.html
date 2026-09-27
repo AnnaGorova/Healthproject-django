@@ -17,14 +17,15 @@
                
                 <li><a href="{% url 'doctors_list' %}" class="nav-link">📅 Записатися до лікаря</a></li>
                 <li><a href="{% url 'my_appointments' %}" class="nav-link">📋 Мої записи до лікаря</a></li>
-                
-                <li><a href="{% url 'my_questions' %}" class="nav-link">Мої питання</a></li>
+                <li><a href="{% url 'my_conclusions' %}" class="nav-link">📄 Мої висновки</a></li> 
+                <li><a href="{% url 'my_questions' %}" class="nav-link">💬 Мої питання</a></li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
                 <li class="nav-divider">👨‍⚕️ Лікарю</li>
+                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">📊 Дашборд</a></li>
+                <li><a href="{% url 'doctor_patients' %}" class="nav-link">👥 Мої пацієнти</a></li>
                 <li><a href="{% url 'manage_schedule' %}" class="nav-link">🗓️ Мій розклад</a></li>
-                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">👥 Мої пацієнти</a></li>
                 <li><a href="{% url 'doctor_appointments' %}" class="nav-link">📋 Мої прийоми</a></li>
                 <li><a href="{% url 'all_questions' %}" class="nav-link">💬 Питання пацієнтів</a></li>
                 

@@ -1,0 +1,66 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📊 Дашборд лікаря</h2>
+</div>
+
+<!-- Пацієнти на сьогодні -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>📅 Пацієнти на сьогодні ({{ today_appointments|length }})</h3>
+    
+    {% for apt in today_appointments %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div>
+                <strong style="color: #fff;">{{ apt.date|date:"H:i" }}</strong>
+                <span style="color: #a78bfa; margin-left: 12px;">
+                    {{ apt.patient.username }}
+                </span>
+                {% if apt.complaints %}
+                    <br><span style="color: rgba(255,255,255,0.5); font-size: 13px;">
+                        {{ apt.complaints|truncatechars:60 }}
+                    </span>
+                {% endif %}
+            </div>
+            <div>
+                <a href="{% url 'patient_card' apt.patient.id %}" class="btn btn-secondary">Картка</a>
+                {% if not apt.conclusion %}
+                    <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Висновок</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">На сьогодні прийомів немає</p>
+    {% endfor %}
+</div>
+
+<!-- Нові звернення -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>💬 Нові звернення ({{ new_questions|length }})</h3>
+    
+    {% for q in new_questions %}
+        <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <p><strong>{{ q.patient.username }}</strong> — {{ q.created_at|date:"d.m.Y H:i" }}</p>
+            <p style="color: rgba(255,255,255,0.7);">{{ q.question|truncatechars:80 }}</p>
+            <a href="{% url 'answer_question' q.id %}" class="btn btn-primary" style="margin-top: 8px;">Відповісти</a>
+        </div>
+    {% empty %}
+        <p class="text-muted">Немає нових звернень</p>
+    {% endfor %}
+</div>
+
+<!-- Посилання на всіх пацієнтів -->
+<div class="record-card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3>👥 Мої пацієнти</h3>
+            <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 4px;">
+                Всього: {{ patients_count }}
+            </p>
+        </div>
+        <a href="{% url 'doctor_patients' %}" class="btn btn-primary">Всі пацієнти →</a>
+    </div>
+</div>
+{% endblock %}

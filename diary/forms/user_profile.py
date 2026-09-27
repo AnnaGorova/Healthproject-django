@@ -1,6 +1,6 @@
 from django import forms
 from ..models import UserProfile
-
+import re
 
 class UserProfileForm(forms.ModelForm):
     phone = forms.CharField(
@@ -27,9 +27,31 @@ class UserProfileForm(forms.ModelForm):
         }
         
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            #'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Прізвище Ім\'я По батькові'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '+380XXXXXXXXX',
+                'type': 'tel',
+                'pattern': r'^\+?[\d\s\-\(\)]{10,20}$',
+                'title': 'Введіть коректний номер телефону'
+            }),
             'gender': forms.Select(attrs={'class': 'form-control'}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date_of_birth': forms.DateInput(attrs={
+                'class': 'form-control', 
+                'type': 'date'
+            }),
+        }
+        
+        help_texts = {
+            'phone': 'Формат: +380XXXXXXXXX',
         }
 
+
+    def clean_username(self):
+        value = self.cleaned_data.get('username', '')
+        # прибираємо пробіли з країв і схлопуємо будь-яку кількість пробілів підряд в один
+        value = re.sub(r'\s+', ' ', value).strip()
+        return value

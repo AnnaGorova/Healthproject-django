@@ -1,0 +1,71 @@
+{% extends "diary/base.html" %}
+{% load static %}
+
+{% block title %}Редагування висновку{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>✏️ Редагування висновку</h2>
+    <p class="subtitle">{{ conclusion.patient.username }} — {{ conclusion.appointment.date|date:"d.m.Y H:i" }}</p>
+</div>
+
+<div class="record-card">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-group icd10-group">
+            <label for="icd10_search_input">🔎 Шифр МКХ-10</label>
+            <div class="icd10-autocomplete">
+                <input type="text"
+                    id="icd10_search_input"
+                    class="icd10-search-input"
+                    autocomplete="off"
+                    placeholder="Почніть вводити код (наприклад, J20) або назву (бронхіт)"
+                    value="{% if conclusion.icd10 %}{{ conclusion.icd10.code }} — {{ conclusion.icd10.name }}{% endif %}">
+                <div id="icd10_results" class="icd10-results"></div>
+            </div>
+            {{ form.icd10 }}
+            {% if form.icd10.errors %}
+                <div class="error">{{ form.icd10.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.diagnosis.id_for_label }}">📝 Діагноз (текстом)</label>
+            {{ form.diagnosis }}
+            {% if form.diagnosis.errors %}
+                <div class="error">{{ form.diagnosis.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.prescriptions.id_for_label }}">💊 Призначення</label>
+            {{ form.prescriptions }}
+            {% if form.prescriptions.errors %}
+                <div class="error">{{ form.prescriptions.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.recommendations.id_for_label }}">📋 Рекомендації</label>
+            {{ form.recommendations }}
+            {% if form.recommendations.errors %}
+                <div class="error">{{ form.recommendations.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'view_conclusion' conclusion.appointment.id %}" class="btn btn-secondary">← Скасувати</a>
+            <button type="submit" class="btn btn-primary">💾 Зберегти зміни</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'diary/js/form.js' %}"></script>
+{% endblock %}

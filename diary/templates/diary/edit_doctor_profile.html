@@ -1,0 +1,32 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Редагування профілю лікаря{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>✏️ Редагування професійної інформації</h2>
+</div>
+
+<div class="record-card">
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p style="color: #F87171; font-size: 13px; margin-top: 4px;">
+                        {{ field.errors.0 }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+            <a href="{% url 'profile' %}" class="btn btn-outline">↩ Назад</a>
+            <button type="submit" class="btn btn-primary">💾 Зберегти</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

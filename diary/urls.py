@@ -19,7 +19,11 @@ urlpatterns = [
     path('doctor/patients/', views.doctor_patients, name='doctor_patients'),
     path('doctor/dashboard/', views.doctor_dashboard, name='doctor_dashboard'),
     path('appointments/doctor/', views.doctor_appointments, name='doctor_appointments'),
+    path('doctor/patient/<int:patient_id>/', views.patient_card, name='patient_card'),
+    path('doctor/conclusion/<int:appointment_id>/', views.create_conclusion, name='create_conclusion'),
+    path('doctor/icd10-autocomplete/', views.icd10_autocomplete, name='icd10-autocomplete'),
 
+    path('profile/doctor/edit/', views.edit_doctor_profile, name='edit_doctor_profile'),
     
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
@@ -29,6 +33,12 @@ urlpatterns = [
     path('appointments/my/', views.my_appointments, name='my_appointments'),
     path('appointments/cancel/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
     path('appointments/reschedule/<int:appointment_id>/', views.reschedule_appointment, name='reschedule_appointment'),
+    path('appointments/<int:appointment_id>/conclusion/', views.view_conclusion, name='view_conclusion'),
+    path('doctor/appointment/<int:appointment_id>/', views.appointment_detail, name='appointment_detail'),
+    path('doctor/appointment/<int:appointment_id>/cancel/', views.doctor_cancel_appointment, name='doctor_cancel_appointment'),
+    path('doctor/conclusion/<int:conclusion_id>/edit/', views.edit_conclusion, name='edit_conclusion'),
+
+
     path('questions/answer/<int:question_id>/', views.answer_question, name='answer_question'),
 
 
@@ -43,7 +53,7 @@ urlpatterns = [
     path('my_questions/', views.my_questions, name='my_questions'),
     path('all_questions/', views.all_questions, name='all_questions'),
     path('questions/reply/<int:question_id>/', views.reply_question, name='reply_question'),
-
+    path('conclusions/my/', views.my_conclusions, name='my_conclusions'),
    
     path('administrator/', views.administrator, name='administrator'),
     # api views

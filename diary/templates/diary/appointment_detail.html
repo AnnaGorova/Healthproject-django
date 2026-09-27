@@ -1,0 +1,66 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Деталі прийому{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📋 Деталі прийому</h2>
+    <p class="subtitle">{{ appointment.date|date:"d.m.Y H:i" }}</p>
+</div>
+
+<div class="record-card" style="margin-bottom: 24px;">
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">Пацієнт</span>
+            <span class="detail-value">{{ appointment.patient.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Статус</span>
+            <span class="detail-value">
+                {% if appointment.is_overdue %}
+                    Минув, очікує висновку
+                {% else %}
+                    {{ appointment.get_status_display }}
+                {% endif %}
+            </span>
+        </div>
+        <div class="detail-item full-width">
+            <span class="detail-label">Скарги</span>
+            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="form-actions" style="margin-bottom: 24px;">
+    <a href="{% url 'patient_card' appointment.patient.id %}" class="btn btn-outline">
+        👤 Картка пацієнта
+    </a>
+
+    {% if appointment.status != 'cancelled' %}
+        {% if appointment.conclusion %}
+            <a href="{% url 'view_conclusion' appointment.id %}" class="btn btn-outline">
+                📄 Переглянути висновок
+            </a>
+            <a href="{% url 'edit_conclusion' appointment.conclusion.id %}" class="btn btn-outline">
+                ✏️ Редагувати висновок
+            </a>
+        {% else %}
+            <a href="{% url 'create_conclusion' appointment.id %}" class="btn btn-primary">
+                ✍️ Створити висновок
+            </a>
+        {% endif %}
+    {% endif %}
+
+    {% if appointment.status == 'scheduled' %}
+        <a href="{% url 'doctor_cancel_appointment' appointment.id %}"
+           class="btn btn-outline"
+           style="color:#F87171; border-color:#F87171;">
+            ❌ Скасувати прийом
+        </a>
+    {% endif %}
+</div>
+
+<div class="form-actions">
+    <a href="{% url 'doctor_appointments' %}" class="btn btn-secondary">← Назад до прийомів</a>
+</div>
+{% endblock %}

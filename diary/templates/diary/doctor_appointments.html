@@ -11,7 +11,13 @@
 {% for appointment in appointments %}
 <div class="record-card">
     <div class="record-top">
-        <span class="badge">{{ appointment.get_status_display }}</span>
+        {% if appointment.is_overdue %}
+            <span class="badge" style="background: rgba(251, 191, 36, 0.15); color: #FBBF24;">
+                Минув, очікує висновку
+            </span>
+        {% else %}
+            <span class="badge">{{ appointment.get_status_display }}</span>
+        {% endif %}
         <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
     </div>
     <div class="detail-grid">
@@ -23,6 +29,23 @@
             <span class="detail-label">Скарги</span>
             <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
         </div>
+    </div>
+
+    <div style="margin-top: 16px; text-align: right;">
+        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-outline">
+            🔍 Деталі
+        </a>
+        {% if appointment.status != 'cancelled' %}
+            {% if appointment.conclusion %}
+                <a href="{% url 'view_conclusion' appointment.id %}" class="btn btn-outline">
+                    📄 Переглянути висновок
+                </a>
+            {% else %}
+                <a href="{% url 'create_conclusion' appointment.id %}" class="btn btn-primary">
+                    ✍️ Створити висновок
+                </a>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 {% empty %}

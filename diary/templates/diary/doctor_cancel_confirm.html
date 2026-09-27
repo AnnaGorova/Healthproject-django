@@ -1,0 +1,25 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Скасування прийому{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>❌ Скасування прийому</h2>
+</div>
+
+<div class="record-card">
+    <p>Скасувати прийом пацієнта <strong>{{ appointment.patient.username }}</strong> на
+       <strong>{{ appointment.date|date:"d.m.Y H:i" }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions" style="margin-top: 20px;">
+            <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-outline">Ні, повернутись</a>
+            <button type="submit" class="btn btn-primary"
+                    style="background: linear-gradient(135deg, #F87171, #EF4444);">
+                Так, скасувати
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

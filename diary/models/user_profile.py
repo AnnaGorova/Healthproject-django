@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from datetime import date
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=100)
@@ -56,3 +57,6 @@ class UserProfile(models.Model):
                 (self.date_of_birth.month, self.date_of_birth.day)
             )
         return None
+
+
+    

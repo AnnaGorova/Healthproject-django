@@ -64,8 +64,8 @@
     letter-spacing: 0.3px;
 }
 
-.form-group input,
-.form-group select,
+.form-group input:not(.select2-search__field),
+.form-group select:not(.select2-hidden-accessible),
 .form-group textarea {
     padding: 10px 14px;
     border: 2px solid #E2E8F0;
@@ -78,8 +78,8 @@
     width: 100%;
 }
 
-.form-group input:focus,
-.form-group select:focus,
+.form-group input:not(.select2-search__field):focus,
+.form-group select:not(.select2-hidden-accessible):focus,
 .form-group textarea:focus {
     outline: none;
     border-color: #4F46E5;
@@ -195,4 +195,87 @@
 .form-group:has(.error-message) .form-control {
     border-color: #F87171;
     box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+}
+
+
+
+/* === Кастомний автокомпліт МКХ-10 (замість Select2) === */
+.icd10-autocomplete {
+    position: relative;
+    width: 100%;
+}
+
+.icd10-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 2px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #fff;
+    color: #1E293B;
+    transition: border-color 0.2s ease;
+}
+
+.icd10-search-input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+}
+
+.icd10-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 260px;
+    overflow-y: auto;
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 50;
+}
+
+.icd10-results.is-open {
+    display: block;
+}
+
+.icd10-result-item {
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1E293B;
+    cursor: pointer;
+}
+
+.icd10-result-item:hover,
+.icd10-result-item.is-active {
+    background: #F1F5F9;
+}
+
+.icd10-result-item .code {
+    font-weight: 600;
+    color: #4F46E5;
+    margin-right: 6px;
+}
+
+.icd10-result-empty,
+.icd10-result-loading {
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #94A3B8;
+}
+
+/* Ховаємо оригінальний select Django — потрібен тільки для відправки форми */
+.icd10-group select#id_icd10 {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
 }

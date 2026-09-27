@@ -1,0 +1,65 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Мої висновки{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📄 Мої висновки</h2>
+    <p class="subtitle">Всього: {{ conclusions|length }}</p>
+</div>
+
+<div class="record-card">
+    {% if conclusions %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid rgba(167, 139, 250, 0.3);">
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Лікар</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Спеціалізація</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Дата прийому</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Шифр МКХ-10</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Діагноз</th>
+                        <th style="text-align: right; padding: 12px; color: #a78bfa; font-weight: 600;">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conclusions %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 12px; color: #fff;">
+                                <strong>{{ c.doctor.username }}</strong>
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ c.doctor.doctor_profile.specialty|default:"—" }}
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ c.appointment.date|date:"d.m.Y H:i" }}
+                            </td>
+                             <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {% if c.icd10 %}{{ c.icd10.code }}{% else %}—{% endif %}
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ c.diagnosis|truncatechars:60 }}
+                            </td>
+                            <td style="padding: 12px; text-align: right;">
+                                <a href="{% url 'view_conclusion' c.appointment.id %}" 
+                                   class="btn btn-primary"
+                                   style="padding: 6px 14px; font-size: 13px;">
+                                    Переглянути
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state" style="padding: 40px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+            <h3 style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">Висновків ще немає</h3>
+            <p style="color: rgba(255,255,255,0.5); font-size: 14px;">
+                Висновки з'являться тут після завершення прийомів
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

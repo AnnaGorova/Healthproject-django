@@ -1,0 +1,106 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Картка пацієнта{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>👤 {{ patient.username }}</h2>
+    <p class="subtitle">Картка пацієнта</p>
+</div>
+
+<!-- Особиста інформація -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>📋 Особиста інформація</h3>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="detail-label">ПІП</span>
+            <span class="detail-value">{{ patient.username }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ patient.email }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Телефон</span>
+            <span class="detail-value">{{ patient.phone|default:"—" }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Стать</span>
+            <span class="detail-value">{{ patient.get_gender_display|default:"—" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Висновки -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>📄 Висновки лікарів ({{ conclusions|length }})</h3>
+    
+    {% for c in conclusions %}
+        <div style="padding: 16px; margin-bottom: 12px; background: rgba(52, 211, 153, 0.05); border-left: 3px solid #34D399; border-radius: 8px;">
+            <p style="color: #34D399; font-size: 13px; margin-bottom: 8px;">
+                {{ c.doctor.username }} — {{ c.created_at|date:"d.m.Y" }}
+            </p>
+            {% if c.icd10 %}
+                <p style="color: #000;"><strong>Шифр МКХ-10:</strong> {{ c.icd10.code }} — {{ c.icd10.name }}</p>
+            {% endif %}
+            <p><strong>Діагноз:</strong> {{ c.diagnosis }}</p>
+            <p><strong>Призначення:</strong> {{ c.prescriptions }}</p>
+            <p><strong>Рекомендації:</strong> {{ c.recommendations }}</p>
+        </div>
+    {% empty %}
+        <p class="text-muted">Висновків ще немає</p>
+    {% endfor %}
+</div>
+
+<!-- Історія прийомів -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>📅 Історія прийомів</h3>
+    
+    {% for apt in appointments %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div>
+                <strong>{{ apt.date|date:"d.m.Y H:i" }}</strong>
+                {% if apt.is_overdue %}
+                    <span class="badge" style="margin-left: 12px; background: rgba(251, 191, 36, 0.15); color: #FBBF24;">
+                        Минув, очікує висновку
+                    </span>
+                {% else %}
+                    <span class="badge" style="margin-left: 12px;">{{ apt.get_status_display }}</span>
+                {% endif %}
+            </div>
+            {% if apt.status != 'cancelled' %}
+                {% if apt.conclusion %}
+                    <a href="{% url 'view_conclusion' apt.id %}" class="btn btn-outline">Переглянути висновок</a>
+                {% else %}
+                    <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Створити висновок</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-muted">Прийомів ще немає</p>
+    {% endfor %}
+</div>
+
+<!-- Медичні записи -->
+<div class="record-card">
+    <h3>📊 Останні записи здоров'я</h3>
+    
+    {% for r in records %}
+        <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <p><strong>{{ r.date|date:"d.m.Y H:i" }}</strong></p>
+            {% if r.temperature %}<span>🌡️ {{ r.temperature }}°C</span>{% endif %}
+            {% if r.heart_rate %}<span style="margin-left: 12px;">❤️ {{ r.heart_rate }} уд/хв</span>{% endif %}
+            {% if r.spo2 %}<span style="margin-left: 12px;">💨 {{ r.spo2 }}%</span>{% endif %}
+            {% if r.pressure_systolic %}<span style="margin-left: 12px;">🩸 {{ r.pressure_systolic }}/{{ r.pressure_diastolic }}</span>{% endif %}
+        </div>
+    {% empty %}
+        <p class="text-muted">Записів ще немає</p>
+    {% endfor %}
+
+    
+</div>
+
+<div class="form-actions" style="margin-top: 24px;">
+        <a href="{% url 'doctor_patients' %}" class="btn btn-secondary">← Назад до моїх пацієнтів</a>
+</div>
+{% endblock %}

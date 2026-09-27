@@ -1,6 +1,7 @@
 from django.contrib import admin
 from diary.models import UserProfile, HealthRecord, DoctorProfile
 from .models import Schedule, Appointment, Question, QuestionMessage
+from .models import MedicalConclusion
 
 # Register your models here.
 
@@ -137,4 +138,14 @@ class QuestionMessageAdmin(admin.ModelAdmin):
     list_display = ['question', 'author', 'created_at']
     list_filter = ['created_at']
     search_fields = ['text', 'author__username']
+    readonly_fields = ['created_at']
+
+
+
+
+@admin.register(MedicalConclusion)
+class MedicalConclusionAdmin(admin.ModelAdmin):
+    list_display = ['patient', 'doctor', 'created_at']
+    list_filter = ['created_at', 'doctor']
+    search_fields = ['patient__username', 'doctor__username', 'diagnosis']
     readonly_fields = ['created_at']

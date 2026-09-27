@@ -19,7 +19,7 @@
             <span class="detail-value">{{ user_profile.email }}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Телефон</span>
+            <span class="detail-label">Особистий телефон</span>
             <span class="detail-value">{{ user_profile.phone|default:"—" }}</span>
         </div>
         <div class="detail-item">
@@ -40,8 +40,37 @@
         </div>
     </div>
     
+        <!-- ===== ДЛЯ ЛІКАРЯ ===== -->
+    {% if user_profile.role == 'doctor' and user_profile.doctor_profile %}
+        <div class="record-card" style="padding: 32px; margin-bottom: 24px;">
+            <h3 style="margin-bottom: 16px;">👨‍⚕️ Професійна інформація</h3>
+            
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Спеціалізація</span>
+                    <span class="detail-value">{{ user_profile.doctor_profile.specialty }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Стаж роботи</span>
+                    <span class="detail-value">{{ user_profile.doctor_profile.year_of_experience }} років</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Робочий телефон</span>
+                    <span class="detail-value">{{ user_profile.doctor_profile.phone|default:"—" }}</span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+
     <div class="record-actions" style="margin-top: 24px;">
         <a href="{% url 'edit_profile' %}" class="btn btn-warning">✏️ Редагувати</a>
+       
+        {% if user_profile.role == 'doctor' %}
+            <a href="{% url 'edit_doctor_profile' %}" class="btn btn-primary">✏️ Редагувати професійну інформацію</a>
+        {% endif %}
+
         <a href="{% url 'home' %}" class="btn btn-outline">↩ Назад</a>
     </div>
 </div>

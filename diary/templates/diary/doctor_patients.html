@@ -1,26 +1,118 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Пацієнти лікаря {{ doctor.username }}{% endblock %}
+{% block title %}Мої пацієнти{% endblock %}
 
 {% block content %}
-<h1> {{ user.userprofile.role }} {{ doctor.username }}</h1>
-<p> {{ doctor.email }}</p>
+<div class="page-header">
+    <h2>👥 Мої пацієнти</h2>
+    <p class="subtitle">Всього: {{ patients|length }}</p>
+</div>
 
-<h2> Мої пацієнти</h2>
+<!-- ===== ПОШУК ===== -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <form method="get" style="display: flex; gap: 12px;">
+        <input type="text" 
+               name="search" 
+               class="form-control" 
+               placeholder="🔍 Пошук за ПІП або телефоном..."
+               value="{{ search }}"
+               style="flex: 1;">
+        <button type="submit" class="btn btn-primary">Пошук</button>
+        {% if search %}
+            <a href="{% url 'doctor_patients' %}" class="btn btn-secondary">✕</a>
+        {% endif %}
+    </form>
+</div>
 
-{% if patients %}
-    
-        {% for patient in patients %}
-            
-                <p><strong> {{ patient.username }}</strong></p>
-                <p>{{ patient.email }}</p>
-                <a href="{% url 'user_records' patient.id %}">Показати записи</a>
-            
-        {% endfor %}
-    
-{% else %}
-    <p> У вас ще немає прикріплених пацієнтів</p>
-{% endif %}
+<!-- ===== ФІЛЬТРИ ===== -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        
+        {% if search %}
+            <input type="hidden" name="search" value="{{ search }}">
+        {% endif %}
+        
+        <div style="flex: 1; min-width: 150px;">
+            <label style="color: #a78bfa; font-size: 13px; margin-bottom: 6px; display: block;">Стать</label>
+            <select name="gender" class="form-control">
+                <option value="">Всі</option>
+                <option value="M" {% if gender == 'M' %}selected{% endif %}>Чоловіча</option>
+                <option value="F" {% if gender == 'F' %}selected{% endif %}>Жіноча</option>
+            </select>
+        </div>
+        
+        <div style="flex: 1; min-width: 120px;">
+            <label style="color: #a78bfa; font-size: 13px; margin-bottom: 6px; display: block;">Вік від</label>
+            <input type="number" name="age_from" class="form-control" 
+                   value="{{ age_from }}" placeholder="18" min="0" max="120">
+        </div>
+        
+        <div style="flex: 1; min-width: 120px;">
+            <label style="color: #a78bfa; font-size: 13px; margin-bottom: 6px; display: block;">Вік до</label>
+            <input type="number" name="age_to" class="form-control" 
+                   value="{{ age_to }}" placeholder="65" min="0" max="120">
+        </div>
+        
+        <div style="display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-primary">Застосувати</button>
+            <a href="{% url 'doctor_patients' %}" class="btn btn-secondary">Скинути</a>
+        </div>
+    </form>
+</div>
 
-<p><a href="{% url 'users_list' %}">← Назад до списку користувачів</a></p>
+<!-- ===== ТАБЛИЦЯ ===== -->
+<div class="record-card">
+    {% if patients %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid rgba(167, 139, 250, 0.3);">
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">ПІП</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Дата народження</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Вік</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Телефон</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa; font-weight: 600;">Email</th>
+                        <th style="text-align: right; padding: 12px; color: #a78bfa; font-weight: 600;">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 12px; color: #fff;">
+                                <strong>{{ patient.username }}</strong>
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ patient.date_of_birth|date:"d.m.Y"|default:"—" }}
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {% if patient.age %}{{ patient.age }} р.{% else %}—{% endif %}
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ patient.phone|default:"—" }}
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">
+                                {{ patient.email|default:"—" }}
+                            </td>
+                            <td style="padding: 12px; text-align: right;">
+                                <a href="{% url 'patient_card' patient.id %}" 
+                                   class="btn btn-primary"
+                                   style="padding: 6px 14px; font-size: 13px;">
+                                    Картка
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted" style="padding: 20px; text-align: center;">
+            {% if search or gender or age_from or age_to %}
+                За вашими фільтрами нічого не знайдено
+            {% else %}
+                Ще немає пацієнтів
+            {% endif %}
+        </p>
+    {% endif %}
+</div>
 {% endblock %}

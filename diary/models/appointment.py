@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone        
 from datetime import timedelta   
 from .user_profile import UserProfile
+from .schedule import Schedule
 
 
 class Appointment(models.Model):
@@ -38,6 +39,15 @@ class Appointment(models.Model):
     def __str__(self):
         return f"{self.patient.username} → {self.doctor.username} ({self.date:%d.%m.%Y %H:%M})"
 
+    @property
+    def duration_minutes(self):
+        """Тривалість прийому — з розкладу лікаря на цю дату, або 30 хв за замовчуванням"""
+        schedule = Schedule.objects.filter(
+            doctor=self.doctor,
+            date=self.date.date(),
+            is_day_off=False
+        ).first()
+        return schedule.slot_duration if schedule else 30
 
 
     @property
@@ -46,3 +56,9 @@ class Appointment(models.Model):
         if self.status != 'scheduled':
             return False
         return self.date - timezone.now() >= timedelta(hours=24)
+
+    @property
+    def is_overdue(self):
+        """Прийом уже завершився (з урахуванням реальної тривалості), а висновок не створено"""
+        end_time = self.date + timedelta(minutes=self.duration_minutes)
+        return self.status == 'scheduled' and end_time < timezone.now()
