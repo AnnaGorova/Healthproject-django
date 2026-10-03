@@ -413,6 +413,12 @@ def login_view(request):
 
         try:
             user_obj = User.objects.get(email=email)
+            
+            if not user_obj.is_active:
+                messages.error(request, 'Обліковий запис деактивовано. Зверніться до адміністратора.')
+                return render(request, 'diary/login.html')
+            
+            
             user = authenticate(request, username=user_obj.username, password=password)
             
             if user is not None:

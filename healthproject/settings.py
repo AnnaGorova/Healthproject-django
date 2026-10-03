@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,13 +34,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'diary',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'diary',
+    
     'rest_framework',
     'dal',
     'dal_select2',
@@ -58,7 +62,7 @@ ROOT_URLCONF = 'healthproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'diary' / 'templates' / 'diary'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,3 +138,19 @@ DATE_FORMAT = 'd.m.Y'
 DATETIME_FORMAT = 'd.m.Y H:i'
 SHORT_DATE_FORMAT = 'd.m.Y'
 SHORT_DATETIME_FORMAT = 'd.m.Y H:i'
+
+# ===== EMAIL (Gmail) =====
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')     # ← App Password (16 символів)
+DEFAULT_FROM_EMAIL = f'Smart Health Bridge <{config("EMAIL_HOST_USER")}>'
+
+# ===== ДЛЯ ПОСИЛАННЯ У ЛИСТІ =====
+PROTOCOL = 'http'
+DOMAIN = '127.0.0.1:8000'
+
+# ===== ЧАС ЖИТТЯ ПОСИЛАННЯ =====
+PASSWORD_RESET_TIMEOUT = 86400  # 24 години

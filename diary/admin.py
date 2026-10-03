@@ -1,9 +1,88 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin   # ← ✅
+from django.contrib.auth.models import User 
 from diary.models import UserProfile, HealthRecord, DoctorProfile
 from .models import Schedule, Appointment, Question, QuestionMessage
 from .models import MedicalConclusion
 
 # Register your models here.
+
+
+
+from django.contrib.auth.forms import UserChangeForm, AdminPasswordChangeForm
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.contrib import messages
+
+from .forms.user_create import UserCreateForm
+
+
+admin.site.unregister(User)
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    """Кастомна адмінка User — створення без пароля"""
+    
+    add_form = UserCreateForm              # ← кастомна форма створення
+    form = UserChangeForm                  # ← стандартна форма редагування
+    change_password_form = AdminPasswordChangeForm
+    
+    # Поля при створенні
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'first_name', 'last_name', 'role'),
+        }),
+    )
+    
+    # Дії
+    actions = ['send_password_setup_email']
+    
+    @admin.action(description='📧 Надіслати лист для встановлення пароля')
+    def send_password_setup_email(self, request, queryset):
+        """Дія: відправити лист для встановлення пароля"""
+        count = 0
+        for user in queryset:
+            if user.has_usable_password():
+                messages.warning(request, f"⚠️ {user.username}: пароль вже встановлено")
+                continue
+            
+            if not user.email:
+                messages.warning(request, f"⚠️ {user.username}: немає email")
+                continue
+            
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            message = render_to_string('registration/password_reset_email.html', {
+                'user': user,
+                'uid': uid,
+                'token': token,
+                'protocol': settings.PROTOCOL,
+                'domain': settings.DOMAIN,
+            })
+            
+            send_mail(
+                subject='Встановлення пароля для Smart Health Bridge',
+                message='',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=message,
+                fail_silently=False,
+            )
+            
+            count += 1
+            messages.success(request, f"✅ Лист надіслано: {user.username}")
+        
+        if count:
+            self.message_user(request, f"📧 Надіслано листів: {count}")
+
+
 
 
 @admin.register(UserProfile)
@@ -16,7 +95,8 @@ class UserProfileAdmin(admin.ModelAdmin):
         'phone',           
         'gender',          
         'date_of_birth',   
-        'doctor'
+        'doctor',
+        'is_active_user',
     ]
     list_filter = [
         'role', 
@@ -41,6 +121,12 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ('doctor',)
         }),
     )
+    def is_active_user(self, obj):
+        return obj.user.is_active
+    is_active_user.boolean = True
+    is_active_user.short_description = 'Активний'
+
+
 
 
 

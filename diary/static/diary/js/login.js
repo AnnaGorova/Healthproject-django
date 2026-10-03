@@ -1,6 +1,13 @@
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const toggleIcon = document.querySelector('.toggle-password');
+function togglePassword(inputId = 'password') {
+    const passwordInput = document.getElementById(inputId);
+    
+    if (!passwordInput) {
+        console.error('Поле не знайдено:', inputId);
+        return;
+    }
+    
+    const wrapper = passwordInput.parentElement;
+    const toggleIcon = wrapper.querySelector('.toggle-password');
 
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
