@@ -126,11 +126,19 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'patient', 'doctor', 'date', 'status']
-    list_filter = ['status', 'date']
+    list_display = ['id', 'patient', 'doctor', 'date', 'status', 
+        'status_label_display',   
+        'cancelled_by',           
+        'created_at']
+    list_filter = ['status', 'date', 'cancelled_by']
     search_fields = ['patient__username', 'doctor__username']
-    raw_id_fields = ['patient', 'doctor']
+    raw_id_fields = ['patient', 'doctor', 'cancelled_by']
+    readonly_fields = ['created_at']
 
+    def status_label_display(self, obj):
+        """Відображення статусу з урахуванням, хто скасував"""
+        return obj.status_label
+    status_label_display.short_description = 'Статус (детально)'
 
 
 @admin.register(QuestionMessage)

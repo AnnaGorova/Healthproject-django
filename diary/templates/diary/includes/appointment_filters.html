@@ -1,0 +1,18 @@
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px;">
+    <a href="?status=active"
+       class="btn {% if current_status == 'active' %}btn-primary{% else %}btn-outline{% endif %}">
+        🟢 Активні ({{ counts.scheduled }})
+    </a>
+    <a href="?status=completed"
+       class="btn {% if current_status == 'completed' %}btn-primary{% else %}btn-outline{% endif %}">
+        ✅ Завершені ({{ counts.completed }})
+    </a>
+    <a href="?status=cancelled"
+       class="btn {% if current_status == 'cancelled' %}btn-primary{% else %}btn-outline{% endif %}">
+        ❌ Скасовані ({{ counts.cancelled }})
+    </a>
+    <a href="?status=all"
+       class="btn {% if current_status == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+        📋 Всі ({{ counts.total }})
+    </a>
+</div>

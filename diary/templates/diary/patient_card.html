@@ -65,7 +65,7 @@
                         Минув, очікує висновку
                     </span>
                 {% else %}
-                    <span class="badge" style="margin-left: 12px;">{{ apt.get_status_display }}</span>
+                    <span class="badge" style="margin-left: 12px;">{{ apt.status_label }}</span>
                 {% endif %}
             </div>
             {% if apt.status != 'cancelled' %}

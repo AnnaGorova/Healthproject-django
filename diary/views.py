@@ -24,7 +24,7 @@ from .models import DoctorProfile
 from .models import ICD10Code
 from dal import autocomplete
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Count
 from .forms.conclusion import MedicalConclusionForm
 
 
@@ -111,38 +111,56 @@ def is_doctor(user):
 def doctor_dashboard(request):
     """Дашборд лікаря"""
     user_profile = request.user.userprofile
-    
+
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть бачити дашборд")
-    
-    today = date.today()
-    
-    # Пацієнти на сьогодні
+
+    now = timezone.now()
+    today = timezone.localdate()
+
+    # Прийоми на сьогодні (крім скасованих)
     today_appointments = Appointment.objects.filter(
         doctor=user_profile,
         date__date=today,
-        status='scheduled'
-    ).order_by('date')
-    
+    ).exclude(
+        status='cancelled'
+    ).select_related('patient', 'conclusion').order_by('date')
+
+    # Прийоми з попередніх днів без висновку
+    past_pending_qs = Appointment.objects.filter(
+        doctor=user_profile,
+        status='scheduled',
+        date__date__lt=today,
+    )
+    past_pending_count = past_pending_qs.count()
+    past_pending = past_pending_qs.select_related('patient').order_by('date')[:10]
+
+    # Останні висновки
+    recent_conclusions = MedicalConclusion.objects.filter(
+        doctor=user_profile
+    ).select_related('patient', 'appointment').order_by('-created_at')[:5]
+
     # Нові звернення
     new_questions = Question.objects.filter(
         doctor=user_profile,
         status='new'
     ).order_by('-created_at')
-    
-    # ТІЛЬКИ КІЛЬКІСТЬ
+
+    # Кількість пацієнтів
     patients_count = UserProfile.objects.filter(
         role='patient',
         appointments__doctor=user_profile
     ).distinct().count()
-    
+
     return render(request, 'diary/doctor_dashboard.html', {
+        'now': now,
         'today_appointments': today_appointments,
+        'past_pending': past_pending,
+        'past_pending_count': past_pending_count,
+        'recent_conclusions': recent_conclusions,
         'new_questions': new_questions,
         'patients_count': patients_count,
     })
-
-
 
 
 
@@ -557,6 +575,7 @@ def cancel_appointment(request, appointment_id):
     # POST — скасовуємо
     if request.method == 'POST':
         appointment.status = 'cancelled'
+        appointment.cancelled_by = request.user.userprofile
         appointment.save()
         messages.success(request, "✅ Запис скасовано")
         return redirect('my_appointments')
@@ -583,6 +602,7 @@ def reschedule_appointment(request, appointment_id):
     
     # Скасовуємо старий
     old_appointment.status = 'cancelled'
+    old_appointment.cancelled_by = request.user.userprofile
     old_appointment.save()
     
     messages.info(request, "🔄 Оберіть новий час для запису")
@@ -590,15 +610,49 @@ def reschedule_appointment(request, appointment_id):
     # Переходимо на сторінку запису до того ж лікаря
     return redirect('book_appointment', doctor_id=old_appointment.doctor.id)
 
+
+def filter_appointments(request, queryset):
+    """Фільтрація й сортування прийомів за статусом через ?status=..."""
+    status_map = {
+        'active': 'scheduled',
+        'completed': 'completed',
+        'cancelled': 'cancelled',
+    }
+
+    current = request.GET.get('status', 'active')
+    if current not in status_map and current != 'all':
+        current = 'active'
+
+    counts = queryset.aggregate(
+        total=Count('id'),
+        scheduled=Count('id', filter=Q(status='scheduled')),
+        completed=Count('id', filter=Q(status='completed')),
+        cancelled=Count('id', filter=Q(status='cancelled')),
+    )
+
+    if current in status_map:
+        queryset = queryset.filter(status=status_map[current])
+
+    # активні: найближчі першими; решта: найновіші першими
+    queryset = queryset.order_by('date' if current == 'active' else '-date')
+
+    return queryset, current, counts
+
+
 @login_required
 def my_appointments(request):
     user_profile = request.user.userprofile
-    appointments = Appointment.objects.filter(patient=user_profile).order_by('date')
-    
+    appointments = Appointment.objects.filter(
+        patient=user_profile
+    ).select_related('doctor', 'cancelled_by')
+
+    appointments, current_status, counts = filter_appointments(request, appointments)
+
     return render(request, 'diary/my_appointments.html', {
         'appointments': appointments,
+        'current_status': current_status,
+        'counts': counts,
     })
-
 
 
 
@@ -725,18 +779,21 @@ def delete_schedule(request, schedule_id):
 def doctor_appointments(request):
     """Записи до лікаря (для лікаря)"""
     user_profile = request.user.userprofile
-    
+
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть бачити цю сторінку")
-    
+
     appointments = Appointment.objects.filter(
         doctor=user_profile
-    ).order_by('date')
-    
+    ).select_related('patient', 'cancelled_by')
+
+    appointments, current_status, counts = filter_appointments(request, appointments)
+
     return render(request, 'diary/doctor_appointments.html', {
         'appointments': appointments,
+        'current_status': current_status,
+        'counts': counts,
     })
-
 
 
 @login_required
@@ -1058,6 +1115,7 @@ def doctor_cancel_appointment(request, appointment_id):
 
     if request.method == 'POST':
         appointment.status = 'cancelled'
+        appointment.cancelled_by = user_profile
         appointment.save()
         messages.success(request, "✅ Прийом скасовано")
         return redirect('doctor_appointments')
@@ -1065,6 +1123,9 @@ def doctor_cancel_appointment(request, appointment_id):
     return render(request, 'diary/doctor_cancel_confirm.html', {
         'appointment': appointment,
     })
+
+
+
 
 
 @login_required

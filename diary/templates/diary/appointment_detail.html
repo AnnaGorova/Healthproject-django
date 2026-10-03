@@ -20,7 +20,7 @@
                 {% if appointment.is_overdue %}
                     Минув, очікує висновку
                 {% else %}
-                    {{ appointment.get_status_display }}
+                    {{ appointment.status_label }}
                 {% endif %}
             </span>
         </div>

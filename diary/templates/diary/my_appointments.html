@@ -5,13 +5,15 @@
 {% block content %}
 <div class="page-header">
     <h2>📋 Мої записи до лікаря</h2>
-    <p class="subtitle">Всього: {{ appointments|length }}</p>
+    <p class="subtitle">Показано: {{ appointments|length }} з {{ counts.total }}</p>
 </div>
+
+{% include "diary/includes/appointment_filters.html" %}
 
 {% for appointment in appointments %}
 <div class="record-card">
     <div class="record-top">
-        <span class="badge">{{ appointment.get_status_display }}</span>
+        <span class="badge">{{ appointment.status_label }}</span>
         <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
     </div>
 
@@ -42,30 +44,27 @@
             <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 12px;">
                 {{ appointment.conclusion.diagnosis|truncatechars:100 }}
             </p>
-            <a href="{% url 'view_conclusion' appointment.id %}" 
-            class="btn btn-primary" 
-            style="padding: 8px 16px; font-size: 14px;">
+            <a href="{% url 'view_conclusion' appointment.id %}"
+               class="btn btn-primary"
+               style="padding: 8px 16px; font-size: 14px;">
                 Переглянути висновок →
             </a>
         </div>
     {% endif %}
 
-   {% if appointment.can_cancel %}
-    
-   <a href="{% url 'reschedule_appointment' appointment.id %}" 
-           class="btn btn-secondary">
+    {% if appointment.can_cancel %}
+        <a href="{% url 'reschedule_appointment' appointment.id %}" class="btn btn-secondary">
             📅 Перенести
-   </a>
-   <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-danger">
-        ❌ Скасувати
-    </a>
+        </a>
+        <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-danger">
+            ❌ Скасувати
+        </a>
     {% endif %}
 </div>
 {% empty %}
 <div class="empty-state">
     <div class="empty-icon">📭</div>
-    <h3>Ще немає записів</h3>
-    <a href="{% url 'doctors_list' %}" class="btn btn-primary">📅 Записатися</a>
+    <h3>Записів у цій категорії немає</h3>
 </div>
 {% endfor %}
 

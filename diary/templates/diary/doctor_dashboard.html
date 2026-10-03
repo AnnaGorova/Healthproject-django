@@ -7,10 +7,10 @@
     <h2>📊 Дашборд лікаря</h2>
 </div>
 
-<!-- Пацієнти на сьогодні -->
+<!-- Прийоми на сьогодні -->
 <div class="record-card" style="margin-bottom: 24px;">
-    <h3>📅 Пацієнти на сьогодні ({{ today_appointments|length }})</h3>
-    
+    <h3>📅 Прийоми на сьогодні ({{ today_appointments|length }})</h3>
+
     {% for apt in today_appointments %}
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
             <div>
@@ -18,21 +18,84 @@
                 <span style="color: #a78bfa; margin-left: 12px;">
                     {{ apt.patient.username }}
                 </span>
+
+                {% if apt.status == 'completed' %}
+                    <span class="badge" style="margin-left: 8px;">Завершено</span>
+                {% elif apt.is_overdue %}
+                    <span class="badge" style="margin-left: 8px; background: rgba(251, 191, 36, 0.15); color: #FBBF24;">Очікує висновку</span>
+                {% elif apt.date <= now %}
+                    <span class="badge" style="margin-left: 8px;">Триває</span>
+                {% else %}
+                    <span class="badge" style="margin-left: 8px;">Попереду</span>
+                {% endif %}
+
                 {% if apt.complaints %}
                     <br><span style="color: rgba(255,255,255,0.5); font-size: 13px;">
                         {{ apt.complaints|truncatechars:60 }}
                     </span>
                 {% endif %}
             </div>
-            <div>
-                <a href="{% url 'patient_card' apt.patient.id %}" class="btn btn-secondary">Картка</a>
-                {% if not apt.conclusion %}
+            <div style="white-space: nowrap;">
+                <a href="{% url 'appointment_detail' apt.id %}" class="btn btn-outline">Деталі</a>
+                {% if apt.conclusion %}
+                    <a href="{% url 'view_conclusion' apt.id %}" class="btn btn-outline">Переглянути висновок</a>
+                {% elif apt.date <= now %}
                     <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Висновок</a>
                 {% endif %}
             </div>
         </div>
     {% empty %}
         <p class="text-muted">На сьогодні прийомів немає</p>
+    {% endfor %}
+</div>
+
+<!-- Очікують висновку з попередніх днів -->
+{% if past_pending_count %}
+<div class="record-card" style="margin-bottom: 24px; border-left: 3px solid #FBBF24;">
+    <h3>⏳ Очікують висновку з попередніх днів ({{ past_pending_count }})</h3>
+
+    {% for apt in past_pending %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div>
+                <strong>{{ apt.date|date:"d.m.Y H:i" }}</strong>
+                <span style="color: #a78bfa; margin-left: 12px;">{{ apt.patient.username }}</span>
+            </div>
+            <div style="white-space: nowrap;">
+                <a href="{% url 'appointment_detail' apt.id %}" class="btn btn-outline">Деталі</a>
+                <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Висновок</a>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if past_pending_count > past_pending|length %}
+        <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 12px;">
+            Показано {{ past_pending|length }} з {{ past_pending_count }}.
+            <a href="{% url 'doctor_appointments' %}?status=active" style="color: #a78bfa;">Усі активні →</a>
+        </p>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Останні висновки -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <h3>📄 Останні висновки</h3>
+
+    {% for c in recent_conclusions %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div>
+                <strong>{{ c.created_at|date:"d.m.Y H:i" }}</strong>
+                <span style="color: #a78bfa; margin-left: 12px;">{{ c.patient.username }}</span>
+                <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 4px;">
+                    {% if c.icd10 %}{{ c.icd10.code }} — {% endif %}{{ c.diagnosis|truncatechars:60 }}
+                </p>
+            </div>
+            <div style="white-space: nowrap;">
+                <a href="{% url 'view_conclusion' c.appointment.id %}" class="btn btn-outline">Переглянути</a>
+                <a href="{% url 'edit_conclusion' c.id %}" class="btn btn-outline">✏️ Редагувати</a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">Висновків ще немає</p>
     {% endfor %}
 </div>
 

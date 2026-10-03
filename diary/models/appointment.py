@@ -28,6 +28,13 @@ class Appointment(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
     complaints = models.TextField(blank=True, verbose_name="Скарги")
     comment = models.TextField(blank=True, verbose_name="Коментар")
+    cancelled_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cancelled_appointments'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -62,3 +69,13 @@ class Appointment(models.Model):
         """Прийом уже завершився (з урахуванням реальної тривалості), а висновок не створено"""
         end_time = self.date + timedelta(minutes=self.duration_minutes)
         return self.status == 'scheduled' and end_time < timezone.now()
+
+
+    @property
+    def status_label(self):
+        """Текст статусу; для скасованих показує, хто скасував"""
+        if self.status == 'cancelled' and self.cancelled_by:
+            if self.cancelled_by.role == 'doctor':
+                return 'Скасовано лікарем'
+            return 'Скасовано пацієнтом'
+        return self.get_status_display()
