@@ -1,0 +1,103 @@
+{% extends "diary/base.html" %}
+
+{% block title %}
+    {% if action == 'create' %}Створити користувача{% else %}Редагувати користувача{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        {% if action == 'create' %}
+            ➕ Створити користувача
+        {% else %}
+            ✏️ Редагувати користувача
+        {% endif %}
+    </h2>
+</div>
+
+<div class="record-card">
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if action == 'create' %}
+            <div class="form-group">
+                <label>Логін (латиниця, без пробілів)</label>
+                <input type="text" name="username" class="form-control" 
+                       placeholder="ivanov_ivan" required>
+            </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" 
+                   placeholder="ivanov@example.com" required
+                   value="{{ user_obj.email|default:'' }}">
+        </div>
+
+         <div class="form-group">
+            <label>Прізвище</label>
+            <input type="text" name="last_name" class="form-control" 
+                   placeholder="Іванов"
+                   value="{{ user_obj.last_name|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Ім'я</label>
+            <input type="text" name="first_name" class="form-control" 
+                   placeholder="Іван"
+                   value="{{ user_obj.first_name|default:'' }}">
+        </div>
+        
+       
+        
+        <div class="form-group">
+            <label>По батькові</label>
+            <input type="text" name="middle_name" class="form-control"
+                   placeholder="Іванович"
+                   value="{{ profile.middle_name|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" name="phone" class="form-control" 
+                   placeholder="+380..."
+                   value="{{ profile.phone|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Стать</label>
+            <select name="gender" class="form-control">
+                <option value="">— Не вказано —</option>
+                <option value="M" {% if profile.gender == 'M' %}selected{% endif %}>Чоловіча</option>
+                <option value="F" {% if profile.gender == 'F' %}selected{% endif %}>Жіноча</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Дата народження</label>
+            <input type="date" name="date_of_birth" class="form-control"
+                value="{{ profile.date_of_birth|date:'Y-m-d'|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label>Роль</label>
+            <select name="role" class="form-control">
+                <option value="patient" {% if profile.role == 'patient' %}selected{% endif %}>Пацієнт</option>
+                <option value="doctor" {% if profile.role == 'doctor' %}selected{% endif %}>Лікар</option>
+                <option value="admin" {% if profile.role == 'admin' %}selected{% endif %}>Адміністратор</option>
+            </select>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'administrator' %}" class="btn btn-secondary">← Назад</a>
+            <button type="submit" class="btn btn-primary">
+                {% if action == 'create' %}
+                    ➕ Створити + надіслати лист
+                {% else %}
+                    💾 Зберегти
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

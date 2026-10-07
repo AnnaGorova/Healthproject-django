@@ -7,6 +7,7 @@ from datetime import date
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, verbose_name="По батькові")
     email = models.EmailField()
     role = models.CharField(max_length=20, choices=[
         ('patient', 'Пацієнт'),

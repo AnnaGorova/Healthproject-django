@@ -1,9 +1,143 @@
 {% extends "diary/base.html" %}
 
-{% block title %} Адміністратор{% endblock  %}
+{% block title %}Адмін-панель{% endblock %}
 
 {% block content %}
-     <h1>Профіль Адміністратора</h1>
-         <hr><h1><strong> Привіт, АДМІН!</strong></h1><hr>
+<div class="page-header">
+    <h2>🔑 Адмін-панель</h2>
+    <p class="subtitle">Управління користувачами</p>
+</div>
+
+<!-- Дії -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <a href="{% url 'admin_user_create' %}" class="btn btn-primary">
+        ➕ Створити користувача
+    </a>
+</div>
+
+<!-- Пошук і фільтр -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
         
-{% endblock  %}
+        <div style="flex: 1; min-width: 200px;">
+            <label style="color: #a78bfa; font-size: 13px; margin-bottom: 6px; display: block;">
+                Пошук
+            </label>
+            <input type="text" name="search" class="form-control" 
+                   value="{{ search }}" placeholder="ПІБ, email або логін...">
+        </div>
+        
+        <div style="flex: 1; min-width: 150px;">
+            <label style="color: #a78bfa; font-size: 13px; margin-bottom: 6px; display: block;">
+                Роль
+            </label>
+            <select name="role" class="form-control">
+                <option value="">Всі</option>
+                <option value="patient" {% if role == 'patient' %}selected{% endif %}>Пацієнт</option>
+                <option value="doctor" {% if role == 'doctor' %}selected{% endif %}>Лікар</option>
+                <option value="admin" {% if role == 'admin' %}selected{% endif %}>Адміністратор</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-primary">🔍 Знайти</button>
+            <a href="{% url 'administrator' %}" class="btn btn-secondary">✕ Скинути</a>
+        </div>
+    </form>
+</div>
+
+<!-- Таблиця -->
+<div class="record-card">
+    <h3>👥 Користувачі ({{ users|length }})</h3>
+    
+    {% if users %}
+        <div style="overflow-x: auto; margin-top: 16px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid rgba(167, 139, 250, 0.3);">
+                        <th style="text-align: left; padding: 12px; color: #a78bfa;">ID</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa;">ПІБ</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa;">Email</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa;">Роль</th>
+                        <th style="text-align: left; padding: 12px; color: #a78bfa;">Статус</th>
+                        <th style="text-align: right; padding: 12px; color: #a78bfa;">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">{{ u.id }}</td>
+                            <td style="padding: 12px; color: #fff;">
+                                <strong>
+                                    {% if u.userprofile %}
+                                        {{ u.userprofile.username }}
+                                    {% else %}
+                                        {{ u.username }}
+                                    {% endif %}
+                                </strong>
+                            </td>
+                            <td style="padding: 12px; color: rgba(255,255,255,0.7);">{{ u.email }}</td>
+                            <td style="padding: 12px;">
+                                {% if u.userprofile %}
+                                    {% if u.userprofile.role == 'admin' %}
+                                        <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #F87171;">Адмін</span>
+                                    {% elif u.userprofile.role == 'doctor' %}
+                                        <span class="badge" style="background: rgba(52, 211, 153, 0.2); color: #34D399;">Лікар</span>
+                                    {% else %}
+                                        <span class="badge" style="background: rgba(96, 165, 250, 0.2); color: #60A5FA;">Пацієнт</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge">—</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px;">
+                                {% if u.is_active %}
+                                    <span style="color: #34D399;">✅ Активний</span>
+                                {% else %}
+                                    <span style="color: #F87171;">❌ Неактивний</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px; text-align: right; white-space: nowrap;">
+                                <!-- ✏️ Редагувати -->
+                                <a href="{% url 'admin_user_edit' u.id %}" 
+                                   class="btn btn-secondary"
+                                   style="padding: 6px 12px; font-size: 13px;">
+                                    ✏️
+                                </a>
+                                
+                                <!-- ❌ Деактивувати / ✅ Активувати -->
+                                {% if u.id != request.user.id and not u.is_superuser %}
+                                    <form method="post" action="{% url 'admin_user_toggle' u.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        {% if u.is_active %}
+                                            <button type="submit" class="btn btn-danger" 
+                                                    style="padding: 6px 12px; font-size: 13px;"
+                                                    title="Деактивувати">
+                                                ❌
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-success" 
+                                                    style="padding: 6px 12px; font-size: 13px;"
+                                                    title="Активувати">
+                                                ✅
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted" style="padding: 20px; text-align: center;">
+            {% if search or role %}
+                Нічого не знайдено за фільтрами
+            {% else %}
+                Немає користувачів
+            {% endif %}
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

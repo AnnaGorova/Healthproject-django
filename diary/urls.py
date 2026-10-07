@@ -55,7 +55,14 @@ urlpatterns = [
     path('questions/reply/<int:question_id>/', views.reply_question, name='reply_question'),
     path('conclusions/my/', views.my_conclusions, name='my_conclusions'),
    
+       
+   # Адмін-панель
     path('administrator/', views.administrator, name='administrator'),
+    path('administrator/users/create/', views.admin_user_create, name='admin_user_create'),
+    path('administrator/users/<int:user_id>/edit/', views.admin_user_edit, name='admin_user_edit'),
+    path('administrator/users/<int:user_id>/toggle/', views.admin_user_toggle, name='admin_user_toggle'),
+   
+   
     # api views
     path('api/diary/records/', records_list_api, name='records_list_api'),
     

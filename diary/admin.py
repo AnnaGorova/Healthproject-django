@@ -243,3 +243,29 @@ class MedicalConclusionAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'doctor']
     search_fields = ['patient__username', 'doctor__username', 'diagnosis']
     readonly_fields = ['created_at']
+
+# ===== ОБМЕЖЕННЯ ДОСТУПУ ДЛЯ ADMIN =====
+
+def is_superuser_or_doctor(request):
+    """Superuser або лікар — бачать медичні моделі"""
+    if request.user.is_superuser:
+        return True
+    if hasattr(request.user, 'userprofile'):
+        return request.user.userprofile.role == 'doctor'
+    return False
+
+
+# Приховати медичні моделі від звичайних admin
+for model_admin in [
+    HealthRecordAdmin, 
+    AppointmentAdmin, 
+    ScheduleAdmin,
+    MedicalConclusionAdmin, 
+    QuestionAdmin, 
+    QuestionMessageAdmin
+]:
+    model_admin.has_module_permission = lambda self, request: is_superuser_or_doctor(request)
+    model_admin.has_view_permission = lambda self, request, obj=None: is_superuser_or_doctor(request)
+    model_admin.has_change_permission = lambda self, request, obj=None: is_superuser_or_doctor(request)
+    model_admin.has_add_permission = lambda self, request: is_superuser_or_doctor(request)
+    model_admin.has_delete_permission = lambda self, request, obj=None: is_superuser_or_doctor(request)
