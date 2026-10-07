@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
@@ -23,13 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x1ty11@hh39^z3-(!8-9@2=fsh*ynk9@ed_3@e(+8$$laafu0a'
-
+# SECRET_KEY = 'django-insecure-x1ty11@hh39^z3-(!8-9@2=fsh*ynk9@ed_3@e(+8$$laafu0a'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-key')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+# DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com').split(',')
+
+# CSRF_TRUSTED_ORIGINS важливо для безпеки форм
+CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS if host != '.onrender.com']
 
 # Application definition
 
@@ -84,6 +89,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default='postgres://healthproject_user:healthproject123@127.0.0.1:5432/healthproject',
         conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -114,15 +120,29 @@ LANGUAGE_CODE = 'en-us'   #en-us    uk, але змінюється повніс
 
 TIME_ZONE = 'Europe/Kiev'
 
-USE_I18N = True
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+
+# WhiteNoise для обслуговування статичних файлів на production
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 
 
 LOGIN_URL = 'login'
@@ -149,8 +169,8 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')     # ← App Password (16 �
 DEFAULT_FROM_EMAIL = f'Smart Health Bridge <{config("EMAIL_HOST_USER")}>'
 
 # ===== ДЛЯ ПОСИЛАННЯ У ЛИСТІ =====
-PROTOCOL = 'http'
-DOMAIN = '127.0.0.1:8000'
+PROTOCOL = config('PROTOCOL', default='http')
+DOMAIN = config('DOMAIN', default='127.0.0.1:8000')
 
 # ===== ЧАС ЖИТТЯ ПОСИЛАННЯ =====
 PASSWORD_RESET_TIMEOUT = 86400  # 24 години

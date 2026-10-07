@@ -2,8 +2,13 @@
 *.log
 *.pyc
 __pycache__/
+*.sqlite3
 db.sqlite3
+db.sqlite3.backup
 
+# Static files (collected)
+staticfiles/
+media/
 
 # Virtual Environment
 venv/
@@ -16,4 +21,13 @@ venv/
 
 # Secrets
 .env
+*.env
+!.env.example
 local_settings.py
+
+# Backups / temp fixtures
+backup_*.json
+db_fixed*.json
+db_reordered*.json
+db_original_backup.json
+db.json.bak

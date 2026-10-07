@@ -1,0 +1,35 @@
+databases:
+  - name: healthproject-db
+    databaseName: healthproject
+    user: healthproject_user
+    plan: free
+
+services:
+  - type: web
+    name: healthproject
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn healthproject.wsgi:application"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: healthproject-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: PROTOCOL
+        value: "https"
+      - key: DOMAIN
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12.5"
+        
