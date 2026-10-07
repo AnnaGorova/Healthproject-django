@@ -13,8 +13,10 @@ from .models import UserProfile, DoctorProfile
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance, created, raw=False, **kwargs):
     """Автоматично створює UserProfile при створенні User"""
+    if raw:       
+        return    
     if created:
         # Роль — з форми (якщо є) або за замовчуванням
         role = getattr(instance, '_pending_role', None)
@@ -48,8 +50,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=User)
-def send_password_setup_email(sender, instance, created, **kwargs):
+def send_password_setup_email(sender, instance, created, raw=False, **kwargs):
     """Надсилає лист при створенні User без пароля"""
+    if raw:
+        return
     if created and not instance.is_staff and not instance.has_usable_password():
         token = default_token_generator.make_token(instance)
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
