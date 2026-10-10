@@ -31,3 +31,10 @@ db_fixed*.json
 db_reordered*.json
 db_original_backup.json
 db.json.bak
+# Backups
+backup_*.dump
+backup_*.json
+*.bak
+
+# Legacy (ÿךשמ םו ץמקועו ג Git)
+# diary/_legacy/
