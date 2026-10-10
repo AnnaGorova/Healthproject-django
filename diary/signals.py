@@ -35,7 +35,7 @@ def create_user_profile(sender, instance, created, raw=False, **kwargs):
         profile = UserProfile.objects.create(
             user=instance,
             username=full_name,
-            email=instance.email,
+           
             role=role,
         )
         

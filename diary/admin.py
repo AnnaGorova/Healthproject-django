@@ -90,7 +90,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = [
         'id', 
         'username', 
-        'email', 
+        'user_email',
         'role', 
         'phone',           
         'gender',          
@@ -105,14 +105,14 @@ class UserProfileAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'username', 
-        'email', 
+        'user__email',
         'phone'            
     ]
     raw_id_fields = ['doctor']
     
     fieldsets = (
         ('Основна інформація', {
-            'fields': ('user', 'username', 'email', 'role')
+            'fields': ('user', 'username', 'role')
         }),
         ('Особиста інформація', {
             'fields': ('phone', 'gender', 'date_of_birth')
@@ -121,13 +121,15 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ('doctor',)
         }),
     )
+ 
+    @admin.display(description='Email', ordering='user__email')
+    def user_email(self, obj):
+        return obj.user.email
+    
     def is_active_user(self, obj):
         return obj.user.is_active
     is_active_user.boolean = True
     is_active_user.short_description = 'Активний'
-
-
-
 
 
 
