@@ -15,7 +15,7 @@
     {% for q in questions %}
         <div class="question-card">
             <p><strong>Від:</strong> {{ q.patient.username|default:"Не вказано" }}</p>
-            <p><strong>Email:</strong> {{ q.patient.email|default:"Не вказано" }}</p>
+            <p><strong>Email:</strong> {{ q.patient.user.email|default:"Не вказано" }}</p>
             <p><strong>Телефон:</strong> {{ q.phone|default:"Не вказано" }}</p>
             <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
             <p><strong>Статус:</strong> 

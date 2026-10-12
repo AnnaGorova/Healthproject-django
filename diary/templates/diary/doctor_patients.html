@@ -91,7 +91,7 @@
                                 {{ patient.phone|default:"—" }}
                             </td>
                             <td style="padding: 12px; color: rgba(255,255,255,0.7);">
-                                {{ patient.email|default:"—" }}
+                                {{ patient.user.email|default:"—" }}
                             </td>
                             <td style="padding: 12px; text-align: right;">
                                 <a href="{% url 'patient_card' patient.id %}" 

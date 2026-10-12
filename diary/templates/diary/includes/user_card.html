@@ -6,7 +6,7 @@
    
     <p><strong> ID:</strong> {{ user.id }}</p>
     <p><strong> Ім'я:</strong> {{ user.username }}</p>
-    <p><strong> Email:</strong> {{ user.email }}</p>
+    <p><strong> Email:</strong> {{ user.user.email }}</p>
     <p>        
         {% if user.role == 'patient' %} 
             <a href="{% url 'user_records' user.id %}">Показати записи</a>

@@ -26,7 +26,17 @@ from dal import autocomplete
 from django.http import JsonResponse
 from django.db.models import Q, Count
 from .forms.conclusion import MedicalConclusionForm
+from django.http import Http404
 import re
+
+
+def is_admin_or_superuser(user):
+    """Перевірка: адмін або супер_адмін"""
+    if user.is_superuser:
+        return True
+    if hasattr(user, 'userprofile') and user.userprofile.role == 'admin':
+        return True
+    return False
 
 
 def old_home(request):
@@ -44,36 +54,51 @@ class AboutView(TemplateView):
 def records(request):
     user_profile = request.user.userprofile
 
+    # 1. Явна заборона 
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу до медичних записів")
+
+    # 2. Безпечний default (порожній queryset)
+    all_records = HealthRecord.objects.none()
+
+    # 3. Основна логіка
     if user_profile.role == 'patient':
         all_records = HealthRecord.objects.filter(user=user_profile, is_active=True)
     elif user_profile.role == 'doctor':
         patient_ids = user_profile.patients.values_list('id', flat=True)
         all_records = HealthRecord.objects.filter(user_id__in=patient_ids, is_active=True)
     else:
-        all_records = HealthRecord.objects.all()
-    
-    
-       
+        # 4. Аномалія (нова роль тощо) → 404
+        raise Http404("Сторінку не знайдено")
+
     context = {
         'records': all_records,
         'user_profile': user_profile,
-       
     }
-    
     return render(request, 'diary/records.html', context)
 
 
 @login_required
 def user_records(request, user_id):
+    # 1. Явна заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+
     target_user = get_object_or_404(UserProfile, id=user_id)
     current_user = request.user.userprofile
 
+    # 2. Пацієнт — тільки себе
     if current_user.role == 'patient' and current_user.id != target_user.id:
         raise PermissionDenied("Ви не маєте доступу до записів іншого користувача")
     
+    # 3. Лікар — тільки своїх пацієнтів
     if current_user.role == 'doctor' and target_user.role == 'patient':
         if target_user.doctor != current_user:
             raise PermissionDenied("Отримайте доступ")
+
+    # 4. Аномалія
+    if current_user.role not in ['patient', 'doctor']:
+        raise Http404("Сторінку не знайдено")
 
     all_records = HealthRecord.objects.filter(user=target_user, is_active=True)
 
@@ -81,26 +106,38 @@ def user_records(request, user_id):
         'records': all_records,
         'user_profile': target_user,
     }
-
     return render(request, 'diary/records.html', context)
+
+
+
 
 @login_required
 def record_detail(request, pk):
-    record = get_object_or_404(HealthRecord, id=pk)
+    # 1. Явна заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+
     user_profile = request.user.userprofile      
     
+    # 2. Пацієнт — тільки свій запис
     if user_profile.role == 'patient':
         record = get_object_or_404(HealthRecord, id=pk, user=user_profile)
-    else: 
+    # 3. Лікар — будь-який (або свого пацієнта)
+    elif user_profile.role == 'doctor':
         record = get_object_or_404(HealthRecord, id=pk)
+    # 4. Аномалія
+    else:
+        raise Http404("Сторінку не знайдено")
 
     context = {
         'record': record,
         'record_date': record.date
     }
-
     return render(request, 'diary/record_detail.html', context)
 
+
+
+   
 
 
 
@@ -301,27 +338,32 @@ def ask_question(request):
         form = DoctorQuestionForm()
     return render(request, 'diary/ask_question.html', {'form': form})
 
-@login_required
+
+@login_required  
 def my_questions(request):
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+    
     user_profile = request.user.userprofile
     questions = Question.objects.filter(patient=user_profile).order_by('-created_at')
     return render(request, 'diary/my_questions.html', {'questions': questions})
 
 
-
 @login_required
 def all_questions(request):
+    # 1. Явна заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу до звернень")
+
     current_user = request.user.userprofile
     
-    if current_user.role not in ['doctor', 'admin']:
+    # 2. Тільки лікар
+    if current_user.role != 'doctor':
         raise PermissionDenied("Доступ заборонено")
     
-    if current_user.role == 'doctor':
-        questions = Question.objects.filter(
-            doctor=current_user
-        ).order_by('-created_at')
-    else:
-        questions = Question.objects.all().order_by('-created_at')
+    # 3. Тільки свої звернення
+    questions = Question.objects.filter(doctor=current_user).order_by('-created_at')
     
     return render(request, 'diary/all_questions.html', {
         'questions': questions,
@@ -331,6 +373,11 @@ def all_questions(request):
 
 @login_required
 def create_record(request):
+
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+
     if request.method == 'POST':
         form = HealthRecordForm(request.POST)
         if form.is_valid():
@@ -352,10 +399,13 @@ def create_record(request):
 
 @login_required
 def my_records(request):
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+    
     user_profile = request.user.userprofile
-    records = HealthRecord.objects.filter(user = user_profile, is_active=True)
+    records = HealthRecord.objects.filter(user=user_profile, is_active=True)
     return render(request, 'diary/my_records.html', {'records': records})
-
 
 
 
@@ -363,8 +413,11 @@ def my_records(request):
 def edit_record(request, pk):
     record = get_object_or_404(HealthRecord, id=pk)
     current_user = request.user.userprofile
+    
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
 
-   
     if record.user != current_user:
         raise PermissionDenied("Ви не можете редагувати чужий запис")
     
@@ -386,6 +439,10 @@ def edit_record(request, pk):
 def delete_record(request, pk):
     record = get_object_or_404(HealthRecord, id=pk)
    
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+
     if record.user != request.user.userprofile:
         raise PermissionDenied("Ви не можете видалити чужий запис")
     
@@ -648,6 +705,10 @@ def filter_appointments(request, queryset):
 
 @login_required
 def my_appointments(request):
+    # Заборона для адмінів
+    if is_admin_or_superuser(request.user):
+        raise PermissionDenied("Адміністратори не мають доступу")
+    
     user_profile = request.user.userprofile
     appointments = Appointment.objects.filter(
         patient=user_profile
