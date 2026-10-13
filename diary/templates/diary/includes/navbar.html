@@ -36,6 +36,7 @@
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
                 <li class="nav-divider">🔑 Адміну</li>
                 <li><a href="{% url "administrator" %}" class="nav-link">Адмін</a></li>         
+                <li><a href="{% url 'profile' %}" class="nav-link">👤 Профіль</a></li>
                 <li><a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a></li>
                 
             {% endif %}

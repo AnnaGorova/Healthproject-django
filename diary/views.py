@@ -27,6 +27,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Count
 from .forms.conclusion import MedicalConclusionForm
 from django.http import Http404
+from datetime import datetime as dt_class
 import re
 
 
@@ -70,6 +71,195 @@ def doctor_can_access_patient(doctor_profile, patient_profile):
         status__in=['scheduled', 'completed']
     ).exists()
 
+
+
+
+def get_available_slots(doctor, days=14):
+    """
+    Повертає список доступних слотів для лікаря.
+    
+    Структура:
+    [
+        {
+            'date': date(2026, 10, 14),
+            'date_str': '2026-10-14',
+            'day_name': 'Середа',
+            'slots': [
+                {'time': '09:00', 'datetime': datetime(2026, 10, 14, 9, 0), 'is_booked': False},
+                ...
+            ]
+        },
+        ...
+    ]
+    
+    Використовується і для показу, і для валідації POST.
+    """
+   
+    
+    DAYS_UA = {
+        0: 'Понеділок', 1: 'Вівторок', 2: 'Середа', 3: 'Четвер',
+        4: 'П\'ятниця', 5: 'Субота', 6: 'Неділя',
+    }
+    
+    slots_by_day = []
+    today = date.today()
+    now = timezone.now()
+    
+    for i in range(days):
+        current_date = today + timedelta(days=i)
+        day_of_week = current_date.weekday()
+        
+        # Розклад на цю дату
+        day_schedules = Schedule.objects.filter(doctor=doctor, date=current_date)
+        
+        if day_schedules.exists():
+            if day_schedules.filter(is_day_off=True).exists():
+                continue
+            schedules_to_use = day_schedules.exclude(is_day_off=True)
+        else:
+            if day_of_week > 4:
+                continue
+            schedules_to_use = [{
+                'start_time': time(8, 0),
+                'end_time': time(17, 0),
+                'slot_duration': 30,
+            }]
+           
+        day_slots = []
+        for schedule in schedules_to_use:
+            if isinstance(schedule, dict):
+                start = schedule['start_time']
+                end = schedule['end_time']
+                duration = schedule['slot_duration']
+            else:
+                start = schedule.start_time
+                end = schedule.end_time
+                duration = schedule.slot_duration
+            
+            current_time = dt_class.combine(current_date, start)
+            end_datetime = dt_class.combine(current_date, end)
+            
+            while current_time + timedelta(minutes=duration) <= end_datetime:
+                # Тільки майбутні
+                if timezone.make_aware(current_time) > now:
+                    is_booked = Appointment.objects.filter(
+                        doctor=doctor,
+                        date=current_time,
+                        status='scheduled'
+                    ).exists()
+                    
+                    day_slots.append({
+                        'time': current_time.strftime('%H:%M'),
+                        'datetime': current_time,
+                        'is_booked': is_booked,
+                    })
+                
+                current_time += timedelta(minutes=duration)
+        
+        if day_slots:
+            slots_by_day.append({
+                'date': current_date,
+                'date_str': current_date.strftime('%Y-%m-%d'),
+                'day_name': DAYS_UA[current_date.weekday()],
+                'slots': day_slots,
+            })
+    
+    return slots_by_day
+
+
+def is_slot_available(doctor, date_str, time_str):
+    """
+    Перевірка: чи є слот доступним для бронювання.
+    
+    Повертає:
+    - (True, None) — слот доступний
+    - (False, 'повідомлення') — слот недоступний з причиною
+    
+    ОПТИМІЗОВАНО: не викликає get_available_slots,
+    перевіряє тільки конкретний слот (2-3 запити до БД).
+    """
+    
+    # 1. Парсинг дати
+    try:
+        parsed_date = dt_class.strptime(date_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        return False, "❌ Некоректний формат дати"
+    
+    # 2. Парсинг часу
+    try:
+        parsed_time = dt_class.strptime(time_str, '%H:%M').time()
+    except (ValueError, TypeError):
+        return False, "❌ Некоректний формат часу"
+    
+    # 3. Комбінуємо
+    appointment_datetime = dt_class.combine(parsed_date, parsed_time)
+    
+    # 4. Майбутнє?
+    if timezone.make_aware(appointment_datetime) <= timezone.now():
+        return False, "❌ Не можна бронювати минулий час"
+    
+    # 5. Знаходимо розклад лікаря на цю дату
+    day_schedules = Schedule.objects.filter(doctor=doctor, date=parsed_date)
+    
+    if day_schedules.exists():
+        # Є свій розклад
+        if day_schedules.filter(is_day_off=True).exists():
+            return False, "❌ Лікар не працює в цей день"
+        
+        schedules_to_check = day_schedules.exclude(is_day_off=True)
+    else:
+        # Немає розкладу — використовуємо дефолт (Пн-Пт, 8:00-17:00)
+        if parsed_date.weekday() > 4:
+            return False, "❌ Лікар не працює в цей день"
+        
+        schedules_to_check = [{
+            'start_time': time(8, 0),
+            'end_time': time(17, 0),
+            'slot_duration': 30,
+        }]
+    
+    # 6. Перевіряємо, що час відповідає сітці слотів
+    is_valid_slot = False
+    
+    for schedule in schedules_to_check:
+        if isinstance(schedule, dict):
+            start = schedule['start_time']
+            end = schedule['end_time']
+            duration = schedule['slot_duration']
+        else:
+            start = schedule.start_time
+            end = schedule.end_time
+            duration = schedule.slot_duration
+        
+        # Генеруємо слоти для цього розкладу
+        current_time = dt_class.combine(parsed_date, start)
+        end_datetime = dt_class.combine(parsed_date, end)
+        
+        while current_time + timedelta(minutes=duration) <= end_datetime:
+            if current_time == appointment_datetime:
+                is_valid_slot = True
+                break
+            
+            current_time += timedelta(minutes=duration)
+        
+        if is_valid_slot:
+            break
+    
+    if not is_valid_slot:
+        return False, "❌ Цей час недоступний (не відповідає сітці слотів)"
+    
+    # 7. Перевіряємо зайнятість
+    is_booked = Appointment.objects.filter(
+        doctor=doctor,
+        date=appointment_datetime,
+        status='scheduled'
+    ).exists()
+    
+    if is_booked:
+        return False, "❌ Цей час вже зайнятий"
+    
+    # 8. Все OK
+    return True, None
 
 
 def old_home(request):
@@ -565,120 +755,41 @@ def book_appointment(request, doctor_id):
         raise PermissionDenied("Тільки пацієнти можуть записуватися")
     
     if request.method == 'POST':
-        date_str = request.POST.get('date')
-        time_str = request.POST.get('time')
-        complaints = request.POST.get('complaints', '')
-
+        date_str = request.POST.get('date', '').strip()
+        time_str = request.POST.get('time', '').strip()
+        complaints = request.POST.get('complaints', '').strip()
+        
+        # 1. Перевірка наявності
         if not date_str or not time_str:
-            messages.error(request, "⚠️ Будь ласка, оберіть дату та час")
+            messages.error(request, "⚠️ Оберіть дату та час")
             return redirect('book_appointment', doctor_id=doctor_id)
         
-        appointment_date = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+        # 2. Перевірка доступності слоту
+        is_available, error_message = is_slot_available(doctor, date_str, time_str)
         
-        if Appointment.objects.filter(
-            doctor=doctor, 
-            date=appointment_date,
-            status='scheduled'
-        ).exists():
-            messages.error(request, "Цей час вже зайнятий")
-        else:
-            Appointment.objects.create(
-                patient=user_profile,
-                doctor=doctor,
-                date=appointment_date,
-                complaints=complaints,
-            )
-            messages.success(request, "Ви успішно записані!")
-            return redirect('my_appointments')
-    
-    # ===== ГЕНЕРАЦІЯ СЛОТІВ =====
-    slots = []
-    today = date.today()
-    now = timezone.now()
-
-    DAYS_UA = {
-        0: 'Понеділок',
-        1: 'Вівторок',
-        2: 'Середа',
-        3: 'Четвер',
-        4: 'П\'ятниця',
-        5: 'Субота',
-        6: 'Неділя',
-    }
-
-    # ===== ГІБРИДНА ЛОГІКА: свій розклад + дефолт =====
-    for i in range(14):
-        current_date = today + timedelta(days=i)
-        day_of_week = current_date.weekday()
+        if not is_available:
+            messages.error(request, error_message)
+            return redirect('book_appointment', doctor_id=doctor_id)
         
-        # Шукаємо розклад на цю дату
-        day_schedules = Schedule.objects.filter(
+        # 3. Створюємо прийом
+        appointment_datetime = dt_class.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+        
+        Appointment.objects.create(
+            patient=user_profile,
             doctor=doctor,
-            date=current_date
+            date=appointment_datetime,
+            complaints=complaints,
         )
-        
-        if day_schedules.exists():
-            # чи це вихідний?
-            if day_schedules.filter(is_day_off=True).exists():
-                continue  # Пропустити день
-            
-            # Є свій розклад → використовуємо (без вихідних)
-            schedules_to_use = day_schedules.exclude(is_day_off=True)
-        else:
-            # Немає → використовуємо дефолт (тільки Пн-Пт)
-            if day_of_week > 4:
-                continue  # Сб, Нд — вихідний
-            
-            # Дефолт: 8:00-17:00, 30 хв
-            schedules_to_use = [{
-                'start_time': time(8, 0),
-                'end_time': time(17, 0),
-                'slot_duration': 30,
-            }]
-        
-        day_slots = []
-        for schedule in schedules_to_use:
-            if isinstance(schedule, dict):
-                start = schedule['start_time']
-                end = schedule['end_time']
-                duration = schedule['slot_duration']
-            else:
-                start = schedule.start_time
-                end = schedule.end_time
-                duration = schedule.slot_duration
-            
-            current_time = datetime.combine(current_date, start)
-            end_datetime = datetime.combine(current_date, end)
-            
-            while current_time < end_datetime:
-                if timezone.make_aware(current_time) > now:
-                    is_booked = Appointment.objects.filter(
-                        doctor=doctor,
-                        date=current_time,
-                        status='scheduled'
-                    ).exists()
-                    
-                    day_slots.append({
-                        'time': current_time.strftime('%H:%M'),
-                        'datetime': current_time,
-                        'is_booked': is_booked,
-                    })
-                
-                current_time += timedelta(minutes=duration)
-        
-        if day_slots:
-            slots.append({
-                'date': current_date,
-                'date_str': current_date.strftime('%Y-%m-%d'),
-                'day_name': DAYS_UA[current_date.weekday()],
-                'slots': day_slots,
-            })
+        messages.success(request, "✅ Ви успішно записані!")
+        return redirect('my_appointments')
+    
+    # GET — показуємо доступні слоти
+    slots = get_available_slots(doctor, days=14)
     
     return render(request, 'diary/book_appointment.html', {
         'doctor': doctor,
         'slots': slots,
     })
-
 
 @login_required
 def cancel_appointment(request, appointment_id):
@@ -816,8 +927,8 @@ def manage_schedule(request):
         is_day_off = request.POST.get('is_day_off') == 'on'
         start = request.POST.get('start_time')
         end = request.POST.get('end_time')
-        duration = request.POST.get('slot_duration', 30)
-        
+        duration = 30
+
         # ===== ВАЛІДАЦІЯ =====
         if not date_str:
             messages.error(request, "⚠️ Оберіть дату")
@@ -877,7 +988,7 @@ def manage_schedule(request):
                     is_day_off=False,
                     start_time=start,
                     end_time=end,
-                    slot_duration=int(duration),
+                    slot_duration=30,
                 )
                 messages.success(request, "✅ Розклад додано")
                 return redirect('manage_schedule')
