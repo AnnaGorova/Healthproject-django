@@ -1483,6 +1483,11 @@ def admin_user_toggle(request, user_id):
     
     if user_profile.role != 'admin':
         raise PermissionDenied("Тільки адміністратори мають доступ")
+
+    #  ТІЛЬКИ POST!
+    if request.method != 'POST':
+        messages.error(request, "❌ Некоректний метод запиту")
+        return redirect('administrator')
     
     user = get_object_or_404(User, id=user_id)
     
