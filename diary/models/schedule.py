@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q, CheckConstraint
 from .user_profile import UserProfile
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Schedule(models.Model):
@@ -14,13 +16,25 @@ class Schedule(models.Model):
     is_day_off = models.BooleanField(default=False, verbose_name="Вихідний") 
     start_time = models.TimeField(verbose_name="Початок", null=True, blank=True)  
     end_time = models.TimeField(verbose_name="Кінець", null=True, blank=True)    
-    slot_duration = models.IntegerField(default=30, verbose_name="Тривалість прийому (хв)")
+    slot_duration = models.IntegerField(
+        default=30,
+        validators=[
+            MinValueValidator(30),
+            MaxValueValidator(30),
+        ]
+    )
     
     class Meta:
         ordering = ['date', 'start_time']
         verbose_name = "Розклад"
         verbose_name_plural = "Розклади"
         unique_together = ['doctor', 'date', 'start_time']
+        constraints = [
+            CheckConstraint(
+                condition=Q(slot_duration=30),
+                name='slot_duration_30',
+            ),
+        ]
     
     def __str__(self):
         if self.is_day_off:

@@ -130,11 +130,11 @@ def get_available_slots(doctor, days=14):
             if isinstance(schedule, dict):
                 start = schedule['start_time']
                 end = schedule['end_time']
-                duration = schedule['slot_duration']
+               
             else:
                 start = schedule.start_time
                 end = schedule.end_time
-                duration = schedule.slot_duration
+            duration = 30
             
             current_time = dt_class.combine(current_date, start)
             end_datetime = dt_class.combine(current_date, end)
@@ -225,11 +225,11 @@ def is_slot_available(doctor, date_str, time_str):
         if isinstance(schedule, dict):
             start = schedule['start_time']
             end = schedule['end_time']
-            duration = schedule['slot_duration']
+            
         else:
             start = schedule.start_time
             end = schedule.end_time
-            duration = schedule.slot_duration
+        duration = 30
         
         # Генеруємо слоти для цього розкладу
         current_time = dt_class.combine(parsed_date, start)
