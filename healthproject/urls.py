@@ -41,4 +41,4 @@ urlpatterns = [
     
     ]
 
-
+handler404 = 'diary.views.custom_404'

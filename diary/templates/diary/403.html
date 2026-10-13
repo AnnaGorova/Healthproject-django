@@ -1,0 +1,24 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Доступ заборонено{% endblock %}
+
+{% block content %}
+<div class="page-header" style="text-align: center; padding: 80px 20px;">
+    <div style="font-size: 120px; font-weight: 700; line-height: 1; margin-bottom: 24px;
+                background: linear-gradient(135deg, #F87171, #FBBF24);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;">
+        403
+    </div>
+    <h2 style="margin: 24px 0; font-size: 32px; color: #fff;">🚫 Доступ заборонено</h2>
+    <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; 
+              margin: 0 auto 32px; line-height: 1.6;">
+        У вас немає прав для перегляду цієї сторінки.
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'home' %}" class="btn btn-primary">🏠 На головну</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">← Назад</a>
+    </div>
+</div>
+{% endblock %}

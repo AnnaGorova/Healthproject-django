@@ -1,25 +1,84 @@
 {% extends "diary/base.html" %}
 
-{% block title %} Всі  записи про самопочуття {% endblock  %}  
-    
+{% block title %}Записи про самопочуття{% endblock %}
 
-     
 {% block content %}
-    <h1> <strong>Всі  записи про самопочуття</strong><br></h1> 
-    <p> <strong>Користувач:</strong> {{user_profile.username}}</p>
-    <p><strong>Всього записів:</strong> {{ records|length }}</p>
+    <h1><strong>Записи про самопочуття</strong></h1>
+
+    {# Різний заголовок для лікаря і пацієнта #}
+    {% if user_profile.role == 'doctor' %}
+        <p><strong>👨‍⚕️ Лікар:</strong> {{ user_profile.username }}</p>
+        <p><strong>Записи ваших пацієнтів:</strong> {{ records|length }}</p>
+    {% else %}
+        <p><strong>👤 Користувач:</strong> {{ user_profile.username }}</p>
+        <p><strong>Всього записів:</strong> {{ records|length }}</p>
+    {% endif %}
 
     <hr>
 
-    {% for record in records  %}
-        {% include "diary/includes/record_card.html" with record=record %}    
+    {% for record in records %}
+        <div class="record-card">
+            {# ЛІКАР БАЧИТЬ ПАЦІЄНТА #}
+            {% if user_profile.role == 'doctor' %}
+                <p style="font-size: 16px; margin-bottom: 12px;">
+                    <strong>👤 Пацієнт:</strong> 
+                    <a href="{% url 'patient_card' record.user.id %}" 
+                       style="color: #a78bfa; text-decoration: none; font-weight: 600;">
+                        {{ record.user.username }}
+                    </a>
+                </p>
+            {% endif %}
+            
+            <p><strong>📅 Дата:</strong> {{ record.date|date:"d.m.Y H:i" }}</p>
+            
+            {% if record.well_being %}
+                <p><strong>😊 Самопочуття:</strong> {{ record.well_being }}</p>
+            {% endif %}
+            
+            {% if record.complaints %}
+                <p><strong>💬 Скарги:</strong> {{ record.complaints }}</p>
+            {% endif %}
+            
+            {# Показники в один рядок #}
+            <p style="margin-top: 8px;">
+                {% if record.temperature %}
+                    <span>🌡️ {{ record.temperature }}°C</span>
+                {% endif %}
+                {% if record.heart_rate %}
+                    <span style="margin-left: 12px;">❤️ {{ record.heart_rate }} уд/хв</span>
+                {% endif %}
+                {% if record.spo2 %}
+                    <span style="margin-left: 12px;">💨 {{ record.spo2 }}%</span>
+                {% endif %}
+                {% if record.pressure_systolic %}
+                    <span style="margin-left: 12px;">🩸 {{ record.pressure_systolic }}/{{ record.pressure_diastolic }}</span>
+                {% endif %}
+            </p>
+            
+            <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="{% url 'record_detail' record.id %}" class="btn btn-primary">
+                    👁️ Детальніше
+                </a>
+                
+                {#  Лікар може перейти до картки пацієнта #}
+                {% if user_profile.role == 'doctor' %}
+                    <a href="{% url 'patient_card' record.user.id %}" class="btn btn-secondary">
+                        📋 Картка пацієнта
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     {% empty %}
-        <p>Записів поки що немає</p>
+        <p class="text-muted" style="padding: 20px; text-align: center;">
+            {% if user_profile.role == 'doctor' %}
+                Записів у ваших пацієнтів поки що немає
+            {% else %}
+                Записів поки що немає
+            {% endif %}
+        </p>
     {% endfor %}
-    
 
-    <p> <a href="{% url "home" %}">На головну</a></p>
-
-{% endblock  %}
-
-   
+    <p style="margin-top: 24px;">
+        <a href="{% url 'home' %}">← На головну</a>
+    </p>
+{% endblock %}
