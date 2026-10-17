@@ -83,7 +83,12 @@
 
 <!-- Медичні записи -->
 <div class="record-card">
-    <h3>📊 Останні записи здоров'я</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0;">📊 Останні записи здоров'я</h3>
+        <a href="{% url 'patient_analytics' patient.id %}" class="btn btn-primary">
+            📈 Повна аналітика
+        </a>
+    </div>
     
     {% for r in records %}
         <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">

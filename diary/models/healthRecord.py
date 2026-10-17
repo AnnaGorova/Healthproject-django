@@ -172,3 +172,88 @@ class HealthRecord(models.Model):
         ordering = ['-date']  
         verbose_name = "Запис здоров'я"
         verbose_name_plural = "Записи здоров'я"
+
+
+    # ===== МЕТОДИ РИЗИКУ (порогові значення) =====
+    # Порогові значення — орієнтовні (додаткова функціональність).
+    # Офіційне погоджене джерело відсутнє.
+    # Низький — зелений, середній — жовтий, високий — червоний.
+
+    
+    @property
+    def temperature_risk(self):
+        """Температура: зелений 36.0-37.0, жовтий 37.1-38.0, червоний >38.0 або <36.0"""
+        if self.temperature is None:
+            return None
+        if 36.0 <= self.temperature <= 37.0:
+            return 'green'
+        elif 37.0 < self.temperature <= 38.0:
+            return 'yellow'
+        else:
+            return 'red'
+
+    @property
+    def heart_rate_risk(self):
+        """Пульс: зелений 60-90, жовтий 50-59 або 91-100, червоний <50 або >100"""
+        if self.heart_rate is None:
+            return None
+        if 60 <= self.heart_rate <= 90:
+            return 'green'
+        elif 50 <= self.heart_rate <= 100:
+            return 'yellow'
+        else:
+            return 'red'
+
+    @property
+    def spo2_risk(self):
+        """SpO2: зелений 95-100, жовтий 90-94, червоний <90"""
+        if self.spo2 is None:
+            return None
+        if self.spo2 >= 95:
+            return 'green'
+        elif self.spo2 >= 90:
+            return 'yellow'
+        else:
+            return 'red'
+
+    @property
+    def pressure_risk(self):
+        """Тиск: зелений <120/80, жовтий 120-139/80-89, червоний ≥140/≥90 або <90/<60"""
+        if self.pressure_systolic is None or self.pressure_diastolic is None:
+            return None
+        
+        sys = self.pressure_systolic
+        dia = self.pressure_diastolic
+        
+        if sys < 90 or dia < 60:
+            return 'red'
+        elif sys < 120 and dia < 80:
+            return 'green'
+        elif sys < 140 and dia < 90:
+            return 'yellow'
+        else:
+            return 'red'
+
+    @property
+    def blood_sugar_risk(self):
+        """Цукор: зелений 3.9-5.5, жовтий 5.6-7.0, червоний >7.0 або <3.9"""
+        if self.blood_sugar is None:
+            return None
+        if 3.9 <= self.blood_sugar <= 5.5:
+            return 'green'
+        elif 3.9 <= self.blood_sugar <= 7.0:
+            return 'yellow'
+        else:
+            return 'red'
+
+    @property
+    def has_any_risk(self):
+        """Чи є хоч один червоний ризик"""
+        risks = [
+            self.temperature_risk,
+            self.heart_rate_risk,
+            self.spo2_risk,
+            self.pressure_risk,
+            self.blood_sugar_risk,
+        ]
+        return 'red' in risks

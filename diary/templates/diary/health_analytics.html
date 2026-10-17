@@ -1,0 +1,225 @@
+{% extends "diary/base.html" %}
+{% load static %}
+
+{% block title %}Аналітика здоров'я{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📊 Аналітика здоров'я</h2>
+    <p class="subtitle">
+        {% if is_doctor_view %}
+            Пацієнт: <strong>{{ patient.username }}</strong>
+        {% else %}
+            Ваша аналітика
+        {% endif %}
+    </p>
+</div>
+
+<!-- Вибір періоду -->
+<div class="record-card" style="margin-bottom: 24px;">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="?period=week" 
+           class="btn {% if period == 'week' %}btn-primary{% else %}btn-secondary{% endif %}">
+            📅 Тиждень
+        </a>
+        <a href="?period=month" 
+           class="btn {% if period == 'month' %}btn-primary{% else %}btn-secondary{% endif %}">
+            📅 Місяць
+        </a>
+        <a href="?period=year" 
+           class="btn {% if period == 'year' %}btn-primary{% else %}btn-secondary{% endif %}">
+            📅 Рік
+        </a>
+    </div>
+</div>
+
+{% if records %}
+    <!-- Статистика -->
+    <div class="record-card" style="margin-bottom: 24px;">
+        <h3>📈 Статистика за період</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+            
+            <!-- Температура -->
+            {% if stats.avg_temp %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">🌡️ Температура</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_temp|floatformat:1 }}°C
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_temp|floatformat:1 }} / Макс: {{ stats.max_temp|floatformat:1 }}
+                    </p>
+                </div>
+            {% endif %}
+       
+            <!-- Пульс -->
+            {% if stats.avg_hr %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">❤️ Пульс</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_hr|floatformat:0 }} уд/хв
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_hr }} / Макс: {{ stats.max_hr }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- SpO2 -->
+            {% if stats.avg_spo2 %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">💨 SpO2</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_spo2|floatformat:0 }}%
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_spo2 }} / Макс: {{ stats.max_spo2 }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- Тиск -->
+            {% if stats.avg_sys %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">🩸 Тиск</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_sys|floatformat:0 }}/{{ stats.avg_dia|floatformat:0 }}
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_sys }}/{{ stats.min_dia }} / Макс: {{ stats.max_sys }}/{{ stats.max_dia }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- Цукор -->
+            {% if stats.avg_sugar %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">🍬 Цукор</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_sugar|floatformat:1 }} ммоль/л
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_sugar|floatformat:1 }} / Макс: {{ stats.max_sugar|floatformat:1 }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- Вага -->
+            {% if stats.avg_weight %}
+                <div style="padding: 12px; background: rgba(167, 139, 250, 0.08); border-radius: 8px;">
+                    <p style="color: #a78bfa; font-size: 13px;">⚖️ Вага</p>
+                    <p style="color: #fff; font-size: 16px;">
+                        <strong>Сер:</strong> {{ stats.avg_weight|floatformat:1 }} кг
+                    </p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 13px;">
+                        Мін: {{ stats.min_weight|floatformat:1 }} / Макс: {{ stats.max_weight|floatformat:1 }}
+                    </p>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+
+    <!-- Легенда кольорів -->
+    <div class="record-card" style="margin-bottom: 24px;">
+        <h4 style="color: #a78bfa; margin-bottom: 12px;">🎨 Кольори точок за ризиком</h4>
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #fff;">🟢 Норма</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #fff;">🟡 Помірний ризик</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #fff;">🔴 Високий ризик</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Графіки -->
+    <div class="record-card" style="margin-bottom: 24px;">     
+        <h3>📊 Графіки</h3>
+
+        <!-- Повідомлення, якщо немає жодного графіка -->
+        <div id="no-charts-message" style="display: none; text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.6);">
+            <p style="font-size: 36px; margin-bottom: 12px;">📉</p>
+            <p style="font-size: 16px;">Немає числових даних для побудови графіків за цей період.</p>
+        </div>
+
+        
+        <!-- Температура -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">🌡️ Температура (°C)</h4>
+            <canvas id="tempChart" height="80"></canvas>
+        </div>
+        
+        <!-- Пульс -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">❤️ Пульс (уд/хв)</h4>
+            <canvas id="hrChart" height="80"></canvas>
+        </div>
+        
+        <!-- SpO2 -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">💨 SpO2 (%)</h4>
+            <canvas id="spo2Chart" height="80"></canvas>
+        </div>
+        
+        <!-- Тиск -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">🩸 Тиск (мм рт.ст.)</h4>
+            <canvas id="bpChart" height="80"></canvas>
+        </div>
+        
+        <!-- Цукор -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">🍬 Цукор (ммоль/л)</h4>
+            <canvas id="sugarChart" height="80"></canvas>
+        </div>
+        
+        <!-- Вага -->
+        <div style="margin-top: 24px;">
+            <h4 style="color: #a78bfa;">⚖️ Вага (кг)</h4>
+            <canvas id="weightChart" height="80"></canvas>
+        </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="form-actions" style="margin-top: 24px;">
+        {% if is_doctor_view %}
+            <a href="{% url 'patient_card' patient.id %}" class="btn btn-secondary">← Назад до картки</a>
+        {% else %}
+            <a href="{% url 'profile' %}" class="btn btn-secondary">← Назад до профілю</a>
+        {% endif %}
+    </div>
+
+{% else %}
+    <!-- Стан порожнечі (Empty State) -->
+    <div class="record-card" style="text-align: center; padding: 60px 20px;">
+        <p style="font-size: 48px; margin-bottom: 16px;">📭</p>
+        <h3 style="color: #fff; margin-bottom: 12px;">Немає даних за обраний період</h3>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 24px;">
+            Додайте записи здоров'я, щоб побачити статистику та графіки
+        </p>
+        
+        {% if not is_doctor_view %}
+            <a href="{% url 'create_record' %}" class="btn btn-primary">
+                ➕ Створити запис
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
+
+
+{% block extra_js %}
+    {# Дані для графіків (JSON) #}
+    {{ chart_data|json_script:"chart-data" }}
+
+    {# Chart.js з CDN #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    {# Наш analytics.js #}
+    <script src="{% static 'diary/js/analytics.js' %}"></script>
+{% endblock %}

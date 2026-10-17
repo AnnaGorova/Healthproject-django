@@ -62,6 +62,11 @@ urlpatterns = [
     path('administrator/users/<int:user_id>/edit/', views.admin_user_edit, name='admin_user_edit'),
     path('administrator/users/<int:user_id>/toggle/', views.admin_user_toggle, name='admin_user_toggle'),
    
+
+    # Статистика 
+    path('analytics/', views.health_analytics, name='health_analytics'),
+    path('analytics/<int:patient_id>/', views.health_analytics, name='patient_analytics'),
+
    
     # api views
     path('api/diary/records/', records_list_api, name='records_list_api'),
