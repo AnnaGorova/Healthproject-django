@@ -527,10 +527,7 @@ def doctor_dashboard(request):
     ).order_by('-created_at')
 
     # Кількість пацієнтів
-    patients_count = UserProfile.objects.filter(
-        role='patient',
-        appointments__doctor=user_profile
-    ).distinct().count()
+    patients_count = get_accessible_patients(user_profile).count()
 
     return render(request, 'diary/doctor_dashboard.html', {
         'now': now,
@@ -552,10 +549,11 @@ def doctor_patients(request):
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть бачити пацієнтів")
     
-    patients = UserProfile.objects.filter(
-        role='patient',
-        appointments__doctor=user_profile
-    ).distinct().order_by('username')
+    patients = (
+        get_accessible_patients(user_profile)
+        .select_related('user')
+        .order_by('username')
+    )
     
     search = request.GET.get('search', '').strip()
     if search:
@@ -585,7 +583,7 @@ def doctor_patients(request):
     if age_to:
         try:
             min_date = today.replace(year=today.year - int(age_to) - 1)
-            patients = patients.filter(date_of_birth__gte=min_date)
+            patients = patients.filter(date_of_birth__gt=min_date)
         except ValueError:
             pass
     
@@ -639,8 +637,12 @@ def users_list(request):
         doctors = UserProfile.objects.filter(role="doctor")
         admins = UserProfile.objects.filter(role ='admin')
     elif current_user.role == 'doctor':
-        patients = current_user.patients.all()
-        doctors = UserProfile.objects.filter(id=current_user.id) 
+        patients = (
+            get_accessible_patients(current_user)
+            .select_related('user')
+            .order_by('username')
+        )
+        doctors = UserProfile.objects.filter(id=current_user.id)
         admins = []
     else:
         patients = UserProfile.objects.filter(id=current_user.id)
