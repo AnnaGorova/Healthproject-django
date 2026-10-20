@@ -861,7 +861,9 @@ def logout_view(request):
 @login_required
 def book_appointment(request, doctor_id):
     """Запис до конкретного лікаря"""
-    doctor = get_object_or_404(UserProfile, id=doctor_id, role='doctor')
+    doctor = get_object_or_404(
+        UserProfile, id=doctor_id, role='doctor', user__is_active=True
+    )
     user_profile = request.user.userprofile
     
     if user_profile.role != 'patient':
