@@ -1018,7 +1018,10 @@ def my_appointments(request):
 @login_required
 def doctors_list(request):
     """Список всіх лікарів"""
-    doctors = UserProfile.objects.filter(role='doctor')
+    doctors = UserProfile.objects.filter(
+        role='doctor',
+        user__is_active=True,
+    )
     
     return render(request, 'diary/doctors_list.html', {
         'doctors': doctors,
@@ -1214,6 +1217,13 @@ def reply_question(request, question_id):
         patient=request.user.userprofile
     )
     
+    if not question.doctor.user.is_active:
+        messages.error(
+            request,
+            "Лікар більше не приймає звернення. Оберіть іншого лікаря."
+        )
+        return redirect('my_questions')
+
     if question.status == 'closed':
         messages.error(request, "❌ Це питання закрито")
         return redirect('my_questions')

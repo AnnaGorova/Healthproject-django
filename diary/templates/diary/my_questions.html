@@ -47,7 +47,10 @@
             </div>
 
             <!-- Форма продовження -->
-            {% if q.status == 'answered' %}
+            {% if not q.doctor.user.is_active %}
+                <p>Лікар більше не приймає звернення.
+                   Попередня переписка доступна для перегляду.</p>
+            {% elif q.status == 'answered' %}
                 <form method="post" action="{% url 'reply_question' q.id %}" style="margin-top: 16px;">
                     {% csrf_token %}
                     <div class="form-group">

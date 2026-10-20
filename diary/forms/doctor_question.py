@@ -5,7 +5,10 @@ from ..models import UserProfile
 
 class DoctorQuestionForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(
-        queryset=UserProfile.objects.filter(role='doctor'),
+        queryset=UserProfile.objects.filter(
+            role='doctor',
+            user__is_active=True,
+        ),
         label="Лікар",
         empty_label="-- Оберіть лікаря --",
         widget=forms.Select(attrs={'class': 'form-control'})
