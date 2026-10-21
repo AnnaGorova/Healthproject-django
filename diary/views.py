@@ -73,6 +73,19 @@ def doctor_can_access_patient(doctor_profile, patient_profile):
     ).exists()
 
 
+def is_slot_booked(doctor, slot_start):
+    if timezone.is_naive(slot_start):
+        slot_start = timezone.make_aware(slot_start)
+
+    duration = timedelta(minutes=30)
+
+    return Appointment.objects.filter(
+        doctor=doctor,
+        status='scheduled',
+        date__gt=slot_start - duration,
+        date__lt=slot_start + duration,
+    ).exists()
+
 
 
 def get_available_slots(doctor, days=14):
@@ -143,11 +156,7 @@ def get_available_slots(doctor, days=14):
             while current_time + timedelta(minutes=duration) <= end_datetime:
                 # Тільки майбутні
                 if timezone.make_aware(current_time) > now:
-                    is_booked = Appointment.objects.filter(
-                        doctor=doctor,
-                        date=current_time,
-                        status='scheduled'
-                    ).exists()
+                    is_booked = is_slot_booked(doctor, current_time)
                     
                     day_slots.append({
                         'time': current_time.strftime('%H:%M'),
@@ -250,11 +259,7 @@ def is_slot_available(doctor, date_str, time_str):
         return False, "❌ Цей час недоступний (не відповідає сітці слотів)"
     
     # 7. Перевіряємо зайнятість
-    is_booked = Appointment.objects.filter(
-        doctor=doctor,
-        date=appointment_datetime,
-        status='scheduled'
-    ).exists()
+    is_booked = is_slot_booked(doctor, appointment_datetime)
     
     if is_booked:
         return False, "❌ Цей час вже зайнятий"
@@ -1079,7 +1084,7 @@ def manage_schedule(request):
                     is_day_off=True,
                     start_time=None,
                     end_time=None,
-                    slot_duration=0,
+                    slot_duration=30,
                 )
                 messages.success(request, "✅ Вихідний додано")
                 return redirect('manage_schedule')
