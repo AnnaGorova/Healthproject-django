@@ -1,0 +1,415 @@
+body.health-theme {
+    --primary: #217568;
+    --primary-dark: #185b51;
+
+    background: #DBEAD7;
+    color: #243640;
+    isolation: isolate;
+}
+
+.health-theme .health-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.health-theme .health-blob {
+    position: absolute;
+    display: block;
+    background: #75B581;
+    border-radius: 50%;
+    filter: blur(4.5vw);
+}
+
+/* X: 42, Y: -15, W: 789, H: 551. */
+.health-theme .health-blob-left {
+    left: 2.1875vw;
+    top: -8vh;
+    width: 41.09375vw;
+    height: 28.69792vw;
+}
+
+/* Верхня права пляма. */
+.health-theme .health-blob-right {
+    left: 65vw;
+    top: 25vh;
+    width: 36vw;
+    height: 34vh;
+    filter: blur(3vw);
+}
+
+.health-theme .health-blob-right-bottom {
+    left: 8vw;
+    top: 65vh;
+    width: 40vw;
+    height: 36vh;
+    filter: blur(3vw);
+}
+
+@media (max-width: 768px) {
+    .health-theme .health-blob {
+        width: 90vw;
+        height: 65vw;
+        filter: blur(20vw);
+    }
+
+    .health-theme .health-blob-left {
+        left: -25vw;
+        top: -10vw;
+    }
+
+    .health-theme .health-blob-right {
+        left: 55vw;
+        top: 25vh;
+        width: 90vw;
+        height: 65vw;
+        filter: blur(20vw);
+    }
+
+    .health-theme .health-blob-right-bottom {
+        display: none;
+    }
+
+}
+
+body.health-theme::before {
+    display: none;
+}
+
+.health-theme .app-container {
+    display: grid;
+    grid-template-columns: 370px minmax(0, 1fr);
+    gap: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.health-theme .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    align-self: start;
+    background: #f8faf7;
+    border: 1px solid #e0e9df;
+    border-radius: 40px;
+    box-shadow: 0 8px 28px rgba(35, 75, 45, 0.06);
+}
+
+.health-theme .main-content {
+    min-width: 0;
+    margin-left: 0;
+    padding: 0;
+}
+
+.health-theme .content-wrapper {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
+.health-theme .sidebar-header {
+    padding: 24px 18px;
+}
+
+.health-theme .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #176c65;
+    text-decoration: none;
+}
+
+.health-theme .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #176c65;
+    color: #fff;
+    font-weight: 700;
+}
+
+.health-theme .brand-logo {
+    display: block;
+    width: 97px;
+    height: 92px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.health-theme .brand-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 39px;
+    letter-spacing: 0;
+    color: #176B67;
+}
+
+.health-theme .brand-name small {
+    display: block;
+    font-size: 16px;
+    font-weight: 300;
+    color: #000000;
+}
+
+.health-theme .sidebar-nav ul {
+    list-style: none;
+    padding: 0 12px 20px;
+}
+
+/* Усі пункти меню */
+.health-theme .sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    padding: 10px 14px;
+    border-radius: 8px;
+
+    color: #243640;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.3;
+    min-height: 64px;
+    letter-spacing: 0;
+    text-decoration: none;
+
+    box-shadow: none;
+    transform: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.health-theme .nav-icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.health-theme .nav-icon-home {
+    width: 48px;
+    height: 48px;
+}
+
+/* Наведення */
+.health-theme .sidebar .nav-link:hover {
+    background: #e6f0e2;
+    color: #236b3c;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Поточна сторінка */
+.health-theme .sidebar .nav-link.is-active {
+    background: #b4d6b5;
+    color: #245d35;
+    font-weight: 500;
+    box-shadow: inset 2px 0 0 #36964b;
+}
+
+.health-theme .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    background: #f8faf7;
+    border: 1px solid #e0e9df;
+    border-radius: 14px;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.health-theme .top-header::before {
+    display: none;
+}
+
+.health-theme .top-header h1::before,
+.health-theme .top-header h1::after {
+    display: none;
+}
+
+.health-theme .top-header h1 {
+    margin: 0;
+    color: #243640;
+    font-size: 22px;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+}
+
+.health-theme .header-account,
+.health-theme .account-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.health-theme .header-account {
+    flex-wrap: wrap;
+}
+
+.health-theme .account-profile {
+    color: #243640;
+    text-decoration: none;
+}
+
+.health-theme .account-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #d5e9d0;
+    color: #327c45;
+    font-weight: 600;
+}
+
+.health-theme .account-details strong,
+.health-theme .account-details small {
+    display: block;
+}
+
+.health-theme .account-details strong {
+    font-size: 13px;
+}
+
+.health-theme .account-details small {
+    color: #64766a;
+    font-size: 11px;
+}
+
+.health-theme .account-logout {
+    padding: 8px 12px;
+    border: 1px solid #cbdcca;
+    border-radius: 8px;
+    background: transparent;
+    color: #286b3c;
+    cursor: pointer;
+}
+
+.health-theme a:focus-visible,
+.health-theme button:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    .health-theme .app-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 12px;
+    }
+
+    .health-theme .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+
+    .health-theme .top-header {
+        flex-wrap: wrap;
+    }
+}
+
+/* Привітання та останні показники пацієнта. */
+.health-theme .home-welcome { margin-bottom: 24px; }
+.health-theme .home-welcome h2 {
+    margin: 0; padding: 0; border: 0; background: none;
+    color: #176B3B; -webkit-text-fill-color: currentColor;
+    font-size: 26px; font-weight: 500; line-height: 1.4;
+}
+.health-theme .home-welcome h2::before,
+.health-theme .home-welcome h2::after { display: none; }
+.health-theme .health-parameters { padding: 24px; border-radius: 16px; background: #f7f9f8; }
+.health-theme .parameters-heading {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+}
+.health-theme .parameters-heading h2 {
+    margin: 0; padding: 0; border: 0; background: none;
+    color: #1b303e; -webkit-text-fill-color: currentColor;
+    font-size: 22px; font-weight: 500;
+}
+.health-theme .parameters-heading h2::before,
+.health-theme .parameters-heading h2::after { display: none; }
+.health-theme .parameters-heading a,
+.health-theme .parameters-add { color: #23834b; font-size: 14px; text-decoration: none; }
+.health-theme .parameters-heading a:hover,
+.health-theme .parameters-add:hover { text-decoration: underline; }
+.health-theme .parameters-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.health-theme .parameter-card { min-width: 0; padding: 20px 14px; border-radius: 15px; }
+.health-theme .parameter-icon {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 14px;
+    object-fit: contain;
+}
+.health-theme .parameter-mint { background: #BFEFDB; }
+.health-theme .parameter-pink { background: #F7CECE; }
+.health-theme .parameter-yellow { background: #F5F7CE; }
+.health-theme .parameter-blue { background: #CEE2F7; }
+.health-theme .parameter-purple { background: #E1BDEE; }
+.health-theme .parameter-card h3 {
+    min-height: 38px; margin: 0 0 16px; color: #52657c;
+    font-size: 14px; font-weight: 400; line-height: 1.35;
+}
+.health-theme .parameter-card .parameter-value {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px;
+    margin: 0 0 18px; color: #1b303e;
+    font-size: clamp(22px, 2vw, 32px); font-weight: 500; line-height: 1.3;
+}
+.health-theme .parameter-value span { color: #52657c; font-size: 12px; font-weight: 400; }
+.health-theme .parameter-date { margin: 0; color: #52657c; font-size: 11px; line-height: 1.5; }
+.health-theme .parameter-empty { margin: 0; color: #52657c; font-size: 14px; }
+.health-theme .parameters-add { display: inline-block; margin-top: 18px; }
+@media (max-width: 1200px) {
+    .health-theme .parameters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+    .health-theme .health-parameters { padding: 16px; }
+    .health-theme .parameters-grid { grid-template-columns: 1fr; }
+    .health-theme .home-welcome h2 { font-size: 22px; }
+}
+
+/* Динаміка показників на головній сторінці пацієнта. */
+.health-theme .health-dynamics { margin-top: 24px; padding: 24px; border-radius: 16px; background: #f7f9f8; }
+.health-theme .dynamics-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.health-theme .dynamics-heading h2 { margin: 0; padding: 0; border: 0; background: none; color: #1b303e; -webkit-text-fill-color: currentColor; font-size: 22px; font-weight: 600; }
+.health-theme .dynamics-heading h2::before, .health-theme .dynamics-heading h2::after { display: none; }
+.health-theme .dynamics-heading p { margin: 6px 0 0; color: #647890; font-size: 13px; }
+.health-theme .dynamics-periods { display: flex; flex-wrap: wrap; gap: 4px; }
+.health-theme .dynamics-periods a { padding: 8px 12px; border-radius: 8px; color: #315e59; font-size: 12px; text-decoration: none; }
+.health-theme .dynamics-periods a[aria-current="true"] { background: #217568; color: #fff; }
+.health-theme .dynamics-layout { display: grid; grid-template-columns: minmax(0, 1fr) 170px; gap: 20px; }
+.health-theme .dynamics-main { min-width: 0; }
+.health-theme .dynamics-main h3 { margin: 0 0 8px; color: #1b303e; font-size: 17px; }
+.health-theme .dynamics-average { margin: 0 0 20px; color: #52657c; font-size: 13px; line-height: 1.6; }
+.health-theme .dynamics-chart { position: relative; height: 280px; }
+.health-theme .dynamics-chart[hidden] { display: none; }
+.health-theme #chart-empty { padding: 32px 0; color: #52657c; font-size: 14px; }
+.health-theme .dynamics-selector { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; background: #dbead7; }
+.health-theme .dynamics-selector button { padding: 10px; border: 1px solid transparent; border-radius: 8px; background: #f7f9f8; color: #243640; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+.health-theme .dynamics-selector button[aria-pressed="true"] { border-color: #217568; background: #e8f3e5; }
+.health-theme .dynamics-selector button:focus-visible { outline: 3px solid #217568; outline-offset: 2px; }
+.health-theme .dynamics-details { display: inline-block; margin-top: 16px; color: #23834b; font-size: 13px; }
+@media (max-width: 1100px) {
+    .health-theme .dynamics-layout { grid-template-columns: 1fr; }
+    .health-theme .dynamics-selector { flex-direction: row; flex-wrap: wrap; }
+}
+@media (max-width: 480px) {
+    .health-theme .health-dynamics { padding: 16px; }
+    .health-theme .dynamics-chart { height: 240px; }
+}

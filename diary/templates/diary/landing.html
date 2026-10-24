@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Health Bridge — турбота про здоров’я</title>
+    <link rel="stylesheet" href="{% static 'diary/css/landing.css' %}">
+</head>
+<body>
+    <div class="landing-page">
+        <header class="landing-header">
+            <a href="{% url 'home' %}" class="landing-brand">
+                <img src="{% static 'diary/images/logo.svg' %}" width="48" height="46" alt="Логотип Smart Health Bridge">
+                <span>SMART HEALTH<small>BRIDGE</small></span>
+            </a>
+            <nav aria-label="Основна навігація">
+                <a href="#patients">Пацієнтам</a>
+                <a href="#doctors">Лікарям</a>
+                <a href="#about">Про систему</a>
+                <a href="{% url 'login' %}" class="landing-button">Почати <span aria-hidden="true">→</span></a>
+            </nav>
+        </header>
+        <main>
+            <section class="landing-hero" aria-labelledby="hero-title">
+                <div class="hero-content">
+                    <h1 id="hero-title">SMART <span>HEALTH</span> BRIDGE</h1>
+                    <p>Поєднуємо самопочуття пацієнта, спілкування з лікарем і медичну історію — все в одному місці.</p>
+                    <a href="{% url 'login' %}" class="landing-button">Увійти до системи →</a>
+                </div>
+            </section>
+            <section class="landing-cards" aria-label="Про платформу">
+                <article class="landing-card" id="patients">
+                    <p class="card-label">ПАЦІЄНТАМ</p>
+                    <h2>Турбота про здоров’я <span>в одному місці</span></h2>
+                    <p>Ведіть щоденник самопочуття, переглядайте динаміку показників, записуйтеся до лікаря та читайте його висновки.</p>
+                </article>
+                <article class="landing-card" id="doctors">
+                    <p class="card-label">ЛІКАРЯМ</p>
+                    <h2>Зручна робота <span>з даними пацієнтів</span></h2>
+                    <p>Переглядайте показники доступних вам пацієнтів, керуйте розкладом, відповідайте на звернення та створюйте медичні висновки.</p>
+                </article>
+                <article class="landing-card" id="about">
+                    <p class="card-label">ОГЛЯД ПРОЄКТУ</p>
+                    <h2>Єдина платформа <span>для кращої турботи про здоров’я</span></h2>
+                    <p>Smart Health Bridge об’єднує щоденник здоров’я, запис на прийом і спілкування з лікарем у спільному цифровому просторі.</p>
+                </article>
+                <div class="landing-more"><a href="{% url 'about' %}" class="landing-button">Дізнатися більше →</a></div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

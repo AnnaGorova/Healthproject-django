@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #1b303e;
+    background-color: #dbead7;
+}
+.landing-page {
+    max-width: 1440px;
+    min-height: min(156.3542vw, 2251.5px);
+    margin: 0 auto;
+    padding: clamp(20px, 2.5vw, 40px);
+    background: #dbead7 url("../images/landing-background.png") center top / 100% auto no-repeat;
+}
+.landing-header, .landing-brand, .landing-header nav { display: flex; align-items: center; }
+.landing-header { justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+.landing-brand { gap: 10px; color: #176b67; text-decoration: none; font-size: 14px; font-weight: 500; }
+.landing-brand img { display: block; flex-shrink: 0; }
+.landing-brand small { display: block; margin-top: 4px; color: #1b303e; font-size: 10px; }
+.landing-header nav { flex-wrap: wrap; gap: 24px; }
+.landing-header nav a { color: #1b303e; font-size: 13px; text-decoration: none; }
+.landing-header nav a:hover { text-decoration: underline; }
+.landing-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 11px 24px;
+    border-radius: 28px;
+    background: #23834b;
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+}
+.landing-header nav .landing-button { color: #fff; }
+.landing-button:hover { background: #176b3b; }
+.landing-hero {
+    min-height: min(90vw, 1296px);
+    padding: clamp(30px, 4vw, 64px) 0 40px;
+}
+.hero-content { width: 31%; }
+.hero-content h1 { margin: 0 0 24px; font-size: clamp(32px, 5.5vw, 80px); font-weight: 400; line-height: .95; letter-spacing: -.05em; }
+.hero-content h1 span { display: block; color: #23976e; }
+.hero-content p { max-width: 370px; margin: 0 0 28px; font-size: 16px; line-height: 1.6; }
+.landing-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.landing-card { padding: 32px; border-radius: 24px; background: #f7f9f8; scroll-margin-top: 24px; }
+.card-label { margin: 0 0 16px; font-size: 11px; font-weight: 600; letter-spacing: .08em; }
+.landing-card h2 { margin: 0 0 20px; font-size: 24px; font-weight: 500; line-height: 1.4; }
+.landing-card h2 span { color: #176b3b; }
+.landing-card > p:last-child { margin: 0; font-size: 14px; line-height: 1.7; }
+.landing-more { display: grid; place-items: center; min-height: 160px; }
+a:focus-visible { outline: 3px solid #176b67; outline-offset: 5px; }
+@media (min-width: 701px) and (max-width: 1024px) {
+    .landing-header {
+        gap: 20px;
+    }
+
+    .landing-header nav {
+        gap: 14px;
+    }
+
+    .hero-content {
+        width: 36%;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(38px, 5.5vw, 56px);
+    }
+
+    .hero-content p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .landing-cards {
+        gap: 20px;
+    }
+
+    .landing-card {
+        padding: 24px;
+    }
+
+    .landing-card h2 {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 700px) {
+    .landing-page {
+        min-height: 100svh;
+        padding: 20px 16px 40px;
+        background-image: none;
+    }
+
+    .landing-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .landing-header nav {
+        width: 100%;
+        gap: 12px 16px;
+    }
+
+    .landing-header nav a {
+        font-size: 13px;
+    }
+
+    .landing-hero {
+        min-height: 0;
+        padding: 36px 0 24px;
+    }
+
+    .hero-content {
+        width: 100%;
+    }
+
+    .hero-content h1 {
+        margin-bottom: 20px;
+        font-size: clamp(42px, 12vw, 64px);
+    }
+
+    .hero-content p {
+        max-width: 420px;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .hero-content .landing-button {
+        min-height: 44px;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    /* Верхня частина картинки містить основну композицію. */
+    .landing-hero::after {
+        content: "";
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        margin-top: 28px;
+        border-radius: 16px;
+        background-image: url("../images/landing-background.png");
+        background-position: center top;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+
+    .landing-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .landing-card {
+        padding: 24px;
+        border-radius: 20px;
+        overflow-wrap: anywhere;
+    }
+
+    .landing-card h2 {
+        font-size: 22px;
+    }
+
+    .landing-more {
+        min-height: 80px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}

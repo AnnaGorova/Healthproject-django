@@ -1,63 +1,177 @@
+{% load static %}
 <aside class="sidebar">
     <div class="sidebar-header">
-        <h2>Smart Health</h2>
+        <a href="{% url 'home' %}" class="brand">
+            <img src="{% static 'diary/images/logo.svg' %}"
+                class="brand-logo"
+                width="97"
+                height="92"
+                alt="Логотип SMART HEALTH BRIDGE">
+            <span class="brand-name">
+                SMART HEALTH
+                <small>BRIDGE</small>
+            </span>
+        </a>
     </div>
 
     <nav class="sidebar-nav">
+        {% with current_page=request.resolver_match.url_name %}
         <ul>
     
-        <li><a href="{% url "home" %}" class="nav-link">🏠 Головна</a></li>
-            <li><a href="{% url "about" %}" class="nav-link">Про нас</a></li>
+        <li>
+            <a href="{% url 'home' %}"
+               class="nav-link{% if current_page == 'home' %} is-active{% endif %}"
+               {% if current_page == 'home' %}aria-current="page"{% endif %}>
+                <img src="{% static 'diary/images/solid_home.svg' %}"
+                     width="48"
+                     height="48"
+                     alt="Головна"
+                     class="nav-icon nav-icon-home">
+                <span>Головна</span>
+            </a>
+        </li>
+            <li>
+                <a href="{% url 'about' %}"
+                   class="nav-link{% if current_page == 'about' %} is-active{% endif %}"
+                   {% if current_page == 'about' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_info.svg' %}"
+                         width="40"
+                         height="40"
+                         alt="Про нас"
+                         class="nav-icon">
+                    <span>Про нас</span>
+                </a>
+            </li>
 
             {% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
-                <li><a href="{% url "ask_question" %}" class="nav-link">Задати питання лікарю</a></li>
-                <li><a href="{% url "profile" %}" class="nav-link">Профіль користувача</a></li>
-                <li><a href="{% url "my_records" %}" class="nav-link">Мої записи</a></li>
-                <li><a href="{% url 'health_analytics' %}" class="nav-link">📈 Моя аналітика</a></li>
-                <li><a href="{% url "create_record" %}" class="nav-link">Створити запис</a></li>
+                <li>
+                    <a href="{% url 'ask_question' %}"
+                       class="nav-link{% if current_page == 'ask_question' %} is-active{% endif %}"
+                       {% if current_page == 'ask_question' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/andrsrxn_message.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Задати питання лікарю"
+                             class="nav-icon">
+                        <span>Задати питання лікарю</span>
+                    </a>
+                </li>
+                <li><a href="{% url "profile" %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
+                   {% if current_page == 'profile' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
+                    <span>Профіль користувача</span>
+                </a></li>
+                <li>
+                    <a href="{% url 'my_records' %}"
+                       class="nav-link{% if current_page == 'my_records' %} is-active{% endif %}"
+                       {% if current_page == 'my_records' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/my-records.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Мої записи"
+                             class="nav-icon">
+                        <span>Мої записи</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'health_analytics' %}"
+                       class="nav-link{% if current_page == 'health_analytics' %} is-active{% endif %}"
+                       {% if current_page == 'health_analytics' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/vector.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Моя аналітика"
+                             class="nav-icon">
+                        <span>Моя аналітика</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'create_record' %}"
+                       class="nav-link{% if current_page == 'create_record' %} is-active{% endif %}"
+                       {% if current_page == 'create_record' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/create-record.svg' %}"
+                             width="40" height="40" alt="Створити запис" class="nav-icon">
+                        <span>Створити запис</span>
+                    </a>
+                </li>
                
-                <li><a href="{% url 'doctors_list' %}" class="nav-link">📅 Записатися до лікаря</a></li>
-                <li><a href="{% url 'my_appointments' %}" class="nav-link">📋 Мої записи до лікаря</a></li>
-                <li><a href="{% url 'my_conclusions' %}" class="nav-link">📄 Мої висновки</a></li> 
-                <li><a href="{% url 'my_questions' %}" class="nav-link">💬 Мої питання</a></li>
+                <li>
+                    <a href="{% url 'doctors_list' %}"
+                       class="nav-link{% if current_page == 'doctors_list' %} is-active{% endif %}"
+                       {% if current_page == 'doctors_list' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/akar-icons_calendar.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Записатися до лікаря"
+                             class="nav-icon">
+                        <span>Записатися до лікаря</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_appointments' %}"
+                       class="nav-link{% if current_page == 'my_appointments' %} is-active{% endif %}"
+                       {% if current_page == 'my_appointments' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/my-appointments.svg' %}"
+                             width="40" height="40" alt="Мої записи до лікаря" class="nav-icon">
+                        <span>Мої записи до лікаря</span>
+                    </a>
+                </li>
+                <li><a href="{% url 'my_conclusions' %}" class="nav-link{% if current_page == 'my_conclusions' %} is-active{% endif %}"
+                   {% if current_page == 'my_conclusions' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/andrsrxn_target.svg' %}" width="40" height="40" alt="Мої висновки" class="nav-icon">
+                    <span>Мої висновки</span>
+                </a></li>
+                <li>
+                    <a href="{% url 'my_questions' %}"
+                       class="nav-link{% if current_page == 'my_questions' %} is-active{% endif %}"
+                       {% if current_page == 'my_questions' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/my-questions.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Мої питання"
+                             class="nav-icon">
+                        <span>Мої питання</span>
+                    </a>
+                </li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
                 <li class="nav-divider">👨‍⚕️ Лікарю</li>
-                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link">📊 Дашборд</a></li>
-                <li><a href="{% url 'doctor_patients' %}" class="nav-link">👥 Мої пацієнти</a></li>
-                <li><a href="{% url 'records' %}" class="nav-link">📋 Записи пацієнтів</a></li>  
-                <li><a href="{% url 'manage_schedule' %}" class="nav-link">🗓️ Мій розклад</a></li>
-                <li><a href="{% url 'doctor_appointments' %}" class="nav-link">📋 Мої прийоми</a></li>
-                <li><a href="{% url 'all_questions' %}" class="nav-link">💬 Питання пацієнтів</a></li>
+                <li><a href="{% url 'doctor_dashboard' %}" class="nav-link{% if current_page == 'doctor_dashboard' %} is-active{% endif %}"
+                   {% if current_page == 'doctor_dashboard' %}aria-current="page"{% endif %}>📊 Дашборд</a></li>
+                <li><a href="{% url 'doctor_patients' %}" class="nav-link{% if current_page == 'doctor_patients' %} is-active{% endif %}"
+                   {% if current_page == 'doctor_patients' %}aria-current="page"{% endif %}>👥 Мої пацієнти</a></li>
+                <li><a href="{% url 'records' %}" class="nav-link{% if current_page == 'records' %} is-active{% endif %}"
+                   {% if current_page == 'records' %}aria-current="page"{% endif %}>📋 Записи пацієнтів</a></li>
+                <li><a href="{% url 'manage_schedule' %}" class="nav-link{% if current_page == 'manage_schedule' %} is-active{% endif %}"
+                   {% if current_page == 'manage_schedule' %}aria-current="page"{% endif %}>🗓️ Мій розклад</a></li>
+                <li><a href="{% url 'doctor_appointments' %}" class="nav-link{% if current_page == 'doctor_appointments' %} is-active{% endif %}"
+                   {% if current_page == 'doctor_appointments' %}aria-current="page"{% endif %}>📋 Мої прийоми</a></li>
+                <li><a href="{% url 'all_questions' %}" class="nav-link{% if current_page == 'all_questions' %} is-active{% endif %}"
+                   {% if current_page == 'all_questions' %}aria-current="page"{% endif %}>💬 Питання пацієнтів</a></li>
                 
-                <li><a href="{% url 'profile' %}" class="nav-link">👤 Профіль</a></li>
+                <li><a href="{% url 'profile' %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
+                   {% if current_page == 'profile' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
+                    <span>Профіль</span>
+                </a></li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
                 <li class="nav-divider">🔑 Адміну</li>
-                <li><a href="{% url "administrator" %}" class="nav-link">Адмін</a></li>         
-                <li><a href="{% url 'profile' %}" class="nav-link">👤 Профіль</a></li>
+                <li><a href="{% url "administrator" %}" class="nav-link{% if current_page == 'administrator' %} is-active{% endif %}"
+                   {% if current_page == 'administrator' %}aria-current="page"{% endif %}>Адмін</a></li>
+                <li><a href="{% url 'profile' %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
+                   {% if current_page == 'profile' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
+                    <span>Профіль</span>
+                </a></li>
                 <li><a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a></li>
                 
             {% endif %}
 
-            {% if user.is_authenticated %}
-                <li class="nav-divider"></li>
-                <li class="nav-user-item">
-                    <span class="nav-user">{{ request.user.userprofile.username }}</span>
-                </li>
-                <li>
-                    <form method="post" action="{% url 'logout' %}" style="width: 100%;">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-logout-btn">🚪 Вийти</button>
-                    </form>
-                </li>
-            {% else %}
-                <li class="nav-divider"></li>
-                <li><a href="{% url "login" %}" class="nav-login-btn">🔑 Увійти</a></li>
-            {% endif %}
         </ul>
+        {% endwith %}
 
     </nav>
 

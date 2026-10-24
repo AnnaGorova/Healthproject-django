@@ -1,16 +1,77 @@
-{% extends "diary/base.html" %}
+﻿{% extends "diary/base.html" %}
 {% load static %}
-{% block title  %}Головна сторінка {% endblock %}    
-
-
+{% block title %}Головна — Smart Health Bridge{% endblock %}
 {% block content %}
-    
-<h1>Система моніторингу здоров'я</h1>
-<!-- <img src="{% static 'diary/images/images_1.png' %}" alt="#"> -->
-
+    {% if health_parameters %}
+        <div class="home-welcome">
+            <h2>Доброго дня, {{ user.first_name|default:user.userprofile.username }}!</h2>
+        </div>
+        <section class="health-parameters" aria-labelledby="parameters-title">
+            <div class="parameters-heading">
+                <h2 id="parameters-title">Мої параметри</h2>
+                <a href="{% url 'my_records' %}">Детальніше <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="parameters-grid">
+                {% for parameter in health_parameters %}
+                    <article class="parameter-card parameter-{{ parameter.theme }}">
+                        <img src="{% static parameter.icon %}"
+                             class="parameter-icon"
+                             width="64"
+                             height="64"
+                             alt="{{ parameter.label }}">
+                        <h3>{{ parameter.label }}</h3>
+                        {% if parameter.value != None %}
+                            <p class="parameter-value">{{ parameter.value }} <span>{{ parameter.unit }}</span></p>
+                            <p class="parameter-date">{{ parameter.date|date:"d.m.Y H:i" }}</p>
+                        {% else %}
+                            <p class="parameter-empty">Немає даних</p>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+            <a href="{% url 'create_record' %}" class="parameters-add">+ Додати показники</a>
+        </section>
+        <section class="health-dynamics" aria-labelledby="dynamics-title">
+            <div class="dynamics-heading">
+                <div>
+                    <h2 id="dynamics-title">Динаміка показників</h2>
+                    <p>Ваші вимірювання за вибраний період</p>
+                </div>
+                <nav class="dynamics-periods" aria-label="Період графіка">
+                    <a href="?period=week" {% if selected_period == 'week' %}aria-current="true"{% endif %}>7 днів</a>
+                    <a href="?period=month" {% if selected_period == 'month' %}aria-current="true"{% endif %}>30 днів</a>
+                    <a href="?period=quarter" {% if selected_period == 'quarter' %}aria-current="true"{% endif %}>3 міс.</a>
+                    <a href="?period=year" {% if selected_period == 'year' %}aria-current="true"{% endif %}>1 рік</a>
+                </nav>
+            </div>
+            <div class="dynamics-layout">
+                <div class="dynamics-main">
+                    <h3 id="chart-title">Артеріальний тиск</h3>
+                    <p class="dynamics-average" id="chart-average" aria-live="polite"></p>
+                    <p id="chart-empty" hidden>Немає вимірювань цього показника за вибраний період.</p>
+                    <div class="dynamics-chart" id="chart-container">
+                        <canvas id="home-health-chart" role="img" aria-label="Динаміка артеріального тиску">Графік показників здоров’я.</canvas>
+                    </div>
+                    <a href="{% url 'health_analytics' %}" class="dynamics-details">Детальна аналітика →</a>
+                    <noscript>Для відображення графіка увімкніть JavaScript. Дані доступні також у розділі «Мої записи».</noscript>
+                </div>
+                <div class="dynamics-selector" role="group" aria-label="Показник для графіка">
+                    <button type="button" data-metric="pressure" aria-pressed="true">Артеріальний тиск</button>
+                    <button type="button" data-metric="heart_rate" aria-pressed="false">Пульс</button>
+                    <button type="button" data-metric="temperature" aria-pressed="false">Температура</button>
+                    <button type="button" data-metric="spo2" aria-pressed="false">SpO₂</button>
+                    <button type="button" data-metric="blood_sugar" aria-pressed="false">Глюкоза</button>
+                </div>
+            </div>
+            {{ home_chart_data|json_script:"home-chart-data" }}
+        </section>
+    {% else %}
+        <h1>Система моніторингу здоров’я</h1>
+    {% endif %}
 {% endblock %}
-    
-
-    
-
-  
+{% block extra_js %}
+    {% if health_parameters %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script src="{% static 'diary/js/home.js' %}"></script>
+    {% endif %}
+{% endblock %}

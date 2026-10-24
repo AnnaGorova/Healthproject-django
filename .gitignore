@@ -36,5 +36,8 @@ backup_*.dump
 backup_*.json
 *.bak
 
-# Legacy (якщо не хочете в Git)
+# Legacy (пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Git)
 # diary/_legacy/
+
+# Р›РѕРєР°Р»СЊРЅС– РЅРѕС‚Р°С‚РєРё РґР»СЏ Codex
+/PROJECT_STATUS.md

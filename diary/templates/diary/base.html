@@ -8,6 +8,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'diary/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'diary/css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'diary/css/health-theme.css' %}">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
@@ -15,32 +16,48 @@
     {% endblock %}
 
 </head>
-<body>
+<body class="health-theme">
+    <div class="health-background" aria-hidden="true">
+        <span class="health-blob health-blob-left"></span>
+        <span class="health-blob health-blob-right"></span>
+        <span class="health-blob health-blob-right-bottom"></span>
+    </div>
+
     <div class="app-container">
         {% include "diary/includes/navbar.html" %}
 
          <main class="main-content">
         
-            <header class="top-header">
-                <!--<img src="{%static 'diary/images/images_1.png'%}" alt="#">-->
-                <h1>{% block page_title %}Головна {% endblock %}</h1>
-                
-                {% if user.is_authenticated %}
-                    
-                    <div class="nav-user-item">
-                        <span class="nav-user">{{ request.user.userprofile.username }}</span>
-                    </div>
-                    <div>
-                        <form method="post" action="{% url 'logout' %}" style="width: 100%;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-logout-btn">🚪 Вийти</button>
-                        </form>
-                    </div>
-                {% else %}
-                    <div class="nav-divider"></div>
-                    <div><a href="{% url "login" %}" class="nav-login-btn">🔑 Увійти</a></div>
-                {% endif %}   
+           <header class="top-header">
+                <h1>{% block page_title %}Головна{% endblock %}</h1>
 
+                <div class="header-account">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="account-profile">
+                            <span class="account-avatar" aria-hidden="true">
+                                {{ request.user.userprofile.username|first }}
+                            </span>
+
+                            <span class="account-details">
+                                <strong>{{ request.user.userprofile.username }}</strong>
+                                <small>
+                                    {{ request.user.userprofile.get_role_display }}
+                                </small>
+                            </span>
+                        </a>
+
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="account-logout">
+                                Вийти
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="account-profile">
+                            Увійти
+                        </a>
+                    {% endif %}
+                </div>
             </header>
         
             {% if messages %}
