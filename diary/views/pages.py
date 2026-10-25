@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+from django.http import JsonResponse
 
 
 def old_home(request):
@@ -7,6 +8,22 @@ def old_home(request):
 
 
 class HomeView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        """Повертає сторінку або JSON для перемикання періоду графіка."""
+        if request.GET.get('format') != 'json':
+            return super().get(request, *args, **kwargs)
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Потрібно увійти до системи.'}, status=401)
+        context = self.get_context_data(**kwargs)
+        if 'home_chart_data' not in context:
+            return JsonResponse({'error': 'Доступ заборонено.'}, status=403)
+        response = JsonResponse({
+            'period': context['selected_period'],
+            'chart_data': context['home_chart_data'],
+        })
+        response['Cache-Control'] = 'no-store'
+        return response
+
     def get_template_names(self):
         if self.request.user.is_authenticated:
             return ['diary/home.html']
@@ -107,6 +124,12 @@ class HomeView(TemplateView):
             'pressure_diastolic': [record.pressure_diastolic for record in chart_records],
             'spo2': [record.spo2 for record in chart_records],
             'blood_sugar': [record.blood_sugar for record in chart_records],
+            # Оцінки обчислює модель HealthRecord за спільними порогами.
+            'temperature_risk': [record.temperature_risk for record in chart_records],
+            'heart_rate_risk': [record.heart_rate_risk for record in chart_records],
+            'pressure_risk': [record.pressure_risk for record in chart_records],
+            'spo2_risk': [record.spo2_risk for record in chart_records],
+            'blood_sugar_risk': [record.blood_sugar_risk for record in chart_records],
         }
         return context
 

@@ -38,16 +38,40 @@
                     <p>Ваші вимірювання за вибраний період</p>
                 </div>
                 <nav class="dynamics-periods" aria-label="Період графіка">
-                    <a href="?period=week" {% if selected_period == 'week' %}aria-current="true"{% endif %}>7 днів</a>
-                    <a href="?period=month" {% if selected_period == 'month' %}aria-current="true"{% endif %}>30 днів</a>
-                    <a href="?period=quarter" {% if selected_period == 'quarter' %}aria-current="true"{% endif %}>3 міс.</a>
-                    <a href="?period=year" {% if selected_period == 'year' %}aria-current="true"{% endif %}>1 рік</a>
+                    <a href="?period=week" data-period="week" {% if selected_period == 'week' %}aria-current="true"{% endif %}>7 днів</a>
+                    <a href="?period=month" data-period="month" {% if selected_period == 'month' %}aria-current="true"{% endif %}>30 днів</a>
+                    <a href="?period=quarter" data-period="quarter" {% if selected_period == 'quarter' %}aria-current="true"{% endif %}>3 міс.</a>
+                    <a href="?period=year" data-period="year" {% if selected_period == 'year' %}aria-current="true"{% endif %}>1 рік</a>
                 </nav>
+            </div>
+            <div class="chart-status-slot">
+                <p id="chart-period-status" role="status"></p>
             </div>
             <div class="dynamics-layout">
                 <div class="dynamics-main">
-                    <h3 id="chart-title">Артеріальний тиск</h3>
-                    <p class="dynamics-average" id="chart-average" aria-live="polite"></p>
+                    <div class="chart-summary">
+                        <div class="chart-summary-main">
+                            <img src="{% static 'diary/images/pressure-chart-icon.svg' %}"
+                                 id="pressure-chart-icon" class="chart-summary-icon"
+                                 width="56" height="56" alt="Артеріальний тиск">
+                            <div>
+                                <h3 id="chart-title">Артеріальний тиск</h3>
+                                <p class="chart-summary-caption">Середнє за період</p>
+                                <p class="chart-summary-value">
+                                    <strong id="chart-average" aria-live="polite">—</strong>
+                                    <span id="chart-unit">мм рт. ст.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="chart-assessment" id="chart-assessment" hidden>
+                            <span class="chart-risk-badge" id="chart-risk-badge"></span>
+                            <p>Оцінка останнього вимірювання за заданими порогами.</p>
+                        </div>
+                        <div class="chart-pressure-details" id="chart-pressure-details" hidden>
+                            <div><span class="chart-dot chart-dot-systolic"></span><span>Систолічний</span><strong id="chart-systolic">—</strong><small>мм рт. ст.</small></div>
+                            <div><span class="chart-dot chart-dot-diastolic"></span><span>Діастолічний</span><strong id="chart-diastolic">—</strong><small>мм рт. ст.</small></div>
+                        </div>
+                    </div>
                     <p id="chart-empty" hidden>Немає вимірювань цього показника за вибраний період.</p>
                     <div class="dynamics-chart" id="chart-container">
                         <canvas id="home-health-chart" role="img" aria-label="Динаміка артеріального тиску">Графік показників здоров’я.</canvas>
@@ -56,11 +80,11 @@
                     <noscript>Для відображення графіка увімкніть JavaScript. Дані доступні також у розділі «Мої записи».</noscript>
                 </div>
                 <div class="dynamics-selector" role="group" aria-label="Показник для графіка">
-                    <button type="button" data-metric="pressure" aria-pressed="true">Артеріальний тиск</button>
-                    <button type="button" data-metric="heart_rate" aria-pressed="false">Пульс</button>
-                    <button type="button" data-metric="temperature" aria-pressed="false">Температура</button>
-                    <button type="button" data-metric="spo2" aria-pressed="false">SpO₂</button>
-                    <button type="button" data-metric="blood_sugar" aria-pressed="false">Глюкоза</button>
+                    <button type="button" data-metric="pressure" aria-pressed="true"><img src="{% static 'diary/images/pressure-chart-icon.svg' %}" class="chart-selector-icon" width="24" height="24" alt="Артеріальний тиск"><span>Артеріальний тиск</span></button>
+                    <button type="button" data-metric="heart_rate" aria-pressed="false"><img src="{% static 'diary/images/chart-pulse.svg' %}" class="chart-selector-icon" width="24" height="24" alt="Пульс"><span>Пульс</span></button>
+                    <button type="button" data-metric="temperature" aria-pressed="false"><img src="{% static 'diary/images/chart-temperature.svg' %}" class="chart-selector-icon" width="24" height="24" alt="Температура"><span>Температура</span></button>
+                    <button type="button" data-metric="spo2" aria-pressed="false"><img src="{% static 'diary/images/chart-spo2.svg' %}" class="chart-selector-icon" width="24" height="24" alt="SpO₂"><span>SpO₂</span></button>
+                    <button type="button" data-metric="blood_sugar" aria-pressed="false"><img src="{% static 'diary/images/chart-glucose.svg' %}" class="chart-selector-icon" width="24" height="24" alt="Глюкоза"><span>Глюкоза</span></button>
                 </div>
             </div>
             {{ home_chart_data|json_script:"home-chart-data" }}
@@ -72,6 +96,7 @@
 {% block extra_js %}
     {% if health_parameters %}
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script src="{% static 'diary/js/health-charts.js' %}"></script>
         <script src="{% static 'diary/js/home.js' %}"></script>
     {% endif %}
 {% endblock %}

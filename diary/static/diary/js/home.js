@@ -4,9 +4,16 @@ const chartCanvas = document.getElementById('home-health-chart');
 
 // На сторінках інших ролей графіка немає — нічого не запускаємо.
 if (chartDataElement && chartCanvas) {
-    const data = JSON.parse(chartDataElement.textContent);
+    const { hasValues, average, formatNumber, createDataset, createOptions } = window.HealthCharts;
+    let data = JSON.parse(chartDataElement.textContent);
     const title = document.getElementById('chart-title');
     const averageText = document.getElementById('chart-average');
+    const unitText = document.getElementById('chart-unit');
+    const assessment = document.getElementById('chart-assessment');
+    const riskBadge = document.getElementById('chart-risk-badge');
+    const pressureDetails = document.getElementById('chart-pressure-details');
+    const systolicText = document.getElementById('chart-systolic');
+    const diastolicText = document.getElementById('chart-diastolic');
     const emptyMessage = document.getElementById('chart-empty');
     const chartContainer = document.getElementById('chart-container');
     const buttons = document.querySelectorAll('.dynamics-selector [data-metric]');
@@ -26,23 +33,57 @@ if (chartDataElement && chartCanvas) {
         blood_sugar: { title: 'Глюкоза', unit: 'ммоль/л', fields: [['blood_sugar', 'Глюкоза', '#ac76bf']] },
     };
     let chart;
+    let currentMetric = 'pressure';
+    let periodController = null;
+    let periodRequestId = 0;
+    const periodLinks = document.querySelectorAll('.dynamics-periods [data-period]');
+    const periodStatus = document.getElementById('chart-period-status');
 
-    // Обчислює середнє лише з чисел; пропуски null не враховує.
-    function average(values) {
-        const numbers = values.filter(Number.isFinite);
-        if (numbers.length === 0) return null;
-        return numbers.reduce((sum, value) => sum + value, 0) / numbers.length;
+    // Оновлює велике середнє значення та плашки артеріального тиску.
+    function updateSummary(key, metric) {
+        const averages = metric.fields.map(([field]) => average(data[field]));
+        averageText.textContent = averages
+            .map((value) => value === null ? '—' : formatNumber(value)).join('/');
+        unitText.textContent = averages.some((value) => value !== null) ? metric.unit : '';
+        pressureDetails.hidden = key !== 'pressure' || averages.every((value) => value === null);
+        if (key === 'pressure') {
+            systolicText.textContent = averages[0] === null ? '—' : formatNumber(averages[0]);
+            diastolicText.textContent = averages[1] === null ? '—' : formatNumber(averages[1]);
+        }
     }
 
-    // Форматує число українською з максимум одним десятковим знаком.
-    function formatNumber(value) {
-        return new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 1 }).format(value);
+    // Оцінює останнє вимірювання у вибраному періоді за готовою оцінкою Django.
+    // Середнє значення не використовується для визначення оцінки.
+    function updateAssessment(key, metric) {
+        const riskField = key === 'pressure' ? 'pressure_risk' : `${key}_risk`;
+        const risks = data[riskField] || [];
+        let latestRisk = null;
+        for (let index = data.labels.length - 1; index >= 0; index--) {
+            const hasMeasurement = metric.fields.some(([field]) => Number.isFinite(data[field][index]));
+            if (hasMeasurement) {
+                latestRisk = risks[index];
+                break;
+            }
+        }
+        const labels = {
+            green: 'У межах заданих порогів',
+            yellow: 'Помірний рівень',
+            red: 'Вихід за задані пороги',
+        };
+        assessment.hidden = !labels[latestRisk];
+        riskBadge.textContent = labels[latestRisk] || '';
+        riskBadge.className = 'chart-risk-badge';
+        if (labels[latestRisk]) riskBadge.classList.add(`chart-risk-${latestRisk}`);
     }
 
     // Оновлює заголовок, середнє значення, стан кнопок і сам графік.
     function showMetric(key) {
+        // Зберігаємо показник при перемиканні періоду.
+        currentMetric = key;
         const metric = metrics[key];
         title.textContent = metric.title;
+        // Сердечко відображаємо лише для графіка артеріального тиску.
+        document.getElementById('pressure-chart-icon').hidden = key !== 'pressure';
         chartCanvas.setAttribute('aria-label', `Динаміка показника: ${metric.title}`);
         buttons.forEach((button) => {
             button.setAttribute('aria-pressed', String(button.dataset.metric === key));
@@ -53,23 +94,15 @@ if (chartDataElement && chartCanvas) {
             chart.destroy();
             chart = null;
         }
-        const hasData = metric.fields.some(([field]) => data[field].some(Number.isFinite));
+        const hasData = metric.fields.some(([field]) => hasValues(data[field]));
+        updateSummary(key, metric);
+        updateAssessment(key, metric);
         emptyMessage.textContent = 'Немає вимірювань цього показника за вибраний період.';
         emptyMessage.hidden = hasData;
         chartContainer.hidden = !hasData;
         if (!hasData) {
-            averageText.textContent = '';
             return;
         }
-
-        // Для тиску обчислюємо середні систолічного і діастолічного окремо.
-        const averages = metric.fields.map(([field, label]) => {
-            const value = average(data[field]);
-            return value === null
-                ? `${label}: немає даних`
-                : `${label}: ${formatNumber(value)} ${metric.unit}`;
-        });
-        averageText.textContent = `Середнє за період — ${averages.join('; ')}`;
 
         // Якщо CDN недоступний, замість помилки JavaScript пояснюємо ситуацію.
         if (typeof Chart === 'undefined') {
@@ -80,40 +113,96 @@ if (chartDataElement && chartCanvas) {
         }
 
         // Створюємо адаптивний графік. Пропуски не замінюємо нулями.
+        const riskField = key === 'pressure' ? 'pressure_risk' : `${key}_risk`;
+        const options = createOptions({ legend: false, unit: metric.unit });
+        // Орієнтир шкали тиску з макета без обрізання більших значень.
+        if (key === 'pressure') {
+            options.scales.y.suggestedMin = 0;
+            options.scales.y.suggestedMax = 180;
+            options.scales.y.ticks.stepSize = 30;
+        }
+        // Скорочуємо лише підписи осі; підказки зберігають дату й час.
+        options.scales.x.ticks.callback = function (value) {
+            return this.getLabelForValue(value).split(' ')[0];
+        };
+        // Плашки над графіком замінюють легенду; сітка — пунктирна.
+        options.scales.x.grid.display = true;
+        options.scales.x.border = { dash: [3, 3], color: '#dfe9e2' };
+        options.scales.y.border = { dash: [3, 3], color: '#dfe9e2' };
         chart = new Chart(chartCanvas, {
             type: 'line',
             data: {
                 labels: data.labels,
-                datasets: metric.fields.map(([field, label, color]) => ({
-                    label, data: data[field], borderColor: color,
-                    backgroundColor: `${color}18`, fill: true,
-                    borderWidth: 2, pointRadius: 3, tension: 0.2, spanGaps: false,
+                datasets: metric.fields.map(([field, label, color]) => createDataset({
+                    label, values: data[field], risks: data[riskField],
+                    color, unit: metric.unit, fill: true, tension: 0.2,
                 })),
             },
-            options: {
-                responsive: true, maintainAspectRatio: false, animation: false,
-                plugins: {
-                    legend: { display: metric.fields.length > 1 },
-                    tooltip: {
-                        callbacks: {
-                            // Підказка над точкою містить значення та одиниці вимірювання.
-                            label(context) {
-                                return `${context.dataset.label}: ${formatNumber(context.parsed.y)} ${metric.unit}`;
-                            },
-                        },
-                    },
-                },
-                scales: {
-                    x: { grid: { display: false }, ticks: { maxTicksLimit: 7, maxRotation: 0 } },
-                    y: { title: { display: true, text: metric.unit }, grid: { color: '#dfe9e2' } },
-                },
-            },
+            options,
         });
     }
 
     // Перемикаємо показник без перезавантаження сторінки.
     buttons.forEach((button) => {
         button.addEventListener('click', () => showMetric(button.dataset.metric));
+    });
+
+    // Завантажуємо новий період без переходу на іншу сторінку.
+    periodLinks.forEach((link) => {
+        link.addEventListener('click', async (event) => {
+            // Не змінюємо стандартне відкриття посилання в новій вкладці.
+            if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+                return;
+            }
+            event.preventDefault();
+
+            // Скасовуємо попередній запит і відстежуємо актуальну відповідь.
+            periodController?.abort();
+            const controller = new AbortController();
+            periodController = controller;
+            const requestId = ++periodRequestId;
+            const url = new URL(link.href);
+            url.searchParams.set('format', 'json');
+            periodStatus.textContent = 'Завантаження показників…';
+            chartContainer.setAttribute('aria-busy', 'true');
+
+            try {
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    credentials: 'same-origin',
+                    cache: 'no-store',
+                    headers: { Accept: 'application/json' },
+                });
+                if (!response.ok) throw new Error('Не вдалося отримати дані.');
+                const result = await response.json();
+                if (requestId !== periodRequestId) return;
+
+                data = result.chart_data;
+                periodLinks.forEach((periodLink) => {
+                    if (periodLink.dataset.period === result.period) {
+                        periodLink.setAttribute('aria-current', 'true');
+                    } else {
+                        periodLink.removeAttribute('aria-current');
+                    }
+                });
+
+                // Оновлюємо адресу, не перезавантажуючи сторінку.
+                const pageUrl = new URL(window.location.href);
+                pageUrl.searchParams.set('period', result.period);
+                pageUrl.searchParams.delete('format');
+                window.history.replaceState(null, '', pageUrl);
+                showMetric(currentMetric);
+                periodStatus.textContent = '';
+            } catch (error) {
+                if (error.name === 'AbortError' || requestId !== periodRequestId) return;
+                // При помилці залишаємо попередній графік доступним.
+                periodStatus.textContent = 'Не вдалося оновити дані. Спробуйте ще раз.';
+            } finally {
+                if (requestId === periodRequestId) {
+                    chartContainer.removeAttribute('aria-busy');
+                }
+            }
+        });
     });
 
     // За замовчуванням відкриваємо артеріальний тиск.
