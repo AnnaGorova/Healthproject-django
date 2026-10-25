@@ -1,0 +1,146 @@
+.health-theme .about-container {
+    container-type: inline-size;
+}
+
+.health-theme .about-page {
+    display: grid;
+    gap: 3.13cqw;
+    font-family: "Inter", sans-serif;
+    color: #000000;
+}
+
+.health-theme .about-row {
+    display: grid;
+    gap: 1.42cqw;
+    align-items: stretch;
+}
+
+/* Пропорції карток відповідають розмірам у Figma. */
+.health-theme .about-row-top {
+    grid-template-columns: minmax(0, 756fr) minmax(0, 630fr);
+}
+
+.health-theme .about-row-bottom {
+    grid-template-columns: minmax(0, 890fr) minmax(0, 500fr);
+}
+
+.health-theme .about-card {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 4.27cqw;
+    border-radius: 3.56cqw;
+    background: #f7f9f8;
+}
+
+.health-theme .about-row-top .about-card { min-height: 38.34cqw; }
+.health-theme .about-row-bottom .about-card { min-height: 40.33cqw; }
+
+.health-theme .about-label {
+    margin: 0 0 0.85cqw;
+    font-size: 1.71cqw;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .about-card h2 {
+    margin: 0;
+    color: #1b303e;
+    font-size: 2.56cqw;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .about-card h2 span {
+    display: block;
+    color: #086412;
+}
+
+.health-theme .about-description {
+    margin: 4.27cqw 0 0;
+    font-size: 1.71cqw;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .about-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 2.28cqw;
+    padding: 4.27cqw 2.56cqw;
+}
+
+.health-theme .about-resource h3 {
+    margin: 0 0 1.42cqw;
+    font-size: 1.71cqw;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .about-link,
+.health-theme .about-guide summary {
+    display: block;
+    padding: 1cqw 1.42cqw;
+    border-radius: 999px;
+    background: #b3d5b4;
+    color: #1b303e;
+    font-size: 1.71cqw;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.health-theme .about-guide summary { list-style: none; }
+.health-theme .about-guide summary::-webkit-details-marker { display: none; }
+
+.health-theme .about-link:hover,
+.health-theme .about-guide summary:hover { background: #a2cba4; }
+
+.health-theme .about-link:focus-visible,
+.health-theme .about-guide summary:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 4px;
+}
+
+.health-theme .about-guide p {
+    margin: 1.14cqw 0 0;
+    font-size: 1.28cqw;
+    line-height: 1.5;
+}
+
+.health-theme .about-version {
+    margin: 0;
+    color: #64748b;
+    font-size: 1.28cqw;
+    line-height: 1.5;
+}
+
+/* На вузькій сторінці зберігаємо читабельність тексту. */
+@container (max-width: 800px) {
+    .health-theme .about-page,
+    .health-theme .about-row { gap: 20px; }
+    .health-theme .about-row { grid-template-columns: 1fr; }
+    .health-theme .about-row-top .about-card,
+    .health-theme .about-row-bottom .about-card { min-height: auto; }
+    .health-theme .about-card {
+        min-height: auto;
+        padding: 24px;
+        border-radius: 24px;
+    }
+    .health-theme .about-card h2 { font-size: 24px; }
+    .health-theme .about-label,
+    .health-theme .about-description,
+    .health-theme .about-resource h3,
+    .health-theme .about-link,
+    .health-theme .about-guide summary,
+    .health-theme .about-guide p,
+    .health-theme .about-version { font-size: 16px; }
+    .health-theme .about-label { margin-bottom: 12px; }
+    .health-theme .about-description { margin-top: 28px; }
+    .health-theme .about-resources { gap: 24px; }
+    .health-theme .about-resource h3 { margin-bottom: 14px; }
+    .health-theme .about-link,
+    .health-theme .about-guide summary { padding: 10px 16px; }
+    .health-theme .about-guide p { margin-top: 16px; }
+}
