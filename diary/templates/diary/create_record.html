@@ -1,5 +1,4 @@
 {% extends "diary/base.html" %}
-{% load static %}
 
 {% block title %}Створити запис{% endblock %}
 {% block page_title %}Створити запис{% endblock %}
@@ -7,88 +6,7 @@
 {% block content %}
 <div class="record-create">
     <h2 class="record-create-title">Новий запис</h2>
-    <form method="post" class="record-create-form">
-        {% csrf_token %}
-        {% if form.errors %}
-            <div class="record-form-errors" role="alert">
-                Перевірте введені дані. Помилки вказані біля полів.
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
-        <section class="record-section" aria-labelledby="wellbeing-title">
-            <h3 id="wellbeing-title">
-                <img src="{% static 'diary/images/tabler_mood-happy.svg' %}" width="32" height="32" alt="Самопочуття">
-                Самопочуття
-            </h3>
-            <div class="record-fields-grid">
-                {% include "diary/includes/record_form_field.html" with field=form.well_being only %}
-                {% include "diary/includes/record_form_field.html" with field=form.mood only %}
-            </div>
-        </section>
-        <section class="record-section" aria-labelledby="measurements-title">
-            <h3 id="measurements-title">
-                <img src="{% static 'diary/images/akar-icons_heart.svg' %}" width="32" height="32" alt="Показники здоров’я">
-                Показники здоров’я
-            </h3>
-            <div class="record-fields-grid">
-                <fieldset class="record-pressure">
-                    <legend>Артеріальний тиск, мм рт. ст.</legend>
-                    <div class="record-pressure-grid">
-                        <div class="record-field">
-                            <label for="{{ form.pressure_systolic.id_for_label }}">Систолічний</label>
-                            {{ form.pressure_systolic }}
-                            {{ form.pressure_systolic.errors }}
-                        </div>
-                        <div class="record-field">
-                            <label for="{{ form.pressure_diastolic.id_for_label }}">Діастолічний</label>
-                            {{ form.pressure_diastolic }}
-                            {{ form.pressure_diastolic.errors }}
-                        </div>
-                    </div>
-                </fieldset>
-                {% include "diary/includes/record_form_field.html" with field=form.weight only %}
-                {% include "diary/includes/record_form_field.html" with field=form.heart_rate only %}
-                {% include "diary/includes/record_form_field.html" with field=form.temperature only %}
-                {% include "diary/includes/record_form_field.html" with field=form.blood_sugar only %}
-                {% include "diary/includes/record_form_field.html" with field=form.spo2 only %}
-            </div>
-        </section>
-        <section class="record-section" aria-labelledby="emotional-title">
-            <h3 id="emotional-title">
-                <img src="{% static 'diary/images/andrsrxn_brain.svg' %}" width="32" height="32" alt="Емоційний стан">
-                Емоційний стан
-            </h3>
-            <div class="record-fields-grid">
-                {% include "diary/includes/record_form_field.html" with field=form.energy_level only %}
-                {% include "diary/includes/record_form_field.html" with field=form.pain_level only %}
-            </div>
-        </section>
-        <section class="record-section" aria-labelledby="lifestyle-title">
-            <h3 id="lifestyle-title">
-                <img src="{% static 'diary/images/griddy-icons_muscle-flex.svg' %}" width="32" height="32" alt="Спосіб життя">
-                Спосіб життя
-            </h3>
-            <div class="record-fields-grid">
-                {% include "diary/includes/record_form_field.html" with field=form.water_intake only %}
-                {% include "diary/includes/record_form_field.html" with field=form.calories only %}
-                {% include "diary/includes/record_form_field.html" with field=form.steps only %}
-                {% include "diary/includes/record_form_field.html" with field=form.sleep_hours only %}
-            </div>
-        </section>
-        <section class="record-section record-section-additional" aria-labelledby="additional-title">
-            <h3 id="additional-title">
-                <img src="{% static 'diary/images/akar-icons_calendar.svg' %}" width="32" height="32" alt="Додатково">
-                Додатково
-            </h3>
-            <div class="record-additional-fields">
-                {% include "diary/includes/record_form_field.html" with field=form.complaints only %}
-                {% include "diary/includes/record_form_field.html" with field=form.comment only %}
-            </div>
-        </section>
-        <div class="record-create-actions">
-            <button type="submit" class="record-create-submit">Створити</button>
-            <a href="{% url 'records' %}" class="record-create-back">Назад до записів</a>
-        </div>
-    </form>
+    {% url 'my_records' as back_url %}
+    {% include "diary/includes/record_form.html" with submit_label="Створити" back_url=back_url back_label="Назад до записів" %}
 </div>
 {% endblock %}

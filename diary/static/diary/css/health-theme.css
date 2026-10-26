@@ -74,6 +74,15 @@ body.health-theme {
 
 }
 
+.health-theme .message-error {
+    background: #fff0f1;
+    color: #a52e35;
+    border: 1px solid #e3a5a8;
+    border-left: 4px solid #a52e35;
+    border-radius: 10px;
+    backdrop-filter: none;
+}
+
 body.health-theme::before {
     display: none;
 }
@@ -568,6 +577,14 @@ body.health-theme::before {
     container-type: inline-size;
     font-family: "Inter", sans-serif;
 }
+.health-theme .record-edit-meta {
+    margin: -12px 0 24px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
+
 .health-theme .record-create-title {
     margin: 0 0 24px;
     color: #1b303e;
@@ -723,4 +740,75 @@ body.health-theme::before {
 }
 @container (max-width: 360px) {
     .health-theme .record-pressure-grid { grid-template-columns: 1fr; }
+}
+
+/* Перегляд збереженого запису. */
+.health-theme .record-edit-meta p { margin: 4px 0; }
+.health-theme .record-detail-grid { margin: 0; }
+.health-theme .record-detail-measurements { margin-top: 20px; }
+
+.health-theme .record-detail-item {
+    min-width: 0;
+    padding: 16px;
+    border: 2px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+}
+.health-theme .record-detail-item dt,
+.health-theme .record-detail-pressure h4 {
+    margin: 0 0 8px;
+    color: #52657c;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.health-theme .record-detail-item dd {
+    margin: 0;
+    color: #1b303e;
+    font-size: 18px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.health-theme .record-detail-empty {
+    color: #64748b;
+    font-size: 16px;
+}
+.health-theme .record-detail-pressure { min-width: 0; }
+.health-theme .record-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 24px;
+}
+.health-theme .record-detail-edit,
+.health-theme .record-detail-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 28px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    font-size: 16px;
+    line-height: 1.5;
+    text-decoration: none;
+}
+.health-theme .record-detail-edit {
+    background: #166534;
+    color: #ffffff;
+}
+.health-theme .record-detail-edit:hover { background: #12532b; }
+.health-theme .record-detail-delete {
+    border: 1px solid #b04448;
+    color: #a52e35;
+    background: #fff0f1;
+}
+.health-theme .record-detail-delete:hover { background: #fbe0e2; }
+.health-theme .record-detail-edit:focus-visible,
+.health-theme .record-detail-delete:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 4px;
 }

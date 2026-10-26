@@ -17,7 +17,7 @@
              <div class="record-actions">
                 {% if request.user.is_authenticated and request.user.userprofile == record.user %}
                     <a href="{% url 'edit_record' record.id %}" class="btn btn-warning">✏️ Редагувати</a>
-                    <a href="{% url 'delete_record' record.id %}" class="btn btn-danger" onclick="return confirm('Ви впевнені?')">🗑️ Видалити</a>
+                    <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">🗑️ Видалити</a>
                 {% endif %}
                 <a href="{% url 'record_detail' record.id %}" class="btn btn-outline">👁️ Детальніше</a>
             </div>

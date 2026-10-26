@@ -22,7 +22,7 @@ def records(request):
 
     # 3. Основна логіка
     if user_profile.role == 'patient':
-        all_records = HealthRecord.objects.filter(user=user_profile, is_active=True)
+        return redirect('my_records')
     elif user_profile.role == 'doctor':
         accessible_patients = get_accessible_patients(user_profile)
         all_records = HealthRecord.objects.filter(
@@ -121,7 +121,7 @@ def create_record(request):
                 record.save()
                 
                 messages.success(request, "Запис в щоденнику успішно створений!")
-                return redirect('records')
+                return redirect('my_records')
             except Exception as e:
                     messages.error(request, f"Помилка при збереженні: {e}")
         else:
