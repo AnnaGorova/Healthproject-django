@@ -461,3 +461,104 @@ body.health-theme::before {
     .health-theme .chart-summary { grid-template-columns: 1fr; gap: 16px; }
     .health-theme .chart-pressure-details { width: fit-content; max-width: 100%; }
 }
+
+/* Список лікарів для запису на прийом. */
+.health-theme .doctors-page {
+    padding: 24px;
+    border-radius: 12px;
+    background: #f7f9f8;
+    font-family: "Inter", sans-serif;
+}
+
+.health-theme .doctors-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.health-theme .doctor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 440px;
+    padding: 16px 20px 28px;
+    border: 2px solid #d3e5cf;
+    border-radius: 12px;
+    background: #f7f9f8;
+    text-align: center;
+}
+
+.health-theme .doctor-item-avatar {
+    display: block;
+    width: 169px;
+    height: 168px;
+    max-width: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.health-theme .doctor-item-name {
+    margin: 12px 0 0;
+    color: #1b303e;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.health-theme .doctor-item-experience,
+.health-theme .doctor-item-specialty {
+    margin: 8px 0 0;
+    color: #000000;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .doctor-item-specialty { margin-bottom: 32px; }
+
+.health-theme .doctor-book-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 247px;
+    max-width: 100%;
+    min-height: 47px;
+    margin-top: auto;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #166534;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+.health-theme .doctor-book-link:hover { background: #12532b; }
+
+.health-theme .doctor-book-link:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 4px;
+}
+
+.health-theme .doctors-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 32px 16px;
+    color: #64748b;
+    text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .health-theme .doctors-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+    .health-theme .doctors-page { padding: 16px; }
+    .health-theme .doctors-list { grid-template-columns: 1fr; }
+    .health-theme .doctor-item { min-height: 400px; }
+}

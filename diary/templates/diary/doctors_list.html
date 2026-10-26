@@ -1,27 +1,35 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Лікарі{% endblock %}
+{% load static %}
+{% block title %}Запис до лікаря{% endblock %}
+{% block page_title %}Запис до лікаря{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>👨‍⚕️ Оберіть лікаря</h2>
-    <p class="subtitle">Натисніть на картку, щоб записатися</p>
-</div>
-
-<div class="doctors-grid">
-    {% for doctor in doctors %}
-    <a href="{% url 'book_appointment' doctor.id %}" class="doctor-card">
-        <div class="doctor-avatar">
-            {% if doctor.gender == 'M' %}👨‍⚕️{% else %}👩‍⚕️{% endif %}
-        </div>
-        <h3>{{ doctor.username }}</h3>
-        <p class="doctor-specialty">{{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
-        <p class="doctor-experience">Стаж: {{ doctor.doctorprofile.year_of_experience|default:"—" }} років</p>
-        
-        <button class="btn btn-primary btn-sm">📅 Записатися</button>
-    </a>
-    {% empty %}
-    <p>Немає доступних лікарів</p>
-    {% endfor %}
-</div>
+<section class="doctors-page" aria-label="Оберіть лікаря">
+    <div class="doctors-list">
+        {% for doctor in doctors %}
+            <article class="doctor-item">
+                <img src="{% static 'diary/images/doctor-avatar.svg' %}"
+                     class="doctor-item-avatar" width="169" height="168"
+                     alt="Аватар лікаря {{ doctor.username }}">
+                <h2 class="doctor-item-name">{{ doctor.username }}</h2>
+                <p class="doctor-item-experience">
+                    {% if doctor.doctor_profile %}
+                        Стаж: {{ doctor.doctor_profile.year_of_experience }} років
+                    {% else %}
+                        Стаж не вказано
+                    {% endif %}
+                </p>
+                <p class="doctor-item-specialty">
+                    {{ doctor.doctor_profile.specialty|default:"Спеціальність не вказана" }}
+                </p>
+                <a href="{% url 'book_appointment' doctor.id %}"
+                   class="doctor-book-link"
+                   aria-label="Записатись до лікаря {{ doctor.username }}">Записатись</a>
+            </article>
+        {% empty %}
+            <p class="doctors-empty">Наразі немає доступних лікарів.</p>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
