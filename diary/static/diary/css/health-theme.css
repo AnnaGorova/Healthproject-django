@@ -290,6 +290,105 @@ body.health-theme {
     .health-theme .patient-appointment-dates dd { font-size: 16px; }
 }
 
+/* Єдиний пошук пацієнта. */
+.health-theme .patient-search {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    max-width: 700px;
+}
+.health-theme .patient-search-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.health-theme .patient-search-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: #d3e5cf;
+    color: #64748b;
+}
+.health-theme .patient-search-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+.health-theme #patient-search-input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin: 0;
+    padding: 4px 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #1b303e;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 40px;
+    letter-spacing: 0;
+    box-shadow: none;
+}
+.health-theme #patient-search-input::placeholder { color: #64748b; opacity: 1; }
+.health-theme .patient-search-control:focus-within {
+    outline: 2px solid #217568;
+    outline-offset: 2px;
+}
+.health-theme #patient-search-input:focus { outline: none; box-shadow: none; }
+.health-theme .patient-search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid #b3d5b4;
+    border-radius: 12px;
+    background: #f7f9f8;
+    box-shadow: 0 8px 24px rgb(27 48 62 / 15%);
+}
+.health-theme .patient-search-group {
+    margin: 12px 12px 6px;
+    color: #217568;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+.health-theme .patient-search-results a {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: #1b303e;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+.health-theme .patient-search-results a strong,
+.health-theme .patient-search-results a span { display: block; line-height: 1.5; }
+.health-theme .patient-search-results a strong { font-size: 15px; font-weight: 500; }
+.health-theme .patient-search-results a span { margin-top: 4px; color: #64748b; font-size: 13px; }
+.health-theme .patient-search-results a:hover,
+.health-theme .patient-search-results a:focus-visible {
+    outline: 2px solid #217568;
+    outline-offset: -2px;
+    background: #dbead7;
+}
+.health-theme .patient-search-message { margin: 0; padding: 12px; color: #64748b; line-height: 1.5; }
+.health-theme .patient-appointment-card[id],
+.health-theme .record-card[id] { scroll-margin-top: 24px; }
+.health-theme .patient-appointment-card:target,
+.health-theme .record-card:target { outline: 3px solid #217568; outline-offset: 3px; }
+
 body.health-theme::before {
     display: none;
 }
@@ -309,7 +408,7 @@ body.health-theme::before {
     height: auto;
     overflow: visible;
     align-self: start;
-    background: #f8faf7;
+    background: #f7f9f8;
     border: 1px solid #e0e9df;
     border-radius: 40px;
     box-shadow: 0 8px 28px rgba(35, 75, 45, 0.06);
@@ -435,6 +534,9 @@ body.health-theme::before {
 }
 
 .health-theme .top-header {
+    overflow: visible;
+    position: relative;
+    z-index: 40;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -476,6 +578,35 @@ body.health-theme::before {
     flex-wrap: wrap;
 }
 
+.health-theme .top-header:has(.patient-search) .header-account {
+    padding-left: 24px;
+    border-left: 0;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        #64748b 0 5px,
+        transparent 5px 13px
+    );
+    background-size: 1.5px 100%;
+    background-position: left top;
+    background-repeat: no-repeat;
+}
+
+.health-theme .top-header:has(.patient-search) {
+    margin-left: 24px;
+}
+
+@media (max-width: 768px) {
+    .health-theme .top-header:has(.patient-search) {
+        margin-left: 0;
+    }
+
+    .health-theme .top-header:has(.patient-search) .header-account {
+        padding-left: 0;
+        border-left: 0;
+        background-image: none;
+    }
+}
+
 .health-theme .account-profile {
     color: #243640;
     text-decoration: none;
@@ -498,7 +629,12 @@ body.health-theme::before {
 }
 
 .health-theme .account-details strong {
-    font-size: 13px;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 40px;
+    letter-spacing: 0;
+    color: #1b303e;
 }
 
 .health-theme .account-details small {
@@ -507,12 +643,18 @@ body.health-theme::before {
 }
 
 .health-theme .account-logout {
-    padding: 8px 12px;
-    border: 1px solid #cbdcca;
+    padding: 8px 16px;
+    border: 1px solid #166534;
     border-radius: 8px;
-    background: transparent;
-    color: #286b3c;
+    background: #166534;
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
     cursor: pointer;
+}
+
+.health-theme .account-logout:hover {
+    background: #12532b;
+    border-color: #12532b;
 }
 
 .health-theme a:focus-visible,

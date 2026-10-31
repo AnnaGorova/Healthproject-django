@@ -14,7 +14,7 @@
     </nav>
     <div class="patient-appointment-list">
         {% for appointment in appointments %}
-            <article class="patient-appointment-card">
+            <article class="patient-appointment-card" id="appointment-{{ appointment.id }}">
                 <div class="patient-appointment-doctor">
                     <span class="patient-appointment-status status-{{ appointment.status }}">{{ appointment.status_label }}</span>
                     <p class="patient-appointment-label">Лікар</p>

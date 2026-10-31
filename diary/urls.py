@@ -2,9 +2,11 @@ from .views import HomeView
 from django.urls import path
 from . import views
 from .api_views import records_list_api
+from .views.search import patient_search
 
 
 urlpatterns = [
+    path('search/', patient_search, name='patient_search'),
     path('', HomeView.as_view(), name='home'),
     path('old_home/', views.old_home, name='old_home'),
     path('about/', views.AboutView.as_view(), name='about'),

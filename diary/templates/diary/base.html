@@ -29,7 +29,24 @@
          <main class="main-content">
         
            <header class="top-header">
-                <h1>{% block page_title %}Головна{% endblock %}</h1>
+                {% if user.is_authenticated and user.userprofile.role == 'patient' %}
+                    <div class="patient-search">
+                        <label for="patient-search-input" class="patient-search-label">Пошук у кабінеті</label>
+                        <div class="patient-search-control">
+                            <img src="{% static 'diary/images/search.svg' %}"
+                                 class="patient-search-icon"
+                                 width="24" height="24" alt="Пошук">
+                            <input type="search" id="patient-search-input"
+                                   data-url="{% url 'patient_search' %}"
+                                   placeholder="Пошук лікарів, записів, показників…"
+                                   autocomplete="off" aria-controls="patient-search-results">
+                        </div>
+                        <div id="patient-search-results" class="patient-search-results" hidden></div>
+                        <span id="patient-search-status" class="patient-search-label" role="status"></span>
+                    </div>
+                {% else %}
+                    <h1>{% block page_title %}Головна{% endblock %}</h1>
+                {% endif %}
 
                 <div class="header-account">
                     {% if user.is_authenticated %}
@@ -86,6 +103,9 @@
     <script src="{% static 'diary/js/main.js' %}"></script>
 
 
+    {% if user.is_authenticated and user.userprofile.role == 'patient' %}
+        <script src="{% static 'diary/js/patient-search.js' %}"></script>
+    {% endif %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>

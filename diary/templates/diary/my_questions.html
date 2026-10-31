@@ -7,7 +7,7 @@
 
 {% if questions %}
     {% for q in questions %}
-        <div class="record-card" style="margin-bottom: 24px;">
+        <div class="record-card" id="question-{{ q.id }}" style="margin-bottom: 24px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                 <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
                 <p><strong>Статус:</strong> 
