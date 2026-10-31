@@ -9,6 +9,7 @@ PREV_IMAGE="$(cat .current_image 2>/dev/null || true)"
 export WEB_IMAGE="$NEW_IMAGE"
 docker compose pull web
 docker compose up -d --no-build --remove-orphans
+docker compose restart nginx
 
 # Перевірка: до 60 секунд чекаємо, поки сайт відповість
 ok=0
@@ -30,5 +31,6 @@ if [ -n "$PREV_IMAGE" ]; then
   echo "Rolling back to $PREV_IMAGE" >&2
   export WEB_IMAGE="$PREV_IMAGE"
   docker compose up -d --no-build
+  docker compose restart nginx
 fi
 exit 1
