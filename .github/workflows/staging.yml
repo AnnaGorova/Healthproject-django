@@ -83,3 +83,70 @@ jobs:
             -e EMAIL_HOST_USER=ci@example.com -e EMAIL_HOST_PASSWORD=ci \
             -e DATABASE_URL=postgres://u:p@localhost:5432/d \
             "${{ steps.meta.outputs.image }}" python manage.py check
+  deploy:
+    # Тільки push у гілку staging, не devops/** і не Pull Request
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: staging-deploy
+      cancel-in-progress: false
+    # id-token: write потрібен, щоб отримати AWS-права через OIDC (без ключів)
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
+    env:
+      DEPLOY_HOST: "13.53.125.115"
+      DEPLOY_USER: admin
+      SG_ID: sg-0cb82a80a46178a82
+      AWS_REGION: eu-north-1
+      IMAGE: ${{ needs.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Відкриваємо SSH лише для IP цього запуску
+      - name: Open SSH for this runner only
+        run: |
+          RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '\n')
+          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
+          aws ec2 authorize-security-group-ingress --group-id "$SG_ID" --protocol tcp --port 22 --cidr "${RUNNER_IP}/32"
+          sleep 5
+
+      - name: Prepare SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -T 10 -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Copy deploy files
+        run: |
+          scp docker-compose.yml deploy/deploy.sh "$DEPLOY_USER@$DEPLOY_HOST:/opt/shb/"
+          scp nginx/default.conf "$DEPLOY_USER@$DEPLOY_HOST:/opt/shb/nginx/default.conf"
+
+      - name: Deploy
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: |
+          echo "$GHCR_TOKEN" | ssh "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io -u '$GHCR_USER' --password-stdin"
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "bash /opt/shb/deploy.sh '$IMAGE'; rc=\$?; docker logout ghcr.io; exit \$rc"
+
+      - name: Verify from outside
+        run: curl -fsS --retry 5 --retry-delay 5 --max-time 10 -o /dev/null "http://$DEPLOY_HOST/"
+
+      # Закриваємо SSH завжди, навіть якщо деплой впав
+      - name: Close SSH
+        if: always()
+        run: |
+          if [ -n "${RUNNER_IP:-}" ]; then
+            aws ec2 revoke-security-group-ingress --group-id "$SG_ID" --protocol tcp --port 22 --cidr "${RUNNER_IP}/32" || true
+          fi
