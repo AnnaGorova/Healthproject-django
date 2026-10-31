@@ -43,24 +43,16 @@
                 </a>
             </li>
 
-            {% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
+{% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
                 <li>
-                    <a href="{% url 'ask_question' %}"
-                       class="nav-link{% if current_page == 'ask_question' %} is-active{% endif %}"
-                       {% if current_page == 'ask_question' %}aria-current="page"{% endif %}>
-                        <img src="{% static 'diary/images/andrsrxn_message.svg' %}"
-                             width="40"
-                             height="40"
-                             alt="Задати питання лікарю"
-                             class="nav-icon">
-                        <span>Задати питання лікарю</span>
+                    <a href="{% url 'create_record' %}"
+                       class="nav-link{% if current_page == 'create_record' %} is-active{% endif %}"
+                       {% if current_page == 'create_record' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/create-record.svg' %}"
+                             width="40" height="40" alt="Створити запис про самопочуття" class="nav-icon">
+                        <span>Створити запис про самопочуття</span>
                     </a>
                 </li>
-                <li><a href="{% url "profile" %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
-                   {% if current_page == 'profile' %}aria-current="page"{% endif %}>
-                    <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
-                    <span>Профіль користувача</span>
-                </a></li>
                 <li>
                     <a href="{% url 'my_records' %}"
                        class="nav-link{% if current_page == 'my_records' %} is-active{% endif %}"
@@ -68,9 +60,9 @@
                         <img src="{% static 'diary/images/my-records.svg' %}"
                              width="40"
                              height="40"
-                             alt="Мої записи"
+                             alt="Мої записи про самопочуття"
                              class="nav-icon">
-                        <span>Мої записи</span>
+                        <span>Мої записи про самопочуття</span>
                     </a>
                 </li>
                 <li>
@@ -85,16 +77,6 @@
                         <span>Моя аналітика</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{% url 'create_record' %}"
-                       class="nav-link{% if current_page == 'create_record' %} is-active{% endif %}"
-                       {% if current_page == 'create_record' %}aria-current="page"{% endif %}>
-                        <img src="{% static 'diary/images/create-record.svg' %}"
-                             width="40" height="40" alt="Створити запис" class="nav-icon">
-                        <span>Створити запис</span>
-                    </a>
-                </li>
-               
                 <li>
                     <a href="{% url 'doctors_list' %}"
                        class="nav-link{% if current_page == 'doctors_list' %} is-active{% endif %}"
@@ -122,6 +104,18 @@
                     <span>Мої висновки</span>
                 </a></li>
                 <li>
+                    <a href="{% url 'ask_question' %}"
+                       class="nav-link{% if current_page == 'ask_question' %} is-active{% endif %}"
+                       {% if current_page == 'ask_question' %}aria-current="page"{% endif %}>
+                        <img src="{% static 'diary/images/andrsrxn_message.svg' %}"
+                             width="40"
+                             height="40"
+                             alt="Задати питання лікарю"
+                             class="nav-icon">
+                        <span>Задати питання лікарю</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{% url 'my_questions' %}"
                        class="nav-link{% if current_page == 'my_questions' %} is-active{% endif %}"
                        {% if current_page == 'my_questions' %}aria-current="page"{% endif %}>
@@ -133,6 +127,11 @@
                         <span>Мої питання</span>
                     </a>
                 </li>
+                <li><a href="{% url "profile" %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
+                   {% if current_page == 'profile' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
+                    <span>Профіль користувача</span>
+                </a></li>
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
