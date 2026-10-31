@@ -1,0 +1,46 @@
+name: Staging pipeline
+
+on:
+  push:
+    branches: [staging, "devops/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      SECRET_KEY: ci-only-key
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost
+      EMAIL_HOST_USER: ci@example.com
+      EMAIL_HOST_PASSWORD: ci
+      DATABASE_URL: postgres://test:test@localhost:5432/test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python manage.py check
+      - run: python manage.py test --noinput

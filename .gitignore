@@ -38,3 +38,7 @@ backup_*.json
 
 # Legacy (ÿךשמ םו ץמקועו ג Git)
 # diary/_legacy/
+
+# Keys and archives
+*.pem
+*.tar.gz
