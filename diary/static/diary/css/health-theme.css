@@ -389,6 +389,304 @@ body.health-theme {
 .health-theme .patient-appointment-card:target,
 .health-theme .record-card:target { outline: 3px solid #217568; outline-offset: 3px; }
 
+/* Питання пацієнта та листування. */
+.health-theme .patient-questions {
+    box-sizing: border-box;
+    min-height: 650px;
+    padding: 32px 40px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: "Inter", sans-serif;
+}
+.health-theme .patient-questions h2 {
+    margin: 0 0 24px;
+    color: #1b303e;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+}
+.health-theme .patient-question-list { display: grid; gap: 32px; }
+.health-theme .patient-question,
+.health-theme .patient-question-new {
+    min-width: 0;
+    border: 3px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+}
+.health-theme .patient-question summary,
+.health-theme .patient-question-new {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 68px;
+    padding: 12px 24px;
+    color: #1b303e;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    text-decoration: none;
+    cursor: pointer;
+}
+.health-theme .patient-question summary {
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+.health-theme .patient-question summary::-webkit-details-marker { display: none; }
+.health-theme .patient-question summary:hover,
+.health-theme .patient-question-new:hover { background: #e8f3e5; }
+.health-theme .patient-question-new { gap: 16px; }
+.health-theme .patient-question-new img {
+    display: block;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+.health-theme .patient-question-body { padding: 24px; border-top: 1px solid #b3d5b4; }
+.health-theme .patient-question-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.health-theme .question-message {
+    margin-bottom: 20px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #edf3f1;
+}
+.health-theme .question-message-doctor { border-left: 3px solid #217568; background: #e8f3e5; }
+.health-theme .question-message-author {
+    margin: 0 0 8px;
+    color: #52657c;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.health-theme .question-message-doctor .question-message-author { color: #166534; }
+.health-theme .question-message-text {
+    margin: 0;
+    color: #1b303e;
+    font-size: 16px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.health-theme .question-reply-form label { display: block; margin-bottom: 8px; font-size: 16px; }
+.health-theme .question-reply-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 120px;
+    padding: 12px 16px;
+    border: 2px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font: inherit;
+    resize: vertical;
+}
+.health-theme .question-reply-form button {
+    margin-top: 16px;
+    padding: 10px 28px;
+    border: 0;
+    border-radius: 999px;
+    background: #166534;
+    color: #ffffff;
+    font: inherit;
+    cursor: pointer;
+}
+.health-theme .question-reply-form button:hover { background: #12532b; }
+.health-theme .question-notice,
+.health-theme .patient-questions-empty {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.5;
+}
+.health-theme .patient-question summary:focus-visible,
+.health-theme .patient-question-new:focus-visible,
+.health-theme .question-reply-form textarea:focus-visible,
+.health-theme .question-reply-form button:focus-visible { outline: 3px solid #217568; outline-offset: 3px; }
+.health-theme .patient-question:target {
+    scroll-margin-top: 24px;
+    outline: 3px solid #217568;
+    outline-offset: 3px;
+}
+@media (max-width: 700px) {
+    .health-theme .patient-questions { min-height: 400px; padding: 24px 16px; }
+    .health-theme .patient-questions h2 { font-size: 26px; }
+    .health-theme .patient-question-list { gap: 20px; }
+    .health-theme .patient-question summary,
+    .health-theme .patient-question-new { padding: 12px 16px; font-size: 18px; }
+    .health-theme .patient-question-body { padding: 16px; }
+}
+
+/* Форма звернення пацієнта до лікаря. */
+.health-theme .content-wrapper:has(> .patient-ask-question) {
+    padding: 0;
+    margin-left: 24px;
+}
+
+.health-theme .patient-ask-question {
+    box-sizing: border-box;
+    padding: 32px 40px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: "Inter", sans-serif;
+}
+.health-theme .patient-ask-question h2,
+.health-theme .patient-ask-important h3 {
+    margin: 0 0 24px;
+    color: #1b303e;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+}
+.health-theme .patient-ask-form { display: grid; gap: 32px; }
+.health-theme .patient-ask-field { min-width: 0; }
+.health-theme .patient-ask-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.health-theme .patient-ask-field select,
+.health-theme .patient-ask-field input,
+.health-theme .patient-ask-field textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 68px;
+    margin: 0;
+    padding: 13px 24px;
+    border: 3px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: "Inter", sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    box-shadow: none;
+}
+.health-theme .patient-ask-field input::placeholder,
+.health-theme .patient-ask-field textarea::placeholder {
+    color: #64748b;
+    opacity: 1;
+    font-style: normal;
+}
+.health-theme .patient-ask-field textarea {
+    min-height: 280px;
+    resize: vertical;
+}
+.health-theme .patient-ask-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+.health-theme .patient-ask-actions button {
+    box-sizing: border-box;
+    width: 340px;
+    max-width: 100%;
+    min-height: 56px;
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 50px;
+    background: #166534;
+    color: #f7f9f8;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    cursor: pointer;
+}
+.health-theme .patient-ask-actions button:hover { background: #12532b; }
+.health-theme .patient-ask-actions a { color: #217568; font-size: 16px; }
+.health-theme .patient-ask-important { margin-top: 40px; }
+.health-theme .patient-ask-important h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.health-theme .patient-ask-important img {
+    display: block;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+.health-theme .patient-ask-warning {
+    box-sizing: border-box;
+    padding: 20px;
+    border: 3px solid #b04448;
+    border-radius: 10px;
+    background: #ffe3e5;
+    color: #b04448;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+}
+.health-theme .patient-ask-warning p { margin: 0; }
+.health-theme .patient-ask-errors {
+    padding: 16px;
+    border: 1px solid #e3a5a8;
+    border-radius: 10px;
+    background: #fff0f1;
+    color: #a52e35;
+}
+.health-theme .patient-ask-field .errorlist {
+    margin: 8px 0 0;
+    padding-left: 20px;
+    color: #a52e35;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.health-theme .patient-ask-field select:focus-visible,
+.health-theme .patient-ask-field input:focus-visible,
+.health-theme .patient-ask-field textarea:focus-visible,
+.health-theme .patient-ask-actions button:focus-visible,
+.health-theme .patient-ask-actions a:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 3px;
+    border-color: #217568;
+}
+@media (max-width: 768px) {
+    .health-theme .content-wrapper:has(> .patient-ask-question) { margin-left: 0; }
+}
+
+@media (max-width: 700px) {
+    .health-theme .patient-ask-question { padding: 24px 16px; }
+    .health-theme .patient-ask-question h2,
+    .health-theme .patient-ask-important h3 { font-size: 22px; }
+    .health-theme .patient-ask-form { gap: 20px; }
+    .health-theme .patient-ask-field select,
+    .health-theme .patient-ask-field input,
+    .health-theme .patient-ask-field textarea {
+        padding: 10px 16px;
+        font-size: 16px;
+    }
+    .health-theme .patient-ask-field textarea { min-height: 260px; }
+    .health-theme .patient-ask-actions button { min-height: 56px; font-size: 20px; }
+    .health-theme .patient-ask-warning { padding: 16px; font-size: 16px; }
+}
+
 body.health-theme::before {
     display: none;
 }
@@ -1160,4 +1458,117 @@ body.health-theme::before {
 .health-theme .record-detail-delete:focus-visible {
     outline: 3px solid #217568;
     outline-offset: 4px;
+}
+.health-theme .content-wrapper:has(> .question-sent) {
+    padding: 0;
+    margin-left: 24px;
+}
+
+.health-theme .question-sent {
+    min-width: 0;
+    padding: 32px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: "Inter", sans-serif;
+}
+
+.health-theme .question-sent h2 {
+    margin: 0 0 12px;
+    color: #166534;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.health-theme .question-sent-subtitle {
+    margin: 0 0 28px;
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.health-theme .question-sent-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0 0 24px;
+}
+
+.health-theme .question-sent-info dt {
+    margin-bottom: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.health-theme .question-sent-info dd {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.health-theme .question-sent-message {
+    padding: 20px;
+    border: 2px solid #b3d5b4;
+    border-radius: 10px;
+}
+
+.health-theme .question-sent-message h3 {
+    margin: 0 0 12px;
+    color: #52657c;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.health-theme .question-sent-message p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.health-theme .question-sent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.health-theme .question-sent-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    box-sizing: border-box;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 16px;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+.health-theme .question-sent-primary {
+    background: #166534;
+    color: #ffffff;
+}
+
+.health-theme .question-sent-primary:hover { background: #12532b; }
+
+.health-theme .question-sent-secondary {
+    border: 2px solid #b3d5b4;
+    color: #217568;
+}
+
+.health-theme .question-sent-secondary:hover { background: #e8f3e5; }
+
+@media (max-width: 768px) {
+    .health-theme .content-wrapper:has(> .question-sent) { margin-left: 0; }
+}
+
+@media (max-width: 600px) {
+    .health-theme .question-sent { padding: 24px 16px; }
+    .health-theme .question-sent h2 { font-size: 24px; }
+    .health-theme .question-sent-info { grid-template-columns: 1fr; }
 }
