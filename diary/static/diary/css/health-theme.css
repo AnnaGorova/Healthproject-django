@@ -74,6 +74,15 @@ body.health-theme {
 
 }
 
+.health-theme .message-success {
+    background: #edf7ee;
+    color: #166534;
+    border: 1px solid #b3d5b4;
+    border-left: 4px solid #349747;
+    border-radius: 10px;
+    backdrop-filter: none;
+}
+
 .health-theme .message-error {
     background: #fff0f1;
     color: #a52e35;
@@ -81,6 +90,204 @@ body.health-theme {
     border-left: 4px solid #a52e35;
     border-radius: 10px;
     backdrop-filter: none;
+}
+
+/* Прийоми пацієнта. */
+.health-theme .patient-appointments {
+    font-family: "Inter", sans-serif;
+    color: #1b303e;
+}
+.health-theme .patient-appointments-title {
+    margin: 0 0 16px;
+    color: #1b303e;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    text-align: center;
+}
+.health-theme .patient-appointment-filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    box-sizing: border-box;
+    width: 930px;
+    max-width: 100%;
+    min-height: 86px;
+    margin: 0 auto 48px;
+    padding: 16px 24px;
+    border-radius: 15px;
+    background: #f7f9f8;
+}
+.health-theme .patient-appointment-filters a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 53px;
+    padding: 6px 10px;
+    border: 2px solid #d3e5cf;
+    border-radius: 10px;
+    color: #1b303e;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    text-align: center;
+    text-decoration: none;
+}
+.health-theme .patient-appointment-filters a[aria-current="page"] {
+    border-color: #349747;
+    background: #349747;
+    color: #ffffff;
+}
+.health-theme .patient-appointment-list { display: grid; gap: 30px; }
+.health-theme .patient-appointment-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 204px minmax(300px, 1.2fr);
+    align-items: start;
+    gap: 32px;
+    box-sizing: border-box;
+    min-height: 206px;
+    padding: 16px 24px;
+    border-radius: 15px;
+    background: #f7f9f8;
+}
+.health-theme .patient-appointment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 204px;
+    max-width: 100%;
+    min-height: 53px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: #349747;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    text-align: center;
+}
+.health-theme .patient-appointment-status.status-completed { background: #217568; }
+.health-theme .patient-appointment-status.status-cancelled { background: #a52e35; }
+.health-theme .patient-appointment-label {
+    margin: 16px 0 12px;
+    color: #64748b;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.health-theme .patient-appointment-doctor { min-width: 0; }
+.health-theme .patient-appointment-doctor h3 {
+    margin: 0;
+    color: #1b303e;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.health-theme .patient-appointment-actions {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+    padding-top: 20px;
+}
+.health-theme .patient-appointment-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 50px;
+    padding: 8px 12px;
+    border: 2px solid #d3e5cf;
+    border-radius: 10px;
+    color: #1b303e;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+}
+.health-theme .patient-appointment-action:hover { background: #e8f3e5; }
+.health-theme .patient-appointment-dates {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    margin: 0;
+    padding-top: 4px;
+}
+.health-theme .patient-appointment-dates > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 20px;
+}
+.health-theme .patient-appointment-dates dt {
+    color: #64748b;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.health-theme .patient-appointment-dates dd {
+    margin: 0;
+    color: #1b303e;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+.health-theme .patient-appointment-dates .patient-appointment-time { margin-top: 36px; }
+.health-theme .patient-appointment-conclusion {
+    grid-column: 1 / -1;
+    min-width: 0;
+    padding: 16px;
+    border-left: 3px solid #217568;
+    border-radius: 8px;
+    background: #e8f3e5;
+    overflow-wrap: anywhere;
+}
+.health-theme .patient-appointment-conclusion h4 { margin: 0 0 8px; color: #217568; }
+.health-theme .patient-appointment-conclusion p { margin: 0 0 12px; }
+.health-theme .patient-appointment-conclusion a { color: #166534; }
+.health-theme .patient-appointments-empty {
+    margin: 0;
+    padding: 32px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    text-align: center;
+}
+.health-theme .patient-appointments-footer { margin-top: 24px; text-align: center; }
+.health-theme .patient-appointments-footer a { color: #166534; }
+.health-theme .patient-appointment-filters a:focus-visible,
+.health-theme .patient-appointment-action:focus-visible,
+.health-theme .patient-appointment-conclusion a:focus-visible,
+.health-theme .patient-appointments-footer a:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 4px;
+}
+@media (max-width: 1350px) {
+    .health-theme .patient-appointment-card { grid-template-columns: minmax(0, 1fr) 204px; }
+    .health-theme .patient-appointment-dates { grid-column: 1 / -1; }
+    .health-theme .patient-appointment-dates .patient-appointment-time { margin-top: 0; }
+}
+@media (max-width: 700px) {
+    .health-theme .patient-appointments-title { font-size: 28px; }
+    .health-theme .patient-appointment-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 24px;
+        padding: 12px;
+    }
+    .health-theme .patient-appointment-filters a { font-size: 18px; }
+    .health-theme .patient-appointment-card {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    .health-theme .patient-appointment-actions { padding-top: 0; }
+    .health-theme .patient-appointment-dates dt,
+    .health-theme .patient-appointment-dates dd { font-size: 16px; }
 }
 
 body.health-theme::before {

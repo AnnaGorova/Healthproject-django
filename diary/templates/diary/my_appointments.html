@@ -1,74 +1,53 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Мої записи{% endblock %}
+{% block title %}Мої записи до лікаря{% endblock %}
+{% block page_title %}Мої записи до лікаря{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📋 Мої записи до лікаря</h2>
-    <p class="subtitle">Показано: {{ appointments|length }} з {{ counts.total }}</p>
-</div>
-
-{% include "diary/includes/appointment_filters.html" %}
-
-{% for appointment in appointments %}
-<div class="record-card">
-    <div class="record-top">
-        <span class="badge">{{ appointment.status_label }}</span>
-        <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+<section class="patient-appointments">
+    <h2 class="patient-appointments-title">Мої записи до лікаря</h2>
+    <nav class="patient-appointment-filters" aria-label="Фільтр прийомів">
+        <a href="?status=active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
+        <a href="?status=completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
+        <a href="?status=cancelled" {% if current_status == 'cancelled' %}aria-current="page"{% endif %}>Скасовані {{ counts.cancelled }}</a>
+        <a href="?status=all" {% if current_status == 'all' %}aria-current="page"{% endif %}>Усі {{ counts.total }}</a>
+    </nav>
+    <div class="patient-appointment-list">
+        {% for appointment in appointments %}
+            <article class="patient-appointment-card">
+                <div class="patient-appointment-doctor">
+                    <span class="patient-appointment-status status-{{ appointment.status }}">{{ appointment.status_label }}</span>
+                    <p class="patient-appointment-label">Лікар</p>
+                    <h3>{{ appointment.doctor.username }}</h3>
+                </div>
+                <div class="patient-appointment-actions">
+                    {% if appointment.can_cancel %}
+                        <a href="{% url 'reschedule_appointment' appointment.id %}" class="patient-appointment-action">Перенести</a>
+                        <a href="{% url 'cancel_appointment' appointment.id %}" class="patient-appointment-action">Скасувати</a>
+                    {% endif %}
+                </div>
+                <dl class="patient-appointment-dates">
+                    <div><dt>Дата створення</dt><dd>{{ appointment.created_at|date:"d/m/Y" }}</dd></div>
+                    <div><dt>Дата призначення</dt><dd>{{ appointment.date|date:"d/m/Y" }}</dd></div>
+                    <div class="patient-appointment-time"><dt>Час прибуття</dt><dd>{{ appointment.date|date:"H:i" }}</dd></div>
+                </dl>
+                {% if appointment.conclusion %}
+                    <div class="patient-appointment-conclusion">
+                        <h4>Висновок лікаря</h4>
+                        {% if appointment.conclusion.icd10 %}
+                            <p>Шифр МКХ-10: {{ appointment.conclusion.icd10.code }} — {{ appointment.conclusion.icd10.name }}</p>
+                        {% endif %}
+                        <p>{{ appointment.conclusion.diagnosis|truncatechars:100 }}</p>
+                        <a href="{% url 'view_conclusion' appointment.id %}">Переглянути висновок →</a>
+                    </div>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p class="patient-appointments-empty">Записів у цій категорії немає.</p>
+        {% endfor %}
     </div>
-
-    <div class="detail-grid">
-        <div class="detail-item">
-            <span class="detail-label">Лікар</span>
-            <span class="detail-value">{{ appointment.doctor.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Скарги</span>
-            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
-        </div>
+    <div class="patient-appointments-footer">
+        <a href="{% url 'doctors_list' %}">Новий запис до лікаря</a>
     </div>
-
-    <!-- ===== ВИСНОВОК (якщо є) ===== -->
-    {% if appointment.conclusion %}
-        <div style="margin-top: 16px; padding: 12px 16px; background: rgba(52, 211, 153, 0.1); border-left: 3px solid #34D399; border-radius: 8px;">
-            <p style="color: #34D399; font-weight: 600; margin-bottom: 8px;">
-                📄 Висновок лікаря
-            </p>
-
-            {% if appointment.conclusion.icd10 %}
-                <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin-bottom: 4px;">
-                    <strong>Шифр МКХ-10:</strong> {{ appointment.conclusion.icd10.code }} — {{ appointment.conclusion.icd10.name }}
-                </p>
-            {% endif %}
-
-            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 12px;">
-                {{ appointment.conclusion.diagnosis|truncatechars:100 }}
-            </p>
-            <a href="{% url 'view_conclusion' appointment.id %}"
-               class="btn btn-primary"
-               style="padding: 8px 16px; font-size: 14px;">
-                Переглянути висновок →
-            </a>
-        </div>
-    {% endif %}
-
-    {% if appointment.can_cancel %}
-        <a href="{% url 'reschedule_appointment' appointment.id %}" class="btn btn-secondary">
-            📅 Перенести
-        </a>
-        <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-danger">
-            ❌ Скасувати
-        </a>
-    {% endif %}
-</div>
-{% empty %}
-<div class="empty-state">
-    <div class="empty-icon">📭</div>
-    <h3>Записів у цій категорії немає</h3>
-</div>
-{% endfor %}
-
-<div class="form-actions" style="margin-top: 24px;">
-    <a href="{% url 'doctors_list' %}" class="btn btn-primary">➕ Новий запис</a>
-</div>
+</section>
 {% endblock %}
