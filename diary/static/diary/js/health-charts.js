@@ -3,9 +3,9 @@ window.HealthCharts = (() => {
     'use strict';
     const riskColors = { green: '#34D399', yellow: '#FBBF24', red: '#EF4444', unknown: '#9CA3AF' };
     const riskLabels = {
-        green: 'У межах заданих порогів',
-        yellow: 'Помірний рівень за заданими порогами',
-        red: 'Вихід за задані пороги',
+        green: 'Норма',
+        yellow: 'Помірний ризик',
+        red: 'Високий ризик',
     };
 
     // Перевіряє наявність числових вимірювань, включно з нулем.

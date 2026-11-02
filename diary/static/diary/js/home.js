@@ -66,9 +66,9 @@ if (chartDataElement && chartCanvas) {
             }
         }
         const labels = {
-            green: 'У межах заданих порогів',
-            yellow: 'Помірний рівень',
-            red: 'Вихід за задані пороги',
+            green: 'Норма',
+            yellow: 'Помірний ризик',
+            red: 'Високий ризик',
         };
         assessment.hidden = !labels[latestRisk];
         riskBadge.textContent = labels[latestRisk] || '';

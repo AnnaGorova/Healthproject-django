@@ -7,7 +7,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Avg, Min, Max
 from .access import doctor_can_access_patient
-from .records import records
 
 
 @login_required
@@ -38,13 +37,16 @@ def health_analytics(request, patient_id=None):
         patient = current_user
     
     # ===== ПЕРІОД =====
-    period = request.GET.get('period', 'month')
+    period = request.GET.get('period', 'week')
     period_days = {
         'week': 7,
         'month': 30,
+        'quarter': 90,
         'year': 365,
     }
-    days = period_days.get(period, 30)
+    if period not in period_days:
+        period = 'week'
+    days = period_days[period]
     date_from = timezone.now() - timedelta(days=days)
     
     # ===== ЗАПИСИ ЗА ПЕРІОД =====
@@ -52,7 +54,7 @@ def health_analytics(request, patient_id=None):
         user=patient,
         is_active=True,
         date__gte=date_from,
-    ).order_by('date')
+    ).order_by('date', 'pk')
     
     # ===== СТАТИСТИКА =====
     stats = records.aggregate(
@@ -87,7 +89,7 @@ def health_analytics(request, patient_id=None):
     
     # ===== ДАНІ ДЛЯ ГРАФІКІВ =====
     chart_data = {
-        'labels': [r.date.strftime('%d.%m') for r in records],
+        'labels': [timezone.localtime(r.date).strftime('%d.%m.%Y %H:%M') for r in records],
         
         # Дані
         'temperature': [float(r.temperature) if r.temperature is not None else None for r in records],
@@ -97,6 +99,10 @@ def health_analytics(request, patient_id=None):
         'pressure_diastolic': [r.pressure_diastolic for r in records],
         'blood_sugar': [float(r.blood_sugar) if r.blood_sugar is not None else None for r in records],
         'weight': [float(r.weight) if r.weight is not None else None for r in records],
+        'sleep_hours': [r.sleep_hours for r in records],
+        'steps': [r.steps for r in records],
+        'water_intake': [r.water_intake for r in records],
+        'calories': [r.calories for r in records],
         
         # Ризики (для кольорових точок)
         'temperature_risk': [r.temperature_risk for r in records],
@@ -106,7 +112,31 @@ def health_analytics(request, patient_id=None):
         'blood_sugar_risk': [r.blood_sugar_risk for r in records],
     }
     
+    parameters = [
+        ('temperature', 'Температура', '°C', 'mint', 'temperature.svg'),
+        ('heart_rate', 'Пульс', 'уд/хв', 'pink', 'pulse.svg'),
+        ('pressure', 'Артеріальний тиск', 'мм рт. ст.', 'yellow', 'blood-pressure.svg'),
+        ('spo2', 'SpO₂', '%', 'blue', 'spo2.svg'),
+        ('blood_sugar', 'Глюкоза', 'ммоль/л', 'purple', 'chart-glucose.svg'),
+    ]
     context = {
+        'stat_rows': [
+            {'label': label, 'unit': unit, 'average': stats['avg_' + suffix],
+             'minimum': stats['min_' + suffix], 'maximum': stats['max_' + suffix]}
+            for suffix, label, unit in [
+                ('temp', 'Температура', '°C'), ('hr', 'Пульс', 'уд/хв'),
+                ('spo2', 'SpO₂', '%'), ('sys', 'Систолічний тиск', 'мм рт. ст.'),
+                ('dia', 'Діастолічний тиск', 'мм рт. ст.'),
+                ('sugar', 'Глюкоза', 'ммоль/л'), ('weight', 'Вага', 'кг'),
+            ]
+        ],
+        'analytics_parameters': [
+            {'key': key, 'label': label, 'unit': unit, 'theme': theme,
+             'icon': 'diary/images/' + icon}
+            for key, label, unit, theme, icon in parameters
+        ],
+        'selected_period': period,
+        'period_options': [('week', '7 днів'), ('month', '30 днів'), ('quarter', '3 місяці'), ('year', '1 рік')],
         'patient': patient,
         'period': period,
         'stats': stats,

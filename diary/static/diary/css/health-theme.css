@@ -1220,6 +1220,15 @@ body.health-theme::before {
 }
 
 /* Форма створення запису. */
+.health-theme .content-wrapper:has(> .record-create) {
+    padding: 0;
+}
+@media (min-width: 769px) {
+    .health-theme .main-content:has(.top-header .patient-search) > .content-wrapper:has(> .record-create) {
+        margin-left: 24px;
+    }
+}
+
 .health-theme .record-create {
     container-type: inline-size;
     font-family: "Inter", sans-serif;
