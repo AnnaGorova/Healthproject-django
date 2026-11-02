@@ -1043,7 +1043,7 @@ body.health-theme::before {
 /* Динаміка показників на головній сторінці пацієнта. */
 .health-theme .health-dynamics { margin-top: 16px; padding: 20px; border-radius: 16px; background: #f7f9f8; }
 .health-theme .dynamics-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-.health-theme .dynamics-heading h2 { margin: 0; padding: 0; border: 0; background: none; color: #1b303e; -webkit-text-fill-color: currentColor; font-size: 24px; font-weight: 600; }
+.health-theme .dynamics-heading h2 { margin: 0; padding: 0; border: 0; background: none; color: #1b303e; -webkit-text-fill-color: currentColor; font-size: 24px; font-weight: 700; }
 .health-theme .dynamics-heading h2::before, .health-theme .dynamics-heading h2::after { display: none; }
 .health-theme .dynamics-heading p { margin: 6px 0 0; color: #647890; font-size: 13px; }
 .health-theme .dynamics-periods { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -1093,7 +1093,7 @@ body.health-theme::before {
 .health-theme .chart-summary-main { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
 .health-theme .chart-summary-icon { display: block; width: 56px; height: 56px; flex-shrink: 0; object-fit: contain; }
 .health-theme .chart-summary-icon[hidden] { display: none; }
-.health-theme .chart-summary-main h3 { margin: 0 0 4px; color: #1b303e; font-size: 18px; font-weight: 600; }
+.health-theme .chart-summary-main h3 { margin: 0 0 4px; color: #1b303e; font-size: 18px; font-weight: 700; }
 .health-theme .chart-summary-caption { margin: 0 0 6px; color: #64748b; font-size: 12px; }
 .health-theme .chart-summary-value { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 0; color: #1b303e; }
 .health-theme .chart-summary-value strong { font-size: 32px; font-weight: 600; line-height: 1.2; }
