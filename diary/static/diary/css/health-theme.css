@@ -1581,3 +1581,259 @@ body.health-theme::before {
     .health-theme .question-sent h2 { font-size: 24px; }
     .health-theme .question-sent-info { grid-template-columns: 1fr; }
 }
+.health-theme .content-wrapper:has(> .patient-profile) {
+    padding: 0;
+}
+
+@media (min-width: 769px) {
+    .health-theme .main-content:has(.top-header .patient-search)
+        > .content-wrapper:has(> .patient-profile) {
+        margin-left: 24px;
+    }
+
+    .health-theme .main-content:has(> .content-wrapper > .patient-profile):has(.top-header .patient-search)
+        > .message {
+        margin-left: 24px;
+    }
+}
+
+.health-theme .patient-profile {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 940px;
+    padding: 24px 32px 40px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: 'Inter', sans-serif;
+}
+
+.health-theme .patient-profile h2 {
+    margin: 0 0 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #1b303e;
+    -webkit-text-fill-color: currentColor;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+}
+
+.health-theme .patient-profile h2::before,
+.health-theme .patient-profile h2::after {
+    display: none;
+}
+
+.health-theme .patient-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 48px;
+    width: 100%;
+    max-width: 1186px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+.health-theme .patient-profile-field {
+    min-width: 0;
+}
+
+.health-theme .patient-profile-field dt,
+.health-theme .patient-profile-field label {
+    display: block;
+    margin: 0 0 6px;
+    padding-left: 12px;
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+}
+
+.health-theme .patient-profile-field dd,
+.health-theme .patient-profile-field input,
+.health-theme .patient-profile-field select {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 72px;
+    margin: 0;
+    padding: 12px;
+    border: 3px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.019em;
+    overflow-wrap: anywhere;
+}
+
+.health-theme .patient-profile-field input,
+.health-theme .patient-profile-field select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-family: inherit;
+    box-shadow: none;
+}
+
+.health-theme .patient-profile-edit input[readonly] {
+    background: #e9eeeb;
+    border-color: #ccd8cf;
+    color: #42564b;
+}
+
+.health-theme .profile-readonly-label {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: #e9eeeb;
+    color: #526559;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: normal;
+}
+
+.health-theme .patient-profile-field input:focus,
+.health-theme .patient-profile-field select:focus {
+    outline: 2px solid #217568;
+    outline-offset: 2px;
+}
+
+.health-theme .profile-date-control {
+    position: relative;
+}
+
+.health-theme .profile-date-control input[type="text"] {
+    padding-right: 60px;
+}
+
+.health-theme .profile-calendar-button {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.health-theme .profile-calendar-button img {
+    display: block;
+}
+
+.health-theme .patient-profile-field input.profile-native-date {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.health-theme .profile-date-control [hidden] {
+    display: none;
+}
+
+.health-theme .patient-profile-edit .patient-profile-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.health-theme .profile-edit-button {
+    border: 0;
+    cursor: pointer;
+}
+
+.health-theme .patient-profile-back {
+    color: #217568;
+    font-size: 14px;
+}
+
+.health-theme .patient-profile-help {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.health-theme .patient-profile-errors {
+    margin: 8px 0;
+    color: #a52e35;
+    font-size: 14px;
+}
+
+.health-theme .patient-profile-errors ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.health-theme .patient-profile-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+    padding-top: 64px;
+}
+
+.health-theme .profile-edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 450px;
+    max-width: 100%;
+    min-height: 87px;
+    padding: 16px 24px;
+    border-radius: 50px;
+    background: #166534;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+}
+
+.health-theme .profile-edit-button:hover {
+    background: #12532b;
+}
+
+@media (max-width: 768px) {
+    .health-theme .patient-profile {
+        min-height: auto;
+        padding: 24px 20px;
+    }
+
+    .health-theme .patient-profile-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .health-theme .patient-profile-field dd,
+    .health-theme .patient-profile-field input,
+    .health-theme .patient-profile-field select {
+        font-size: 20px;
+    }
+
+    .health-theme .patient-profile-actions {
+        padding-top: 40px;
+    }
+}

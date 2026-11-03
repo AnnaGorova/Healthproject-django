@@ -3,6 +3,54 @@
 {% block title %}Профіль{% endblock %}
 
 {% block content %}
+{% if user_profile.role == 'patient' %}
+<section class="patient-profile" aria-labelledby="profile-title">
+    <h2 id="profile-title">Мій профіль</h2>
+
+    <dl class="patient-profile-grid">
+        <div class="patient-profile-field">
+            <dt>ПІБ</dt>
+            <dd>{{ user_profile.username|default:"—" }}</dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Email</dt>
+            <dd>{{ user_profile.user.email|default:"—" }}</dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Особистий телефон</dt>
+            <dd>{{ user_profile.phone|default:"—" }}</dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Стать</dt>
+            <dd>{{ user_profile.get_gender_display|default:"—" }}</dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Дата народження</dt>
+            <dd>{{ user_profile.date_of_birth|date:"d.m.Y"|default:"—" }}</dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Вік</dt>
+            <dd>
+                {% if user_profile.age != None %}
+                    {{ user_profile.age }}
+                {% else %}
+                    —
+                {% endif %}
+            </dd>
+        </div>
+        <div class="patient-profile-field">
+            <dt>Роль</dt>
+            <dd>{{ user_profile.get_role_display }}</dd>
+        </div>
+    </dl>
+
+    <div class="patient-profile-actions">
+        <a href="{% url 'edit_profile' %}" class="profile-edit-button">
+            Редагувати
+        </a>
+    </div>
+</section>
+{% else %}
 <div class="page-header">
     <h2>👤 Мій профіль</h2>
     <p class="subtitle">{{ user_profile.username }}</p>
@@ -74,4 +122,5 @@
         <a href="{% url 'home' %}" class="btn btn-outline">↩ Назад</a>
     </div>
 </div>
+{% endif %}
 {% endblock %}

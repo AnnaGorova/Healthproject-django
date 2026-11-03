@@ -3,6 +3,20 @@ from ..models import UserProfile
 import re
 
 class UserProfileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.role == 'patient':
+            self.fields['date_of_birth'].widget = forms.DateInput(
+                format='%d.%m.%Y',
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'ДД.ММ.РРРР',
+                    'inputmode': 'numeric',
+                    'maxlength': '10',
+                },
+            )
+            self.fields['date_of_birth'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
+
     phone = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -39,7 +53,7 @@ class UserProfileForm(forms.ModelForm):
                 'title': 'Введіть коректний номер телефону'
             }),
             'gender': forms.Select(attrs={'class': 'form-control'}),
-            'date_of_birth': forms.DateInput(attrs={
+            'date_of_birth': forms.DateInput(format='%Y-%m-%d', attrs={
                 'class': 'form-control', 
                 'type': 'date'
             }),

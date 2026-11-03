@@ -1,8 +1,68 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Редагувати профіль{% endblock %}
 
 {% block content %}
+{% if user_profile.role == 'patient' %}
+<form method="post" class="patient-profile patient-profile-edit" aria-labelledby="profile-title">
+    {% csrf_token %}
+    <h2 id="profile-title">Редагування профілю</h2>
+    {% if form.non_field_errors %}
+        <div class="patient-profile-errors" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="patient-profile-grid">
+        {% for field in form %}
+            <div class="patient-profile-field">
+                <label for="{{ field.id_for_label }}">
+                    {% if field.name == 'phone' %}Особистий телефон{% else %}{{ field.label }}{% endif %}
+                </label>
+                {% if field.name == 'date_of_birth' %}
+                    <div class="profile-date-control">
+                        {{ field }}
+                        <button type="button" class="profile-calendar-button"
+                                aria-label="Вибрати дату народження" hidden>
+                            <img src="{% static 'diary/images/calendar.svg' %}" width="40" height="40" alt="">
+                        </button>
+                        <input type="date" class="profile-native-date" tabindex="-1"
+                               aria-label="Календар дати народження" hidden>
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.help_text %}
+                    <p class="patient-profile-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="patient-profile-errors" id="{{ field.auto_id }}_error" role="alert">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% if field.name == 'username' %}
+                <div class="patient-profile-field">
+                    <label for="profile-email">Email <span class="profile-readonly-label">Лише перегляд</span></label>
+                    <input id="profile-email" type="text" value="{{ user_profile.user.email }}" readonly>
+                </div>
+            {% endif %}
+            {% if field.name == 'date_of_birth' %}
+                <div class="patient-profile-field">
+                    <label for="profile-age">Вік <span class="profile-readonly-label">Лише перегляд</span></label>
+                    <input id="profile-age" type="text" value="{{ user_profile.age|default_if_none:'—' }}" readonly>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <div class="patient-profile-field">
+            <label for="profile-role">Роль <span class="profile-readonly-label">Лише перегляд</span></label>
+            <input id="profile-role" type="text" value="{{ user_profile.get_role_display }}" readonly>
+        </div>
+    </div>
+
+    <div class="patient-profile-actions">
+        <button type="submit" class="profile-edit-button">Зберегти</button>
+        <a href="{% url 'profile' %}" class="patient-profile-back">Назад до профілю</a>
+    </div>
+</form>
+{% else %}
 <div class="page-header">
     <h2>✏️ Редагувати профіль</h2>
     <p class="subtitle">{{ user_profile.username }}</p>
@@ -53,4 +113,11 @@
         </div>
     </form>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if user_profile.role == 'patient' %}
+<script src="{% static 'diary/js/profile-date.js' %}"></script>
+{% endif %}
 {% endblock %}
