@@ -39,5 +39,8 @@ backup_*.json
 # Legacy (���� �� ������ � Git)
 # diary/_legacy/
 
+# Keys and archives
+*.pem
+*.tar.gz
 # Локальні нотатки для Codex
 /PROJECT_STATUS.md
