@@ -1,0 +1,4 @@
+<div class="record-detail-item">
+    <dt>{{ label }}</dt>
+    <dd>{% if value != None and value != "" %}{{ value }}{% if unit %} {{ unit }}{% endif %}{% else %}<span class="record-detail-empty">Не вказано</span>{% endif %}</dd>
+</div>

@@ -1,23 +1,30 @@
-{% extends 'diary/base.html' %}
+{% extends "diary/base.html" %}
 
 {% block title %}Питання надіслано{% endblock %}
+{% block page_title %}Питання надіслано{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>✅ Питання надіслано</h2>
-</div>
-
-<div class="record-card">
-    <p><strong>Лікарю:</strong> {{ data.doctor.username }}</p>
-    <p><strong>Телефон:</strong> {{ data.phone }}</p>
-    <p><strong>Питання:</strong></p>
-    <p style="margin-top: 8px; color: rgba(255,255,255,0.85);">
-        {{ data.question|linebreaks }}
+<section class="question-sent">
+    <h2>Питання успішно надіслано</h2>
+    <p class="question-sent-subtitle">
+        Відповідь лікаря з’явиться в розділі «Мої питання».
     </p>
-</div>
 
-<div class="form-actions" style="margin-top: 24px;">
-    <a href="{% url 'my_questions' %}" class="btn btn-primary">Мої питання</a>
-    <a href="{% url 'home' %}" class="btn btn-secondary">На головну</a>
-</div>
+    <dl class="question-sent-info">
+        <div>
+            <dt>Лікар</dt>
+            <dd>{{ data.doctor.username }}</dd>
+        </div>
+    </dl>
+
+    <div class="question-sent-message">
+        <h3>Ваше запитання</h3>
+        <p>{{ data.question }}</p>
+    </div>
+
+    <div class="question-sent-actions">
+        <a href="{% url 'my_questions' %}" class="question-sent-primary">Мої питання</a>
+        <a href="{% url 'home' %}" class="question-sent-secondary">На головну</a>
+    </div>
+</section>
 {% endblock %}

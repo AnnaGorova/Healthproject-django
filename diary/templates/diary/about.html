@@ -1,11 +1,64 @@
 {% extends "diary/base.html" %}
 
-{% block title %} Про нас {% endblock  %}
+{% load static %}
+{% block title %}Про нас — Smart Health Bridge{% endblock %}
+{% block page_title %}Про нас{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'diary/css/about.css' %}">
+{% endblock %}
 
 {% block content %}
-     <h1>Щоденник самопочуття</h1>
-        <p>Застосунок створено для моніторингу здоров'я</p>
-        <p>Тут ви можете вести записи про своє самопочуття</p>
-        
-        <hr>
+<div class="about-container">
+<section class="about-page" aria-label="Про Smart Health Bridge">
+    <div class="about-row about-row-top">
+        <article class="about-card">
+            <p class="about-label">ПРОБЛЕМА</p>
+            <h2>Управління здоров’ям не повинно <span>бути складним</span></h2>
+            <p class="about-description">
+                Медична інформація часто зберігається в різних лікарнях,
+                застосунках і документах, через що пацієнтам і лікарям
+                складніше залишатися на зв’язку та швидко отримувати потрібні дані.
+            </p>
+        </article>
+        <article class="about-card">
+            <p class="about-label">НАШЕ РІШЕННЯ</p>
+            <h2>Розумніший і більш зручний <span>спосіб піклуватися про здоров’я</span></h2>
+            <p class="about-description">
+                Smart Health Bridge об’єднує медичні записи, прийоми у лікаря
+                та спілкування з медичними працівниками в одній безпечній і зручній платформі.
+            </p>
+        </article>
+    </div>
+    <div class="about-row about-row-bottom">
+        <article class="about-card">
+            <p class="about-label">ОГЛЯД ПРОЄКТУ</p>
+            <h2>Єдина платформа для кращої <span>турботи про здоров’я</span></h2>
+            <p class="about-description">
+                Smart Health Bridge — це сучасна цифрова медична платформа,
+                створена для спрощення взаємодії між пацієнтами та лікарями.
+                Користувачі можуть записуватися на прийом, переглядати медичні документи,
+                спілкуватися з лікарями та відстежувати основні показники свого здоров’я — усе в одному місці.
+            </p>
+        </article>
+        <aside class="about-card about-resources" aria-label="Додаткова інформація">
+            <div class="about-resource">
+                <h3>Посібник з використання</h3>
+                <details class="about-guide">
+                    <summary>Дізнатися більше</summary>
+                    <p>Додавайте вимірювання в розділі «Створити запис», переглядайте їх
+                        у «Моїх записах», а зміни показників — у «Моїй аналітиці».</p>
+                </details>
+            </div>
+            <div class="about-resource">
+                <h3>Налаштування</h3>
+                <a href="{% url 'edit_profile' %}" class="about-link">Дізнатися більше</a>
+            </div>
+            <div class="about-resource">
+                <h3>Про версію</h3>
+                <p class="about-version">Дипломний проєкт</p>
+            </div>
+        </aside>
+    </div>
+</section>
+</div>
 {% endblock  %}

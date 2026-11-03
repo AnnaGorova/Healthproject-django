@@ -1,157 +1,96 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Запис №{{ record.id }}{% endblock %}
+{% block page_title %}Деталі запису{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📄 Запис №{{ record.id }}</h2>
-    <p class="subtitle">{{ record.date|date:"d.m.Y H:i" }}</p>
-    
-    {% if record.updated_at %}
-        <p><strong>Оновлено:</strong> {{ record.updated_at|date:"d.m.Y H:i" }}</p>
-    {% endif %}
-</div>
-
-<div class="record-card" style="padding: 32px;">
-    <!-- БЛОК 1: САМОПОЧУТТЯ -->
-    <div class="form-section">
-        <div class="section-header">
-            <span class="section-icon">😊</span>
-            <h3>Самопочуття</h3>
-        </div>
-        <div class="detail-grid">
-            <div class="detail-item">
-                <span class="detail-label">Самопочуття</span>
-                <span class="detail-value">{{ record.well_being|default:"—" }}</span>
-            </div>
-           
-            <div class="detail-item">
-                <span class="detail-label">Настрій</span>
-                <span class="detail-value">{{ record.get_mood_display|default:"—" }}</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- БЛОК 2: ПОКАЗНИКИ ЗДОРОВ'Я -->
-    <div class="form-section">
-        <div class="section-header">
-            <span class="section-icon">❤️</span>
-            <h3>Показники здоров'я</h3>
-        </div>
-        <div class="detail-grid">
-
-             
-            <div class="detail-item">
-                <span class="detail-label">Артеріальний тиск (систолічний)</span>
-                <span class="detail-value">{{ record.pressure_systolic|default:"—" }} мм рт.ст.</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Артеріальний тиск (діастолічний)</span>
-                <span class="detail-value">{{ record.pressure_diastolic|default:"—" }} мм рт.ст.</span>
-            </div>
-            
-            <div class="detail-item">
-                <span class="detail-label">Пульс</span>
-                <span class="detail-value">{{ record.heart_rate|default:"—" }} уд/хв</span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Температура</span>
-                <span class="detail-value">{{ record.temperature|default:"—" }} °C</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">SpO2</span>
-                <span class="detail-value">{{ record.spo2|default:"—" }}%</span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Рівень цукру</span>
-                <span class="detail-value">{{ record.blood_sugar|default:"—" }} ммоль/л</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Вага</span>
-                <span class="detail-value">{{ record.weight|default:"—" }} кг</span>
-            </div>
-           
-        </div>
-    </div>
-
-    <!-- БЛОК 3: ЕМОЦІЙНИЙ СТАН -->
-    <div class="form-section">
-        <div class="section-header">
-            <span class="section-icon">🧠</span>
-            <h3>Емоційний стан</h3>
-        </div>
-        <div class="detail-grid">
-            <div class="detail-item">
-                <span class="detail-label">Рівень енергії</span>
-                <span class="detail-value">{{ record.energy_level|default:"—" }}/10</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Рівень болю</span>
-                <span class="detail-value">{{ record.pain_level|default:"—" }}/10</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- БЛОК 4: СПОСІБ ЖИТТЯ -->
-    <div class="form-section">
-        <div class="section-header">
-            <span class="section-icon">💪</span>
-            <h3>Спосіб життя</h3>
-        </div>
-        <div class="detail-grid">
-            <div class="detail-item">
-                <span class="detail-label">Вода</span>
-                <span class="detail-value">{{ record.water_intake|default:"—" }} мл</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Калорії</span>
-                <span class="detail-value">{{ record.calories|default:"—" }}</span>
-            </div>
-              <div class="detail-item">
-                <span class="detail-label">Кроки</span>
-                <span class="detail-value">{{ record.steps|default:"—" }}</span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Сон</span>
-                <span class="detail-value">{{ record.sleep_hours|default:"—" }} год</span>
-            </div>
-          
-        </div>
-    </div>
-
-    <!-- БЛОК 5: ДОДАТКОВО -->
-    <div class="form-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
-        <div class="section-header">
-            <span class="section-icon">📋</span>
-            <h3>Додатково</h3>
-        </div>
-        <div class="record-notes" style="margin-top: 10px;">
-            {% if record.complaints %}
-            <div class="note">
-                <span class="note-label">Скарги:</span>
-                <span class="note-text">{{ record.complaints }}</span>
-            </div>
-            {% endif %}
-            {% if record.comment %}
-            <div class="note">
-                <span class="note-label">Коментар:</span>
-                <span class="note-text">{{ record.comment }}</span>
-            </div>
-            {% endif %}
-           
-        </div>
-    </div>
-
-    <!-- КНОПКИ -->
-    <div class="record-actions" style="margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
-        {% if request.user.is_authenticated and request.user.userprofile == record.user %}
-            <a href="{% url 'edit_record' record.id %}" class="btn btn-warning">✏️ Редагувати</a>
-            <a href="{% url 'delete_record' record.id %}" class="btn btn-danger" >🗑️ Видалити</a>
+<div class="record-create">
+    <h2 class="record-create-title">Запис №{{ record.id }}</h2>
+    <div class="record-edit-meta">
+        <p>{{ record.date|date:"d.m.Y H:i" }}</p>
+        {% if record.updated_at %}
+            <p>Оновлено: {{ record.updated_at|date:"d.m.Y H:i" }}</p>
         {% endif %}
-        <a href="{% url 'records' %}" class="btn btn-outline">↩ Назад до списку</a>
+    </div>
+    <div class="record-create-form record-detail-panel">
+        <section class="record-section" aria-labelledby="wellbeing-title">
+            <h3 id="wellbeing-title">
+                <img src="{% static 'diary/images/tabler_mood-happy.svg' %}" width="32" height="32" alt="Самопочуття">
+                Самопочуття
+            </h3>
+            <dl class="record-fields-grid record-detail-grid">
+                {% include "diary/includes/record_detail_item.html" with label="Самопочуття" value=record.well_being only %}
+                {% include "diary/includes/record_detail_item.html" with label="Настрій" value=record.get_mood_display only %}
+            </dl>
+        </section>
+        <section class="record-section" aria-labelledby="measurements-title">
+            <h3 id="measurements-title">
+                <img src="{% static 'diary/images/akar-icons_heart.svg' %}" width="32" height="32" alt="Показники здоров’я">
+                Показники здоров’я
+            </h3>
+            <div class="record-fields-grid">
+                <div class="record-detail-pressure">
+                    <h4>Артеріальний тиск, мм рт. ст.</h4>
+                    <dl class="record-pressure-grid record-detail-grid">
+                        {% include "diary/includes/record_detail_item.html" with label="Систолічний" value=record.pressure_systolic unit="мм рт. ст." only %}
+                        {% include "diary/includes/record_detail_item.html" with label="Діастолічний" value=record.pressure_diastolic unit="мм рт. ст." only %}
+                    </dl>
+                </div>
+                <dl class="record-detail-grid">
+                    {% include "diary/includes/record_detail_item.html" with label="Вага" value=record.weight unit="кг" only %}
+                </dl>
+            </div>
+            <dl class="record-fields-grid record-detail-grid record-detail-measurements">
+                {% include "diary/includes/record_detail_item.html" with label="Пульс" value=record.heart_rate unit="уд/хв" only %}
+                {% include "diary/includes/record_detail_item.html" with label="Температура" value=record.temperature unit="°C" only %}
+                {% include "diary/includes/record_detail_item.html" with label="Глюкоза" value=record.blood_sugar unit="ммоль/л" only %}
+                {% include "diary/includes/record_detail_item.html" with label="SpO₂" value=record.spo2 unit="%" only %}
+            </dl>
+        </section>
+        <section class="record-section" aria-labelledby="emotional-title">
+            <h3 id="emotional-title">
+                <img src="{% static 'diary/images/andrsrxn_brain.svg' %}" width="32" height="32" alt="Емоційний стан">
+                Емоційний стан
+            </h3>
+            <dl class="record-fields-grid record-detail-grid">
+                {% include "diary/includes/record_detail_item.html" with label="Рівень енергії" value=record.energy_level unit="/ 10" only %}
+                {% include "diary/includes/record_detail_item.html" with label="Рівень болю" value=record.pain_level unit="/ 10" only %}
+            </dl>
+        </section>
+        <section class="record-section" aria-labelledby="lifestyle-title">
+            <h3 id="lifestyle-title">
+                <img src="{% static 'diary/images/griddy-icons_muscle-flex.svg' %}" width="32" height="32" alt="Спосіб життя">
+                Спосіб життя
+            </h3>
+            <dl class="record-fields-grid record-detail-grid">
+                {% include "diary/includes/record_detail_item.html" with label="Вода" value=record.water_intake unit="мл" only %}
+                {% include "diary/includes/record_detail_item.html" with label="Калорії" value=record.calories unit="ккал" only %}
+                {% include "diary/includes/record_detail_item.html" with label="Кроки за день" value=record.steps only %}
+                {% include "diary/includes/record_detail_item.html" with label="Сон" value=record.sleep_hours unit="год" only %}
+            </dl>
+        </section>
+        <section class="record-section record-section-additional" aria-labelledby="additional-title">
+            <h3 id="additional-title">
+                <img src="{% static 'diary/images/akar-icons_calendar.svg' %}" width="32" height="32" alt="Додатково">
+                Додатково
+            </h3>
+            <dl class="record-additional-fields record-detail-grid">
+                {% include "diary/includes/record_detail_item.html" with label="Скарги" value=record.complaints only %}
+                {% include "diary/includes/record_detail_item.html" with label="Коментар" value=record.comment only %}
+            </dl>
+        </section>
+        <div class="record-detail-actions">
+            {% if request.user.is_authenticated and request.user.userprofile == record.user %}
+                <a href="{% url 'edit_record' record.id %}" class="record-detail-edit">Редагувати</a>
+                <a href="{% url 'delete_record' record.id %}" class="record-detail-delete">Видалити</a>
+            {% endif %}
+            {% if request.user.userprofile.role == 'patient' %}
+                <a href="{% url 'my_records' %}" class="record-create-back">Назад до моїх записів</a>
+            {% else %}
+                <a href="{% url 'records' %}" class="record-create-back">Назад до записів</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
