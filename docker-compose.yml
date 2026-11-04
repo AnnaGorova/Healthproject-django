@@ -15,6 +15,13 @@ services:
     build: .
     image: ${WEB_IMAGE:-shb-web}
     restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "python manage.py migrate --no-input && gunicorn healthproject.wsgi:application --bind 0.0.0.0:8000 --workers 2"
+    expose:
+      - "8000"
 
   nginx:
     image: nginx:1.27-alpine
