@@ -89,6 +89,10 @@
             </div>
             {{ home_chart_data|json_script:"home-chart-data" }}
         </section>
+    {% elif user.userprofile.role == 'admin' %}
+        <section class="admin-home-errors" aria-labelledby="admin-errors-title">
+            <h2 id="admin-errors-title">Помилки</h2>
+        </section>
     {% else %}
         <h1>Система моніторингу здоров’я</h1>
     {% endif %}

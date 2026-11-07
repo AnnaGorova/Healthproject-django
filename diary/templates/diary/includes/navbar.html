@@ -138,7 +138,6 @@
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
-                <li class="nav-divider">🔑 Адміну</li>
                 <li><a href="{% url "administrator" %}" class="nav-link{% if current_page == 'administrator' %} is-active{% endif %}"
                    {% if current_page == 'administrator' %}aria-current="page"{% endif %}>
                     <img src="{% static 'diary/images/pajamas_log.svg' %}" width="40" height="40" alt="" class="nav-icon">

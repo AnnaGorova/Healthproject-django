@@ -1,9 +1,10 @@
 {% extends "diary/base.html" %}
 
 {% block title %}Профіль{% endblock %}
+{% block page_title %}Мій профіль{% endblock %}
 
 {% block content %}
-{% if user_profile.role == 'patient' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
 <section class="patient-profile" aria-labelledby="profile-title">
     <h2 id="profile-title">Мій профіль</h2>
 

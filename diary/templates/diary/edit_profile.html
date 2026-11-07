@@ -2,9 +2,10 @@
 {% load static %}
 
 {% block title %}Редагувати профіль{% endblock %}
+{% block page_title %}Редагування профілю{% endblock %}
 
 {% block content %}
-{% if user_profile.role == 'patient' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
 <form method="post" class="patient-profile patient-profile-edit" aria-labelledby="profile-title">
     {% csrf_token %}
     <h2 id="profile-title">Редагування профілю</h2>
@@ -117,7 +118,7 @@
 {% endblock %}
 
 {% block extra_js %}
-{% if user_profile.role == 'patient' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
 <script src="{% static 'diary/js/profile-date.js' %}"></script>
 {% endif %}
 {% endblock %}

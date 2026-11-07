@@ -1,5 +1,30 @@
 console.log("main.js завантажено!");
 
+// Вирівнюємо меню з нижнім краєм вмісту вибраних сторінок на широких екранах.
+const profileCard = document.querySelector('.patient-profile, .admin-user-editor, .about-page, .admin-home-errors');
+const profileSidebar = document.querySelector('.health-theme .sidebar');
+
+if (profileCard && profileSidebar) {
+    const desktopLayout = window.matchMedia('(min-width: 769px)');
+
+    function alignProfileSidebar() {
+        if (!desktopLayout.matches) {
+            profileSidebar.style.removeProperty('min-height');
+            return;
+        }
+
+        const height = profileCard.getBoundingClientRect().bottom
+            - profileSidebar.getBoundingClientRect().top;
+        profileSidebar.style.minHeight = `${Math.ceil(height)}px`;
+    }
+
+    const profileLayoutObserver = new ResizeObserver(alignProfileSidebar);
+    profileLayoutObserver.observe(profileCard);
+    profileLayoutObserver.observe(profileCard.closest('.main-content'));
+    window.addEventListener('resize', alignProfileSidebar);
+    alignProfileSidebar();
+}
+
 const menuScrollKey = 'sidebarNavigationScroll';
 
 // Відновлюємо прокрутку після переходу через меню.

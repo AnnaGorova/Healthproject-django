@@ -1,3 +1,159 @@
+/* Керування користувачами. */
+.health-theme .content-wrapper:has(> .admin-users-page) { padding: 0; }
+.health-theme .admin-users-page { display: grid; gap: 16px; min-width: 0; color: #1b303e; font-family: 'Inter', sans-serif; }
+.health-theme .admin-users-toolbar,
+.health-theme .admin-users-filters,
+.health-theme .admin-users-table-panel { min-width: 0; padding: 20px; border-radius: 15px; background: #f7f9f8; }
+.health-theme .admin-users-primary,
+.health-theme .admin-users-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 42px;
+    padding: 10px 24px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    text-decoration: none;
+    cursor: pointer;
+}
+.health-theme .admin-users-primary { background: #349747; color: #fff; }
+.health-theme .admin-users-primary:hover { background: #166534; }
+.health-theme .admin-users-toolbar .admin-users-primary { width: 280px; max-width: 100%; }
+.health-theme .admin-users-reset { background: #b3d5b4; color: #1b303e; }
+.health-theme .admin-users-reset:hover { background: #a2cba4; }
+.health-theme .admin-users-filters > form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 24px; }
+.health-theme .admin-filter-fields { display: grid; gap: 16px; }
+.health-theme .admin-filter-fields > div { min-width: 0; }
+.health-theme .admin-filter-fields label { display: block; margin: 0 0 6px 8px; color: #64748b; font-size: 12px; }
+.health-theme .admin-filter-fields input,
+.health-theme .admin-filter-fields select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 2px solid #b3d5b4;
+    border-radius: 8px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font: inherit;
+    font-size: 14px;
+}
+.health-theme .admin-filter-fields input::placeholder { color: #64748b; }
+.health-theme .admin-filter-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; }
+.health-theme .admin-filter-actions .admin-users-primary { min-width: 160px; }
+.health-theme .admin-filter-actions .admin-users-reset { min-width: 120px; }
+.health-theme .admin-users-table-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.health-theme .admin-users-table-heading h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #1b303e;
+    -webkit-text-fill-color: currentColor;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.health-theme .admin-users-table-heading h2::before,
+.health-theme .admin-users-table-heading h2::after { display: none; }
+.health-theme .admin-users-table-heading p { margin: 0; color: #64748b; font-size: 13px; }
+.health-theme .admin-users-table-scroll { overflow-x: auto; }
+.health-theme .admin-users-page table { width: 100%; min-width: 760px; margin: 0; border-collapse: collapse; background: transparent; color: #1b303e; font-size: 14px; box-shadow: none; }
+.health-theme .admin-users-page th,
+.health-theme .admin-users-page td { padding: 12px 10px; border: 0; border-bottom: 1px solid #e2ece5; background: transparent; color: #1b303e; text-align: left; vertical-align: middle; }
+.health-theme .admin-users-page thead { background: #e0efdc; }
+.health-theme .admin-users-page thead th { font-weight: 600; }
+.health-theme .admin-users-page tbody th { max-width: 260px; font-weight: 500; overflow-wrap: anywhere; }
+.health-theme .admin-users-page tbody td:nth-child(3) { max-width: 240px; overflow-wrap: anywhere; }
+.health-theme .admin-users-page tbody tr:hover { background: #edf3ee; }
+.health-theme .admin-users-page td.admin-user-id { color: #64748b; }
+.health-theme .admin-role-badge { display: inline-block; min-width: 70px; padding: 3px 10px; border-radius: 999px; font-size: 12px; text-align: center; }
+.health-theme .admin-role-patient { background: #dbeafe; color: #245eac; }
+.health-theme .admin-role-doctor { background: #dff3e4; color: #166534; }
+.health-theme .admin-role-admin { background: #fde0e0; color: #a52e35; }
+.health-theme .admin-user-status { display: inline-flex; align-items: center; gap: 7px; color: #168441; white-space: nowrap; }
+.health-theme .admin-user-status.is-inactive { color: #a52e35; }
+.health-theme .admin-user-status > span { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.health-theme .admin-user-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.health-theme .admin-user-actions form { margin: 0; }
+.health-theme .admin-user-edit,
+.health-theme .admin-user-toggle { display: inline-flex; justify-content: center; align-items: center; box-sizing: border-box; width: 36px; height: 36px; padding: 7px; border: 0; border-radius: 50%; cursor: pointer; text-decoration: none; }
+.health-theme .admin-user-edit { background: #e1f1e2; color: #168441; }
+.health-theme .admin-user-toggle { background: #fde6e7; color: #a52e35; }
+.health-theme .admin-user-toggle.is-inactive { background: #e1f1e2; color: #168441; }
+.health-theme .admin-user-edit:hover,
+.health-theme .admin-user-toggle.is-inactive:hover { background: #cde5ce; }
+.health-theme .admin-user-toggle:hover { background: #f7cfd1; }
+.health-theme .admin-users-page th.admin-user-actions-heading { text-align: right; }
+.health-theme .admin-users-page td.admin-users-empty { padding: 28px; color: #64748b; text-align: center; }
+.health-theme .admin-users-page :is(a, button, input, select):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
+@media (max-width: 900px) {
+    .health-theme .admin-users-filters > form { grid-template-columns: 1fr; }
+    .health-theme .admin-filter-actions { justify-content: flex-start; }
+}
+@media (max-width: 600px) {
+    .health-theme .admin-users-toolbar,
+    .health-theme .admin-users-filters,
+    .health-theme .admin-users-table-panel { padding: 16px; }
+}
+
+.health-theme .content-wrapper:has(> .admin-user-editor) { padding: 0; }
+.health-theme .admin-user-editor {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 24px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font-family: 'Inter', sans-serif;
+}
+.health-theme .admin-user-editor h2 {
+    margin: 0 0 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #1b303e;
+    -webkit-text-fill-color: currentColor;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.health-theme .admin-user-editor h2::before,
+.health-theme .admin-user-editor h2::after { display: none; }
+.health-theme .admin-user-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+.health-theme .admin-user-editor .form-group { min-width: 0; margin: 0; }
+.health-theme .admin-user-editor label { display: block; margin: 0 0 6px; color: #64748b; font-size: 13px; font-weight: 500; letter-spacing: normal; }
+.health-theme .admin-user-editor .form-group input,
+.health-theme .admin-user-editor .form-group select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #b3d5b4;
+    border-radius: 8px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font: inherit;
+    font-size: 14px;
+    box-shadow: none;
+}
+.health-theme .admin-user-editor input::placeholder { color: #64748b; font-style: normal; opacity: 1; }
+.health-theme .admin-user-editor .form-group input:focus,
+.health-theme .admin-user-editor .form-group select:focus { border-color: #217568; outline: 2px solid #217568; outline-offset: 2px; box-shadow: none; }
+.health-theme .admin-user-form-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid #dfe9e2; }
+.health-theme .admin-user-form-actions :is(a, button):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
+@media (max-width: 700px) {
+    .health-theme .admin-user-editor { padding: 20px 16px; }
+    .health-theme .admin-user-form-grid { grid-template-columns: 1fr; }
+    .health-theme .admin-user-form-actions { align-items: stretch; flex-direction: column-reverse; }
+}
+
 /* Особисті записи пацієнта. */
 .health-theme .content-wrapper:has(> .patient-records) { padding: 0; }
 @media (min-width: 769px) {
@@ -1305,6 +1461,26 @@ body.health-theme::before {
     display: none;
 }
 
+.health-theme .content-wrapper:has(> .admin-home-errors) {
+    padding: 0;
+}
+
+.health-theme .admin-home-errors {
+    box-sizing: border-box;
+    min-height: 720px;
+    padding: 24px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+}
+
+.health-theme .admin-home-errors h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
 .health-theme .app-container {
     display: grid;
     grid-template-columns: 370px minmax(0, 1fr);
@@ -1315,6 +1491,7 @@ body.health-theme::before {
 }
 
 .health-theme .sidebar {
+    box-sizing: border-box;
     position: static;
     width: auto;
     height: auto;

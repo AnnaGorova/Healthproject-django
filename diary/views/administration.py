@@ -26,7 +26,8 @@ def administrator(request):
         users = users.filter(
             models.Q(username__icontains=search) |
             models.Q(email__icontains=search) |
-            models.Q(userprofile__username__icontains=search)
+            models.Q(userprofile__username__icontains=search) |
+            models.Q(userprofile__phone__icontains=search)
         )
     
     # Фільтр за роллю

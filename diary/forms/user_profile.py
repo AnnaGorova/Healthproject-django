@@ -5,7 +5,7 @@ import re
 class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.role == 'patient':
+        if self.instance.role in ('patient', 'admin'):
             self.fields['date_of_birth'].widget = forms.DateInput(
                 format='%d.%m.%Y',
                 attrs={
