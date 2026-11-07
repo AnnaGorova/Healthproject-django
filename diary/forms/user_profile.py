@@ -19,9 +19,13 @@ class UserProfileForm(forms.ModelForm):
 
     phone = forms.CharField(
         required=False,
+        max_length=13,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '+380XXXXXXXXX'
+            'placeholder': '+380XXXXXXXXX',
+            'type': 'tel',
+            'pattern': r'^\+380[0-9]{9}$',
+            'title': 'Введіть +380 та 9 цифр, без пробілів',
         }),
         label='Телефон',
         help_text='Формат: +380XXXXXXXXX'
@@ -49,8 +53,9 @@ class UserProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '+380XXXXXXXXX',
                 'type': 'tel',
-                'pattern': r'^\+?[\d\s\-\(\)]{10,20}$',
-                'title': 'Введіть коректний номер телефону'
+                'pattern': r'^\+380[0-9]{9}$',
+                'maxlength': '13',
+                'title': 'Введіть +380 та 9 цифр, без пробілів'
             }),
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'date_of_birth': forms.DateInput(format='%Y-%m-%d', attrs={

@@ -103,7 +103,7 @@
 <div class="analytics-table-scroll"><table><thead><tr><th scope="col">Показник</th><th scope="col">Середнє</th><th scope="col">Мінімум</th><th scope="col">Максимум</th></tr></thead><tbody>
 {% for row in stat_rows %}<tr><th scope="row">{{ row.label }}, {{ row.unit }}</th><td>{{ row.average|floatformat:1|default:"—" }}</td><td>{{ row.minimum|floatformat:1|default:"—" }}</td><td>{{ row.maximum|floatformat:1|default:"—" }}</td></tr>{% endfor %}
 </tbody></table></div></details>
-{% if not records %}<p class="analytics-empty">За вибраний період записів немає.{% if not is_doctor_view %} <a href="{% url 'create_record' %}">Додати показники →</a>{% endif %}</p>{% endif %}
+<p class="analytics-empty" id="analytics-empty" {% if records %}hidden{% endif %}>За вибраний період записів немає.{% if not is_doctor_view %} <a href="{% url 'create_record' %}">Додати показники →</a>{% endif %}</p>
 <noscript>Для перегляду графіків і карток увімкніть JavaScript.</noscript>
 </div>
 {% endblock %}

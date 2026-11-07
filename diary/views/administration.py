@@ -67,7 +67,7 @@ def admin_user_create(request):
             messages.error(request, "⚠️ Такий логін вже існує")
         elif User.objects.filter(email=email).exists():
             messages.error(request, "⚠️ Такий email вже існує")
-        elif phone and not re.match(r'^\+?[\d\s\-\(\)]{10,20}$', phone): 
+        elif phone and not re.match(r'^\+380[0-9]{9}$', phone):
             messages.error(request, "⚠️ Некоректний телефон. Приклад: +380501234567")
         else:
             # Створення User (без пароля → сигнал надішле лист)
@@ -136,7 +136,7 @@ def admin_user_edit(request, user_id):
         date_of_birth = request.POST.get('date_of_birth', '').strip()
 
         # ===== ВАЛІДАЦІЯ ТЕЛЕФОНУ =====
-        if phone and not re.match(r'^\+?[\d\s\-\(\)]{10,20}$', phone):
+        if phone and not re.match(r'^\+380[0-9]{9}$', phone):
             messages.error(request, "⚠️ Некоректний телефон. Приклад: +380501234567")
             return render(request, 'diary/admin_user_form.html', {    # ← ОСЬ ЦЕ ДОДАТИ!
                 'action': 'edit',

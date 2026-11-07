@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from ..models import UserProfile, HealthRecord
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -144,4 +145,11 @@ def health_analytics(request, patient_id=None):
         'records': records,
         'is_doctor_view': patient_id is not None,
     }
+    if request.GET.get('format') == 'json':
+        return JsonResponse({
+            'period': period,
+            'chart_data': chart_data,
+            'stat_rows': context['stat_rows'],
+            'has_records': bool(records),
+        })
     return render(request, 'diary/health_analytics.html', context)

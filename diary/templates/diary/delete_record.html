@@ -3,27 +3,21 @@
 {% block title %}Видалити запис №{{ record.id }}{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Видалення запису</h2>
-    <p class="subtitle">Запис №{{ record.id }} від {{ record.date|date:"d.m.Y H:i" }}</p>
-</div>
+<section class="record-delete-confirm" aria-labelledby="delete-record-title">
+    <h2 id="delete-record-title">Видалення запису</h2>
+    <p class="record-delete-meta">Запис №{{ record.id }} від {{ record.date|date:"d.m.Y H:i" }}</p>
 
-<div class="delete-card">
-    <div class="delete-icon">⚠️</div>
-    
-    <h3 class="delete-title">Підтвердження видалення</h3>
-    <p class="delete-text">
-        Ви впевнені, що хочете видалити цей запис?
-        <br>
-        <span class="delete-highlight">Цю дію не можна буде скасувати.</span>
-    </p>
-
-    <div class="delete-actions">
-        <form method="post" class="delete-form">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-lg">🗑️ Так, видалити</button>
-        </form>
-        <a href="{% url 'record_detail' record.id %}" class="btn btn-secondary btn-lg">↩ Скасувати</a>
+    <div class="record-delete-warning">
+        <h3>Ви впевнені, що хочете видалити цей запис?</h3>
+        <p>Цю дію не можна скасувати.</p>
     </div>
-</div>
+
+    <div class="record-delete-confirm-actions">
+        <a href="{% url 'record_detail' record.id %}" class="record-delete-cancel">Скасувати</a>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="record-delete-submit">Видалити запис</button>
+        </form>
+    </div>
+</section>
 {% endblock %}

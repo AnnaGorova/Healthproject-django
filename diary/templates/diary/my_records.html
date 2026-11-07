@@ -3,35 +3,24 @@
 {% block title %}Мої записи{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📋 Мої записи</h2>
-    <p class="subtitle">Всього записів: {{ records|length }}</p>
-</div>
-
-<!-- Статистика -->
-<div class="stats-row">
-    <div class="stat-item">
-        <span class="stat-number">{{ records|length }}</span>
-        <span class="stat-label">Всього записів</span>
+<section class="patient-records" aria-labelledby="records-title">
+    <div class="patient-records-heading">
+        <div>
+            <h2 id="records-title">Мої записи</h2>
+            <p>Всього записів: {{ records|length }}</p>
+        </div>
+        <a href="{% url 'create_record' %}" class="patient-records-create">+ Новий запис</a>
     </div>
-</div>
-
-<!-- Список записів -->
-{% for record in records %}
-    {% include "diary/includes/record_card.html" with record=record %}
-{% empty %}
-    <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>Ще немає записів</h3>
-        <p>Додайте свій перший запис</p>
-        <a href="{% url 'create_record' %}" class="btn btn-primary">➕ Створити запис</a>
+    <div class="patient-records-list">
+        {% for record in records %}
+            {% include "diary/includes/record_card.html" with record=record %}
+        {% empty %}
+            <div class="patient-records-empty">
+                <h3>Ще немає записів</h3>
+                <p>Додайте перший запис, щоб відстежувати самопочуття й показники здоров’я.</p>
+                <a href="{% url 'create_record' %}" class="patient-records-create">Створити запис</a>
+            </div>
+        {% endfor %}
     </div>
-{% endfor %}
-
-<!-- Плаваюча кнопка -->
-<div class="create-float">
-    <a href="{% url 'create_record' %}" class="btn btn-primary btn-lg">
-        ➕ Новий запис
-    </a>
-</div>
+</section>
 {% endblock %}

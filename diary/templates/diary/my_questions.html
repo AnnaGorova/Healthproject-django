@@ -5,8 +5,15 @@
 {% block page_title %}Мої питання лікарю{% endblock %}
 
 {% block content %}
-<section class="patient-questions">
-    <h2>Існуючі запитання</h2>
+<div class="patient-questions-page">
+    <header class="patient-records-heading">
+        <div>
+            <h2 id="questions-title">Мої питання</h2>
+            <p>Всього запитань: {{ questions|length }}</p>
+        </div>
+        <a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове запитання</a>
+    </header>
+<section class="patient-questions" aria-labelledby="questions-title">
     <div class="patient-question-list">
         {% for q in questions %}
             <details class="patient-question" id="question-{{ q.id }}">
@@ -63,11 +70,11 @@
             <p class="patient-questions-empty">Ви ще не задавали питань.</p>
         {% endfor %}
         <a href="{% url 'ask_question' %}" class="patient-question-new">
-            <span>Нове запитання</span>
-            <img src="{% static 'diary/images/plus.svg' %}" width="32" height="32" alt="Додати запитання">
+            Нове запитання
         </a>
     </div>
 </section>
+</div>
 {% endblock %}
 
 {% block extra_js %}

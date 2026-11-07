@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import RegexValidator
 from .user_profile import UserProfile
 
 
@@ -21,7 +22,15 @@ class Question(models.Model):
         limit_choices_to={'role': 'doctor'},
         verbose_name="Лікар"
     )
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(
+        max_length=20,
+        validators=[
+            RegexValidator(
+                regex=r'^\+380[0-9]{9}$',
+                message="Введіть номер у форматі +380XXXXXXXXX: рівно 13 символів, без пробілів",
+            )
+        ],
+    )
     question = models.TextField()
     answer = models.TextField(blank=True, verbose_name="Відповідь лікаря")
     status = models.CharField(

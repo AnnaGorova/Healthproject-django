@@ -2,7 +2,7 @@
     'use strict';
     const element = document.getElementById('chart-data');
     if (!element || !window.HealthCharts) return;
-    const data = JSON.parse(element.textContent);
+    let data = JSON.parse(element.textContent);
     const { average, formatNumber, hasValues, createDataset, createOptions } = window.HealthCharts;
     const metrics = {
         pressure: { title: 'Артеріальний тиск', unit: 'мм рт. ст.', fields: [['pressure_systolic', 'Систолічний', '#218b70'], ['pressure_diastolic', 'Діастолічний', '#35c9a0']] },
@@ -53,39 +53,59 @@
             options,
         });
     }
-    document.querySelectorAll('[data-overview-metric]').forEach(panel => {
-        const key = panel.dataset.overviewMetric;
-        const averages = metrics[key].fields.map(([field]) => average(data[field]));
-        panel.querySelector('[data-average]').textContent = valuesText(averages);
-        if (key === 'pressure') {
-            panel.querySelector('[data-systolic]').textContent = valuesText([averages[0]]);
-            panel.querySelector('[data-diastolic]').textContent = valuesText([averages[1]]);
-        }
-        assessment(panel.querySelector('[data-assessment]'), panel.querySelector('[data-risk]'), key);
-        draw(panel.querySelector('canvas'), panel.querySelector('.analytics-chart-empty'), key);
-    });
-    document.querySelectorAll('[data-parameter]').forEach(card => {
-        const key = card.dataset.parameter;
-        const measured = indices(key);
-        const last = measured.at(-1);
-        if (last === undefined) return;
-        const current = metrics[key].fields.map(([field]) => data[field][last]);
-        card.querySelector('[data-value]').textContent = valuesText(current);
-        card.querySelector('[data-date]').textContent = data.labels[last];
-        card.querySelector('[data-risk]').textContent = riskLabels[riskValues(key)[last]] || '';
-        const previous = measured.at(-2);
-        card.querySelector('[data-change]').textContent = previous === undefined ? 'Перше вимірювання' : metrics[key].fields.map(([field], index) => {
-            const delta = current[index] - data[field][previous];
-            return `${delta > 0 ? '+' : ''}${formatNumber(delta)}`;
-        }).join('/') + ` ${metrics[key].unit}`;
-    });
+    const overviewCharts = new Map();
+    function updateOverview() {
+        document.querySelectorAll('[data-overview-metric]').forEach(panel => {
+            overviewCharts.get(panel)?.destroy();
+            const key = panel.dataset.overviewMetric;
+            const averages = metrics[key].fields.map(([field]) => {
+                const value = average(data[field]);
+                return key === 'pressure' && value !== null ? Math.round(value) : value;
+            });
+            panel.querySelector('[data-average]').textContent = valuesText(averages);
+            if (key === 'pressure') {
+                panel.querySelector('[data-systolic]').textContent = valuesText([averages[0]]);
+                panel.querySelector('[data-diastolic]').textContent = valuesText([averages[1]]);
+            }
+            assessment(panel.querySelector('[data-assessment]'), panel.querySelector('[data-risk]'), key);
+            overviewCharts.set(panel, draw(panel.querySelector('canvas'), panel.querySelector('.analytics-chart-empty'), key));
+        });
+    }
+    function updateParameters() {
+        document.querySelectorAll('[data-parameter]').forEach(card => {
+            const key = card.dataset.parameter;
+            const measured = indices(key);
+            const last = measured.at(-1);
+            if (last === undefined) {
+                card.querySelector('[data-value]').textContent = '—';
+                card.querySelector('[data-date]').textContent = '';
+                card.querySelector('[data-risk]').textContent = '';
+                card.querySelector('[data-change]').textContent = 'Немає даних';
+                return;
+            }
+            const current = metrics[key].fields.map(([field]) => data[field][last]);
+            card.querySelector('[data-value]').textContent = valuesText(current);
+            card.querySelector('[data-date]').textContent = data.labels[last];
+            card.querySelector('[data-risk]').textContent = riskLabels[riskValues(key)[last]] || '';
+            const previous = measured.at(-2);
+            card.querySelector('[data-change]').textContent = previous === undefined ? 'Перше вимірювання' : metrics[key].fields.map(([field], index) => {
+                const delta = current[index] - data[field][previous];
+                return `${delta > 0 ? '+' : ''}${formatNumber(delta)}`;
+            }).join('/') + ` ${metrics[key].unit}`;
+        });
+    }
     let chart;
+    let currentMetric = 'temperature';
     function showMetric(key) {
         const metric = metrics[key];
         if (!metric) return;
+        currentMetric = key;
         if (chart) chart.destroy();
         document.getElementById('chart-title').textContent = metric.title;
-        const averages = metric.fields.map(([field]) => average(data[field]));
+        const averages = metric.fields.map(([field]) => {
+            const value = average(data[field]);
+            return key === 'pressure' && value !== null ? Math.round(value) : value;
+        });
         document.getElementById('chart-average').textContent = valuesText(averages);
         document.getElementById('chart-unit').textContent = metric.unit;
         document.getElementById('pressure-chart-icon').hidden = key !== 'pressure';
@@ -105,5 +125,74 @@
             button.setAttribute('aria-expanded', String(!other.hidden));
         } else showMetric(button.dataset.metric);
     }));
-    showMetric('temperature');
+    const periodLinks = document.querySelectorAll('.analytics-page .dynamics-periods a');
+    const periodStatus = document.getElementById('chart-period-status');
+    const page = document.querySelector('.analytics-page');
+    let periodController;
+    let periodRequestId = 0;
+    function updateStatistics(rows) {
+        const body = document.querySelector('.analytics-statistics tbody');
+        const number = new Intl.NumberFormat('uk-UA', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        body.replaceChildren(...rows.map(row => {
+            const tr = document.createElement('tr');
+            const heading = document.createElement('th');
+            heading.scope = 'row';
+            heading.textContent = `${row.label}, ${row.unit}`;
+            tr.append(heading);
+            ['average', 'minimum', 'maximum'].forEach(field => {
+                const cell = document.createElement('td');
+                cell.textContent = row[field] === null ? '—' : number.format(Number(row[field]));
+                tr.append(cell);
+            });
+            return tr;
+        }));
+    }
+    periodLinks.forEach(link => link.addEventListener('click', async event => {
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        periodController?.abort();
+        const controller = new AbortController();
+        periodController = controller;
+        const requestId = ++periodRequestId;
+        const url = new URL(link.href);
+        url.searchParams.set('format', 'json');
+        periodStatus.textContent = 'Завантаження показників…';
+        page.setAttribute('aria-busy', 'true');
+        try {
+            const response = await fetch(url, {
+                signal: controller.signal, credentials: 'same-origin', cache: 'no-store',
+                headers: { Accept: 'application/json' },
+            });
+            if (!response.ok) throw new Error('Не вдалося отримати дані.');
+            const result = await response.json();
+            if (requestId !== periodRequestId) return;
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+            data = result.chart_data;
+            updateOverview();
+            updateParameters();
+            updateStatistics(result.stat_rows);
+            document.getElementById('analytics-empty').hidden = result.has_records;
+            showMetric(currentMetric);
+            periodLinks.forEach(periodLink => {
+                const active = new URL(periodLink.href).searchParams.get('period') === result.period;
+                if (active) periodLink.setAttribute('aria-current', 'true');
+                else periodLink.removeAttribute('aria-current');
+            });
+            const pageUrl = new URL(window.location.href);
+            pageUrl.searchParams.set('period', result.period);
+            pageUrl.searchParams.delete('format');
+            window.history.replaceState(null, '', pageUrl);
+            periodStatus.textContent = '';
+            window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
+        } catch (error) {
+            if (error.name === 'AbortError' || requestId !== periodRequestId) return;
+            periodStatus.textContent = 'Не вдалося оновити дані. Спробуйте ще раз.';
+        } finally {
+            if (requestId === periodRequestId) page.removeAttribute('aria-busy');
+        }
+    }));
+    updateOverview();
+    updateParameters();
+    showMetric(currentMetric);
 })();

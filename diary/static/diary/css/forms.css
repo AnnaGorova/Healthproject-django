@@ -31,11 +31,11 @@
 }
 
 .section-icon {
-    font-size: 24px;
+    font-size: 19px;
 }
 
 .section-header h3 {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
     color: #334155;
     margin: 0;
@@ -70,7 +70,7 @@
     padding: 10px 14px;
     border: 2px solid #E2E8F0;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-family: inherit;
     transition: all 0.3s ease;
     background: white;
@@ -151,7 +151,7 @@
 
 .btn-lg {
     padding: 14px 36px;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 /* ===== АДАПТИВНІСТЬ ===== */
@@ -180,7 +180,7 @@
     }
     
     .section-header h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
 
@@ -212,7 +212,7 @@
     padding: 10px 14px;
     border: 2px solid #E2E8F0;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-family: inherit;
     background: #fff;
     color: #1E293B;

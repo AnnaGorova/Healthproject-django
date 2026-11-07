@@ -1,26 +1,33 @@
-{% load static %}
+<article class="record-card patient-record-card" id="record-{{ record.id }}" aria-labelledby="record-title-{{ record.id }}">
+    <header class="patient-record-card-heading">
+        <div>
+            <h3 id="record-title-{{ record.id }}">Запис №{{ record.id }}</h3>
+            <time datetime="{{ record.date|date:'c' }}">{{ record.date|date:"d.m.Y H:i" }}</time>
+        </div>
+        {% if record.mood %}<span class="patient-record-mood">{{ record.get_mood_display }}</span>{% endif %}
+    </header>
 
+    <p class="patient-record-wellbeing"><strong>Самопочуття:</strong> {{ record.well_being|default:"Не вказано" }}</p>
 
+    <dl class="patient-record-measurements">
+        <div><dt>Температура</dt><dd>{{ record.temperature|default_if_none:"—" }} <small>°C</small></dd></div>
+        <div><dt>Артеріальний тиск</dt><dd>{{ record.pressure_systolic|default_if_none:"—" }}/{{ record.pressure_diastolic|default_if_none:"—" }} <small>мм рт. ст.</small></dd></div>
+        <div><dt>Пульс</dt><dd>{{ record.heart_rate|default_if_none:"—" }} <small>уд/хв</small></dd></div>
+        <div><dt>Сатурація</dt><dd>{{ record.spo2|default_if_none:"—" }} <small>%</small></dd></div>
+    </dl>
 
-<div class="record-card">
-            <p>ID: {{ record.id}}</p>
-            <p>Самопочуття: {{ record.well_being|upper}}</p>
-            <p>Скарги: {{ record.complaints|truncatewords:5}}</p>
-            <p>Дата: {{ record.date|date:"d.m.Y H:i"}}</p>
-            <p>Температура: {{ record.temperature|default:"—" }} °C</p>
-            <p>Тиск: {{ record.pressure_systolic|default:"—" }}/{{ record.pressure_diastolic|default:"—" }} мм рт.ст.</p>
-            <p>Пульс: {{ record.heart_rate|default:"—" }} уд/хв</p>
-            <p>Сатурація: {{ record.spo2|default:"—" }}%</p>
-            <p>Коментар: {{ record.comment }}</p>
+    {% if record.complaints %}
+        <div class="patient-record-note"><h4>Скарги</h4><p>{{ record.complaints|truncatewords:30 }}</p></div>
+    {% endif %}
+    {% if record.comment %}
+        <div class="patient-record-note"><h4>Коментар</h4><p>{{ record.comment }}</p></div>
+    {% endif %}
 
-            <hr>
-             <div class="record-actions">
-                {% if request.user.is_authenticated and request.user.userprofile == record.user %}
-                    <a href="{% url 'edit_record' record.id %}" class="btn btn-warning">✏️ Редагувати</a>
-                    <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">🗑️ Видалити</a>
-                {% endif %}
-                <a href="{% url 'record_detail' record.id %}" class="btn btn-outline">👁️ Детальніше</a>
-            </div>
-            
-            
-</div>
+    <div class="patient-record-actions">
+        <a href="{% url 'record_detail' record.id %}" class="patient-record-details">Детальніше →</a>
+        {% if request.user.is_authenticated and request.user.userprofile == record.user %}
+            <a href="{% url 'edit_record' record.id %}" class="patient-record-edit">Редагувати</a>
+            <a href="{% url 'delete_record' record.id %}" class="patient-record-delete">Видалити</a>
+        {% endif %}
+    </div>
+</article>

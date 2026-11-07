@@ -17,6 +17,16 @@
             <div class="alert alert-error">{{ form.non_field_errors }}</div>
         {% endif %}
 
+        {% for field in form %}
+            {% if field.name == 'complaints' or field.name == 'objective_data' or field.name == 'laboratory_results' or field.name == 'instrumental_results' %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
         <div class="form-group icd10-group">
             <label for="icd10_search_input">🔎 Шифр МКХ-10</label>
             <div class="icd10-autocomplete">

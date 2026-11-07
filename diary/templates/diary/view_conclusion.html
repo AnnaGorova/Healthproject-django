@@ -1,91 +1,85 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Висновок лікаря{% endblock %}
+{% block page_title %}Висновок лікаря{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📄 Висновок лікаря</h2>
-    <p class="subtitle">Форма № 028/о</p>
-</div>
+<div class="conclusion-page">
+    <article class="conclusion-card" aria-labelledby="conclusion-title">
+    <header class="conclusion-heading">
+        <h2 id="conclusion-title">Висновок лікаря</h2>
+        <p>Форма № 028/о</p>
+    </header>
 
-<!-- Інформація про прийом -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3 style="margin-bottom: 16px;">📋 Інформація про прийом</h3>
-    
-    <div class="detail-grid">
-        <div class="detail-item full-width">
-            <span class="detail-label">Заклад охорони здоров'я</span>
-            <span class="detail-value">Smart Health Bridge</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Лікар</span>
-            <span class="detail-value">{{ appointment.doctor.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Спеціалізація</span>
-            <span class="detail-value">
-                {{ appointment.doctor.doctor_profile.specialty|default:"—" }}
-            </span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Пацієнт</span>
-            <span class="detail-value">{{ appointment.patient.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Дата народження</span>
-            <span class="detail-value">
-                {{ appointment.patient.date_of_birth|date:"d.m.Y"|default:"—" }}
-            </span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Вік</span>
-            <span class="detail-value">
-                {% if appointment.patient.age %}{{ appointment.patient.age }} років{% else %}—{% endif %}
-            </span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Дата та час прийому</span>
-            <span class="detail-value">{{ appointment.date|date:"d.m.Y H:i" }}</span>
-        </div>
-    </div>
-</div>
+    <section class="conclusion-appointment" aria-labelledby="conclusion-appointment-title">
+        <h3 id="conclusion-appointment-title">Інформація про прийом</h3>
+        <dl class="conclusion-info-grid">
+            <div class="conclusion-info-wide">
+                <dt>Заклад охорони здоров’я</dt>
+                <dd class="conclusion-brand">
+                    <img src="{% static 'diary/images/logo.svg' %}" width="40" height="40" alt="">
+                    <span class="conclusion-brand-name">SMART HEALTH<small>BRIDGE</small></span>
+                </dd>
+            </div>
+            <div><dt>Лікар</dt><dd>{{ appointment.doctor.username }}</dd></div>
+            <div><dt>Спеціалізація</dt><dd>{{ appointment.doctor.doctor_profile.specialty|default:"—" }}</dd></div>
+            <div><dt>Пацієнт</dt><dd>{{ appointment.patient.username }}</dd></div>
+            <div>
+                <dt>Дата народження</dt>
+                <dd>
+                    {{ appointment.patient.date_of_birth|date:"d.m.Y"|default:"—" }}
+                    {% if appointment.patient.age != None %}
+                        ({{ appointment.patient.age }} {% with last_two=appointment.patient.age|stringformat:"d"|slice:"-2:" last=appointment.patient.age|stringformat:"d"|slice:"-1:" %}{% if last_two == '11' or last_two == '12' or last_two == '13' or last_two == '14' %}років{% elif last == '1' %}рік{% elif last == '2' or last == '3' or last == '4' %}роки{% else %}років{% endif %}{% endwith %})
+                    {% endif %}
+                </dd>
+            </div>
+            <div><dt>Дата та час прийому</dt><dd>{{ appointment.date|date:"d.m.Y H:i" }}</dd></div>
+        </dl>
+    </section>
 
-<!-- Висновок -->
-<div class="record-card">
-    <h3 style="margin-bottom: 16px;">📄 Висновок</h3>
-    
-    {% if conclusion.icd10 %}
-    <div style="padding: 16px; margin-bottom: 16px; background: rgba(79, 70, 229, 0.08); border-radius: 12px;">
-        <p style="color: #4F46E5; font-weight: 600; margin-bottom: 8px;">🔖 Шифр МКХ-10</p>
-        <p style="color: #fff; line-height: 1.6;">{{ conclusion.icd10.code }} — {{ conclusion.icd10.name }}</p>
+    <div class="conclusion-content">
+        <section class="conclusion-section" aria-labelledby="conclusion-complaints-title">
+            <h4 id="conclusion-complaints-title">Скарги</h4>
+            <div class="conclusion-text">{{ conclusion.complaints|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-objective-title">
+            <h4 id="conclusion-objective-title">Об’єктивні дані</h4>
+            <div class="conclusion-text">{{ conclusion.objective_data|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-laboratory-title">
+            <h4 id="conclusion-laboratory-title">Результати лабораторних досліджень</h4>
+            <div class="conclusion-text">{{ conclusion.laboratory_results|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-instrumental-title">
+            <h4 id="conclusion-instrumental-title">Результати функціональних, рентгенологічних та інших досліджень</h4>
+            <div class="conclusion-text">{{ conclusion.instrumental_results|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-diagnosis-title">
+            <h4 id="conclusion-diagnosis-title">Діагноз</h4>
+            <div class="conclusion-text">{{ conclusion.diagnosis|default:"Не вказано"|linebreaks }}</div>
+            {% if conclusion.icd10 %}
+                <p class="conclusion-code"><span>МКХ-10:</span> <strong>{{ conclusion.icd10.code }}</strong> — {{ conclusion.icd10.name }}</p>
+            {% endif %}
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-prescriptions-title">
+            <h4 id="conclusion-prescriptions-title">Призначення</h4>
+            <div class="conclusion-text">{{ conclusion.prescriptions|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <section class="conclusion-section" aria-labelledby="conclusion-recommendations-title">
+            <h4 id="conclusion-recommendations-title">Рекомендації</h4>
+            <div class="conclusion-text">{{ conclusion.recommendations|default:"Не вказано"|linebreaks }}</div>
+        </section>
+        <p class="conclusion-created">Висновок створено: {{ conclusion.created_at|date:"d.m.Y H:i" }}</p>
     </div>
-    {% endif %}
+    </article>
 
-    <div style="padding: 16px; margin-bottom: 16px; background: rgba(167, 139, 250, 0.08); border-radius: 12px;">
-        <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">🔍 Діагноз</p>
-        <p style="color: #fff; line-height: 1.6;">{{ conclusion.diagnosis|linebreaks }}</p>
-    </div>
-    
-    <div style="padding: 16px; margin-bottom: 16px; background: rgba(52, 211, 153, 0.08); border-radius: 12px;">
-        <p style="color: #34D399; font-weight: 600; margin-bottom: 8px;">💊 Призначення</p>
-        <p style="color: #fff; line-height: 1.6;">{{ conclusion.prescriptions|linebreaks }}</p>
-    </div>
-    
-    <div style="padding: 16px; background: rgba(251, 191, 36, 0.08); border-radius: 12px;">
-        <p style="color: #FBBF24; font-weight: 600; margin-bottom: 8px;">📝 Рекомендації</p>
-        <p style="color: #fff; line-height: 1.6;">{{ conclusion.recommendations|linebreaks }}</p>
-    </div>
-    
-    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 24px; text-align: right;">
-        Висновок створено: {{ conclusion.created_at|date:"d.m.Y H:i" }}
-    </p>
-</div>
-
-<div class="form-actions" style="margin-top: 24px;">
-    {% if request.user.userprofile.role == 'patient' %}
-        <a href="{% url 'my_conclusions' %}" class="btn btn-secondary">← Назад до висновків</a>
-    {% else %}
-        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-secondary">← Назад до прийому</a>
-    {% endif %}
+    <nav class="conclusion-actions" aria-label="Повернення з висновку">
+        {% if request.user.userprofile.role == 'patient' %}
+            <a href="{% url 'my_conclusions' %}">← Назад до висновків</a>
+        {% else %}
+            <a href="{% url 'appointment_detail' appointment.id %}">← Назад до прийому</a>
+        {% endif %}
+    </nav>
 </div>
 {% endblock %}

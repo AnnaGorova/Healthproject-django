@@ -21,8 +21,9 @@ class DoctorProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '+380XXXXXXXXX',
                 'type': 'tel',                            # ← HTML5
-                'pattern': r'^\+?[\d\s\-\(\)]{10,20}$',   # ← HTML5 pattern
-                'title': 'Введіть коректний номер телефону'
+                'pattern': r'^\+380[0-9]{9}$',   # ← HTML5 pattern
+                'maxlength': '13',
+                'title': 'Введіть +380 та 9 цифр, без пробілів'
             }),
         }
         labels = {

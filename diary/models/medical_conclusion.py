@@ -34,6 +34,15 @@ class MedicalConclusion(models.Model):
         verbose_name="Код МКХ-10"
     )
     
+    complaints = models.TextField(verbose_name="Скарги", blank=True)
+    objective_data = models.TextField(verbose_name="Об’єктивні дані", blank=True)
+    laboratory_results = models.TextField(
+        verbose_name="Результати лабораторних досліджень", blank=True
+    )
+    instrumental_results = models.TextField(
+        verbose_name="Результати функціональних, рентгенологічних та інших досліджень",
+        blank=True,
+    )
     diagnosis = models.TextField(verbose_name="Діагноз")
     prescriptions = models.TextField(verbose_name="Призначення")
     recommendations = models.TextField(verbose_name="Рекомендації")

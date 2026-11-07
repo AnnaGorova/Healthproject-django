@@ -44,15 +44,7 @@
             </li>
 
 {% if request.user.is_authenticated and user.userprofile.role == 'patient' %}
-                <li>
-                    <a href="{% url 'create_record' %}"
-                       class="nav-link{% if current_page == 'create_record' %} is-active{% endif %}"
-                       {% if current_page == 'create_record' %}aria-current="page"{% endif %}>
-                        <img src="{% static 'diary/images/create-record.svg' %}"
-                             width="40" height="40" alt="Створити запис про самопочуття" class="nav-icon">
-                        <span>Створити запис про самопочуття</span>
-                    </a>
-                </li>
+                
                 <li>
                     <a href="{% url 'my_records' %}"
                        class="nav-link{% if current_page == 'my_records' %} is-active{% endif %}"
@@ -103,18 +95,7 @@
                     <img src="{% static 'diary/images/andrsrxn_target.svg' %}" width="40" height="40" alt="Мої висновки" class="nav-icon">
                     <span>Мої висновки</span>
                 </a></li>
-                <li>
-                    <a href="{% url 'ask_question' %}"
-                       class="nav-link{% if current_page == 'ask_question' %} is-active{% endif %}"
-                       {% if current_page == 'ask_question' %}aria-current="page"{% endif %}>
-                        <img src="{% static 'diary/images/andrsrxn_message.svg' %}"
-                             width="40"
-                             height="40"
-                             alt="Задати питання лікарю"
-                             class="nav-icon">
-                        <span>Задати питання лікарю</span>
-                    </a>
-                </li>
+               
                 <li>
                     <a href="{% url 'my_questions' %}"
                        class="nav-link{% if current_page == 'my_questions' %} is-active{% endif %}"

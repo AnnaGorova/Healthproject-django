@@ -37,8 +37,8 @@ class HealthRecord(models.Model):
         null=True, 
         blank=True,
         validators=[
-            MinValueValidator(50, message="Сатурація має бути від 50 до 100%"),
-            MaxValueValidator(100, message="Сатурація має бути від 50 до 100%")
+            MinValueValidator(50, message="Сатурація має бути від 50 до 100%%"),
+            MaxValueValidator(100, message="Сатурація має бути від 50 до 100%%")
         ],
         help_text="Сатурація (SpO2) %"
     )

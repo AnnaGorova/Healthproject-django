@@ -60,7 +60,8 @@
         <div class="form-group">
             <label>Телефон</label>
             <input type="tel" name="phone" class="form-control" 
-                   placeholder="+380..."
+                   placeholder="+380XXXXXXXXX" maxlength="13"
+                   pattern="\+380[0-9]{9}" title="Введіть +380 та 9 цифр, без пробілів"
                    value="{{ profile.phone|default:'' }}">
         </div>
         

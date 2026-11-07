@@ -20,7 +20,11 @@ class DoctorQuestionForm(forms.ModelForm):
         widgets = {
             'phone': forms.TextInput(attrs={
                 'class': 'form-control', 
-                'placeholder': '+380...'
+                'placeholder': '+380...',
+                'type': 'tel',
+                'pattern': r'^\+380[0-9]{9}$',
+                'maxlength': '13',
+                'title': 'Введіть +380 та 9 цифр, без пробілів',
             }),
             'question': forms.Textarea(attrs={
                 'class': 'form-control', 

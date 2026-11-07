@@ -7,9 +7,9 @@
 <section class="patient-appointments">
     <h2 class="patient-appointments-title">Мої записи до лікаря</h2>
     <nav class="patient-appointment-filters" aria-label="Фільтр прийомів">
-        <a href="?status=active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
-        <a href="?status=completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
-        <a href="?status=cancelled" {% if current_status == 'cancelled' %}aria-current="page"{% endif %}>Скасовані {{ counts.cancelled }}</a>
+        <a href="?status=active" data-status="active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
+        <a href="?status=completed" data-status="completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
+        <a href="?status=cancelled" data-status="cancelled" {% if current_status == 'cancelled' %}aria-current="page"{% endif %}>Скасовані {{ counts.cancelled }}</a>
         <a href="?status=all" {% if current_status == 'all' %}aria-current="page"{% endif %}>Усі {{ counts.total }}</a>
     </nav>
     <div class="patient-appointment-list">
@@ -22,8 +22,8 @@
                 </div>
                 <div class="patient-appointment-actions">
                     {% if appointment.can_cancel %}
-                        <a href="{% url 'reschedule_appointment' appointment.id %}" class="patient-appointment-action">Перенести</a>
-                        <a href="{% url 'cancel_appointment' appointment.id %}" class="patient-appointment-action">Скасувати</a>
+                        <a href="{% url 'reschedule_appointment' appointment.id %}" class="patient-appointment-action appointment-action-reschedule">Перенести</a>
+                        <a href="{% url 'cancel_appointment' appointment.id %}" class="patient-appointment-action appointment-action-cancel">Скасувати</a>
                     {% endif %}
                 </div>
                 <dl class="patient-appointment-dates">

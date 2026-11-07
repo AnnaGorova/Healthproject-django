@@ -41,7 +41,10 @@ if (chartDataElement && chartCanvas) {
 
     // Оновлює велике середнє значення та плашки артеріального тиску.
     function updateSummary(key, metric) {
-        const averages = metric.fields.map(([field]) => average(data[field]));
+        const averages = metric.fields.map(([field]) => {
+            const value = average(data[field]);
+            return key === 'pressure' && value !== null ? Math.round(value) : value;
+        });
         averageText.textContent = averages
             .map((value) => value === null ? '—' : formatNumber(value)).join('/');
         unitText.textContent = averages.some((value) => value !== null) ? metric.unit : '';

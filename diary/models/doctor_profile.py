@@ -18,8 +18,8 @@ class DoctorProfile(models.Model):
             blank=True,
             validators=[
                 RegexValidator(
-                    regex=r'^\+?[\d\s\-\(\)]{10,20}$',
-                    message="Введіть коректний номер телефону"
+                    regex=r'^\+380[0-9]{9}$',
+                    message="Введіть номер у форматі +380XXXXXXXXX: рівно 13 символів, без пробілів"
                 )
             ]
         )

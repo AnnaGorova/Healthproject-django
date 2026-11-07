@@ -29,7 +29,7 @@ def ask_question(request):
                 'user_profile': request.user.userprofile,
             })
     else:
-        form = DoctorQuestionForm()
+        form = DoctorQuestionForm(initial={'phone': user_profile.phone})
     return render(request, 'diary/ask_question.html', {'form': form})
 
 

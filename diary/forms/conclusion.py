@@ -6,8 +6,16 @@ from diary.models import MedicalConclusion
 class MedicalConclusionForm(forms.ModelForm):
     class Meta:
         model = MedicalConclusion
-        fields = ['icd10', 'diagnosis', 'prescriptions', 'recommendations']
+        fields = [
+            'complaints', 'objective_data', 'laboratory_results',
+            'instrumental_results', 'icd10', 'diagnosis',
+            'prescriptions', 'recommendations',
+        ]
         widgets = {
+            'complaints': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'objective_data': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'laboratory_results': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'instrumental_results': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'icd10': autocomplete.Select2(
                 url='icd10-autocomplete',
                 attrs={

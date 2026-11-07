@@ -37,7 +37,7 @@
 
 .health-theme .about-label {
     margin: 0 0 0.85cqw;
-    font-size: 1.71cqw;
+    font-size: 1.368cqw;
     font-weight: 500;
     line-height: 1.5;
 }
@@ -45,7 +45,7 @@
 .health-theme .about-card h2 {
     margin: 0;
     color: #1b303e;
-    font-size: 2.56cqw;
+    font-size: 2.048cqw;
     font-weight: 500;
     line-height: 1.5;
 }
@@ -57,7 +57,7 @@
 
 .health-theme .about-description {
     margin: 4.27cqw 0 0;
-    font-size: 1.71cqw;
+    font-size: 1.368cqw;
     font-weight: 500;
     line-height: 1.5;
 }
@@ -71,7 +71,7 @@
 
 .health-theme .about-resource h3 {
     margin: 0 0 1.42cqw;
-    font-size: 1.71cqw;
+    font-size: 1.368cqw;
     font-weight: 500;
     line-height: 1.5;
 }
@@ -83,7 +83,7 @@
     border-radius: 999px;
     background: #b3d5b4;
     color: #1b303e;
-    font-size: 1.71cqw;
+    font-size: 1.368cqw;
     font-weight: 500;
     line-height: 1.5;
     text-align: center;
@@ -105,14 +105,14 @@
 
 .health-theme .about-guide p {
     margin: 1.14cqw 0 0;
-    font-size: 1.28cqw;
+    font-size: 1.024cqw;
     line-height: 1.5;
 }
 
 .health-theme .about-version {
     margin: 0;
     color: #64748b;
-    font-size: 1.28cqw;
+    font-size: 1.024cqw;
     line-height: 1.5;
 }
 
@@ -128,14 +128,14 @@
         padding: 24px;
         border-radius: 24px;
     }
-    .health-theme .about-card h2 { font-size: 24px; }
+    .health-theme .about-card h2 { font-size: 19px; }
     .health-theme .about-label,
     .health-theme .about-description,
     .health-theme .about-resource h3,
     .health-theme .about-link,
     .health-theme .about-guide summary,
     .health-theme .about-guide p,
-    .health-theme .about-version { font-size: 16px; }
+    .health-theme .about-version { font-size: 14px; }
     .health-theme .about-label { margin-bottom: 12px; }
     .health-theme .about-description { margin-top: 28px; }
     .health-theme .about-resources { gap: 24px; }
