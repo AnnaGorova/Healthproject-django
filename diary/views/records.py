@@ -6,7 +6,15 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from ..forms import HealthRecordForm
 from django.http import Http404
+from datetime import timedelta
+from django import forms
+from django.utils import timezone
 from .access import doctor_can_access_patient, get_accessible_patients, is_admin_or_superuser
+
+
+class RecordPeriodForm(forms.Form):
+    date_from = forms.DateField(required=True, input_formats=['%d.%m.%Y', '%Y-%m-%d'])
+    date_to = forms.DateField(required=True, input_formats=['%d.%m.%Y', '%Y-%m-%d'])
 
 
 @login_required
@@ -145,7 +153,39 @@ def my_records(request):
     
     
     records = HealthRecord.objects.filter(user=user_profile, is_active=True)
-    return render(request, 'diary/my_records.html', {'records': records})
+    period = request.GET.get('period', 'all')
+    period_options = [('all', 'Усі'), ('week', '7 днів'), ('month', '30 днів'), ('year', 'Рік')]
+    if period not in {'all', 'week', 'month', 'year', 'custom'}:
+        period = 'all'
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    period_error = ''
+    if period == 'custom':
+        form = RecordPeriodForm(request.GET)
+        if not form.is_valid():
+            period_error = 'Вкажіть коректні початкову та кінцеву дати.'
+        elif form.cleaned_data['date_from'] > form.cleaned_data['date_to']:
+            period_error = 'Дата «З» має бути не пізнішою за дату «По».'
+        else:
+            date_from = form.cleaned_data['date_from'].strftime('%d.%m.%Y')
+            date_to = form.cleaned_data['date_to'].strftime('%d.%m.%Y')
+            records = records.filter(date__date__range=(
+                form.cleaned_data['date_from'], form.cleaned_data['date_to'],
+            ))
+        if period_error:
+            records = records.none()
+    elif period != 'all':
+        days = {'week': 7, 'month': 30, 'year': 365}[period]
+        today = timezone.localdate()
+        records = records.filter(date__date__range=(today - timedelta(days=days - 1), today))
+    return render(request, 'diary/my_records.html', {
+        'records': records.order_by('-date', '-pk'),
+        'selected_period': period,
+        'period_options': period_options,
+        'date_from': date_from,
+        'date_to': date_to,
+        'period_error': period_error,
+    })
 
 
 @login_required

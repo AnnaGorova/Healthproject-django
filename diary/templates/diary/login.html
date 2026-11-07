@@ -16,13 +16,6 @@
         </div>
         <section class="login-form-panel">
             <h1 id="login-title">З поверненням</h1>
-            {% if messages %}
-                <div class="login-messages" role="alert">
-                    {% for message in messages %}
-                        <p class="login-message">{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="form-group">
@@ -44,6 +37,13 @@
                                 aria-controls="password"></button>
                     </div>
                 </div>
+                {% if messages %}
+                    <div class="login-messages" role="alert">
+                        {% for message in messages %}
+                            <p class="login-message">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <button type="submit" class="login-submit">Увійти</button>
                 <a href="{% url 'password_reset' %}" class="forgot-password">Забули пароль?</a>
             </form>

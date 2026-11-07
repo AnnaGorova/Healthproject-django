@@ -1,70 +1,66 @@
 {% extends "diary/base.html" %}
-
-{% block title %}Всі питання{% endblock %}
-
+{% load static %}
+{% block title %}{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}{% endblock %}
+{% block page_title %}{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}{% endblock %}
 {% block content %}
-<h1>Питання від пацієнтів</h1>
-
-{% if questions %}
-    <div class="stats">
-        <p><strong>Всього питань:</strong> {{ questions|length }}</p>
-    </div>
-
-    <hr>
-
-    {% for q in questions %}
-        <div class="question-card">
-            <p><strong>Від:</strong> {{ q.patient.username|default:"Не вказано" }}</p>
-            <p><strong>Email:</strong> {{ q.patient.user.email|default:"Не вказано" }}</p>
-            <p><strong>Телефон:</strong> {{ q.phone|default:"Не вказано" }}</p>
-            <p><strong>Дата:</strong> {{ q.created_at|date:"d.m.Y H:i" }}</p>
-            <p><strong>Статус:</strong> 
-                {% if q.status == 'new' %}
-                    <span style="color: #FBBF24;">🆕 Нове</span>
-                {% elif q.status == 'answered' %}
-                    <span style="color: #34D399;">✓ Відповідь надано</span>
-                {% else %}
-                    <span style="color: rgba(255,255,255,0.5);">✓ Закрито</span>
-                {% endif %}
-            </p>
-
-            <!-- ===== ІСТОРІЯ ДІАЛОГУ ===== -->
-            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-top: 16px;">
-                
-                <!-- Перше питання пацієнта -->
-                <div style="margin-bottom: 16px;">
-                    <p style="color: #a78bfa; font-size: 13px; margin-bottom: 4px;">
-                        {{ q.patient.username }}, {{ q.created_at|date:"d.m.Y H:i" }}
-                    </p>
-                    <p style="color: #fff;">{{ q.question|linebreaks }}</p>
-                </div>
-                
-                <!-- Всі повідомлення -->
-                {% for msg in q.messages.all %}
-                    <div style="margin-bottom: 16px; {% if msg.author.role == 'doctor' %}padding-left: 20px; border-left: 2px solid #34D399;{% endif %}">
-                        <p style="color: {% if msg.author.role == 'doctor' %}#34D399{% else %}#a78bfa{% endif %}; font-size: 13px; margin-bottom: 4px;">
-                            {% if msg.author.role == 'doctor' %}
-                                Лікар {{ msg.author.username }}
-                            {% else %}
-                                {{ msg.author.username }}
-                            {% endif %}, {{ msg.created_at|date:"d.m.Y H:i" }}
-                        </p>
-                        <p style="color: #fff;">{{ msg.text|linebreaks }}</p>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <!-- Кнопка відповіді -->
-            {% if q.status == 'new' %}
-                <a href="{% url 'answer_question' q.id %}" class="btn btn-primary" style="margin-top: 12px;">
-                    💬 Відповісти
-                </a>
-            {% endif %}
+<section class="doctor-question-inbox{% if patient_view %} patient-question-inbox{% endif %}" data-question-inbox {% if patient_view %}data-patient-inbox{% endif %} aria-labelledby="inbox-title">
+    <div class="doctor-inbox-heading">
+        <div class="doctor-chat-heading">
+            <h2 id="inbox-title">{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}</h2>
+            {% if patient_view %}<a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове запитання</a>{% endif %}
         </div>
-    {% endfor %}
-{% else %}
-    <p>Питань поки що немає</p>
-{% endif %}
-
-<p><a href="{% url 'home' %}">← На головну</a></p>
+        <form method="get" class="doctor-inbox-filters" role="search">
+            <div>
+                <label for="inbox-search">Пошук</label>
+                <input id="inbox-search" type="search" name="q" value="{{ search }}"
+                       placeholder="{% if patient_view %}Лікар або текст повідомлення{% else %}Пацієнт, телефон або текст повідомлення{% endif %}">
+            </div>
+            <div>
+                <label for="inbox-status">Статус</label>
+                <select id="inbox-status" name="status">
+                    <option value="">{% if patient_view %}Усі питання{% else %}Усі звернення{% endif %}</option>
+                    {% for value, label in status_options %}
+                        <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Знайти</button>
+        </form>
+        <p class="question-sync-status" data-inbox-sync role="status"></p>
+    </div>
+    <div data-inbox-results>
+        <p class="doctor-inbox-count">Звернень: {{ page_obj.paginator.count }}</p>
+        <div class="doctor-inbox-list">
+            {% for q in questions %}
+                <article class="doctor-inbox-card" id="question-{{ q.id }}">
+                    <div class="doctor-inbox-card-heading">
+                        <h3>{% if patient_view %}Лікар: {{ q.doctor.username }}{% else %}{{ q.patient.username|default:"Пацієнт" }}{% endif %}</h3>
+                        <span class="doctor-inbox-status status-{{ q.status }}">{% if patient_view and q.status == 'new' %}Очікує відповіді{% else %}{{ q.get_status_display }}{% endif %}</span>
+                    </div>
+                    <p class="doctor-inbox-preview">{{ q.preview|truncatechars:160 }}</p>
+                    <div class="doctor-inbox-card-footer">
+                        <span>№{{ q.id }} · <time datetime="{{ q.last_activity|date:'c' }}">{{ q.last_activity|date:"d.m.Y H:i" }}</time></span>
+                        <a href="{% if patient_view %}{% url 'reply_question' q.id %}{% else %}{% url 'answer_question' q.id %}{% endif %}">Відкрити чат →</a>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="doctor-inbox-empty">Звернень не знайдено.</p>
+            {% endfor %}
+        </div>
+        {% if page_obj.has_other_pages %}
+            <nav class="doctor-inbox-pagination" aria-label="Сторінки звернень">
+                {% if page_obj.has_previous %}
+                    <a href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">← Попередня</a>
+                {% endif %}
+                <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Наступна →</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'diary/js/patient-questions.js' %}"></script>
 {% endblock %}

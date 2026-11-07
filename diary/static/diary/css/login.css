@@ -323,8 +323,8 @@ button {
 .login-body .forgot-password { display: block; width: fit-content; margin: 48px auto 0; color: #176b3b; font-size: 12px; text-align: center; text-decoration: none; }
 .login-body .forgot-password:hover { text-decoration: underline; }
 .login-body .login-submit:focus-visible, .login-body .toggle-password:focus-visible, .login-body .forgot-password:focus-visible { outline: 3px solid #176b67; outline-offset: 4px; }
-.login-body .login-messages { width: 100%; max-width: 390px; margin: 0 auto 20px; }
-.login-body .login-message { margin: 0 0 8px; padding: 12px 14px; border: 1px solid #e7b5b5; border-radius: 6px; background: #fff0f0; color: #963d3d; font-size: 13px; line-height: 1.5; }
+.login-body .login-messages { width: 90%; max-width: 390px; margin: 0 auto 20px; }
+.login-body .login-message { margin: 0 0 8px; padding: 8px 12px; border: 1px solid #d9534f; border-radius: 0; background: #fde7e7; color: #963d3d; font-size: 13px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
 @media (max-width: 900px) {
     .login-body .login-form-panel { padding: 40px 28px; }
     .login-body .login-form-panel h1 { margin-bottom: 36px; font-size: 25px; }

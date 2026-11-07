@@ -60,7 +60,7 @@
             const key = panel.dataset.overviewMetric;
             const averages = metrics[key].fields.map(([field]) => {
                 const value = average(data[field]);
-                return key === 'pressure' && value !== null ? Math.round(value) : value;
+                return (key === 'pressure' || key === 'heart_rate') && value !== null ? Math.round(value) : value;
             });
             panel.querySelector('[data-average]').textContent = valuesText(averages);
             if (key === 'pressure') {
@@ -104,7 +104,7 @@
         document.getElementById('chart-title').textContent = metric.title;
         const averages = metric.fields.map(([field]) => {
             const value = average(data[field]);
-            return key === 'pressure' && value !== null ? Math.round(value) : value;
+            return (key === 'pressure' || key === 'heart_rate') && value !== null ? Math.round(value) : value;
         });
         document.getElementById('chart-average').textContent = valuesText(averages);
         document.getElementById('chart-unit').textContent = metric.unit;

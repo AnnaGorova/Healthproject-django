@@ -3,34 +3,41 @@
 {% load static %}
 
 {% block title %}Запис до лікаря{% endblock %}
+{% block page_title %}Запис до лікаря{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📅 Запис до лікаря</h2>
-    <p class="subtitle">{{ doctor.username }} — {{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
+<section class="patient-booking" aria-labelledby="booking-title">
+<div class="booking-heading">
+    <h2 id="booking-title">Запис до лікаря</h2>
+    <p>Лікар: <strong>{{ doctor.username }}</strong> · {{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
 </div>
 
-<form method="post" class="record-form">
+<form method="post" class="patient-booking-form">
     {% csrf_token %}
     
     <!-- БЛОК 1: ВИБІР ДАТИ ТА ЧАСУ -->
     <div class="form-section">
         <div class="section-header">
-            <span class="section-icon">📅</span>
+            <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
             <h3>Оберіть дату та час</h3>
+        </div>
+        <div class="booking-legend" aria-label="Позначення часу прийому">
+            <span><i class="booking-dot-free" aria-hidden="true"></i>Вільний час</span>
+            <span><i class="booking-dot-selected" aria-hidden="true"></i>Обраний час</span>
+            <span><i class="booking-dot-booked" aria-hidden="true"></i>Зайнятий час</span>
         </div>
         
         {% for day in slots %}
         <div class="day-slots">
             <h4>{{ day.date|date:"d.m.Y" }} ({{ day.day_name }})</h4>
-            <div class="slots-grid">
+            <div class="slots-grid" role="group" aria-label="Час прийому {{ day.date|date:'d.m.Y' }}">
                 {% for slot in day.slots %}
                     {% if slot.is_booked %}
-                        <button type="button" class="slot-btn slot-booked" disabled>
+                        <button type="button" class="slot-btn slot-booked" title="Цей час уже зайнятий" disabled>
                             {{ slot.time }}
                         </button>
                     {% else %}
-                        <button type="button" class="slot-btn slot-free" 
+                        <button type="button" class="slot-btn slot-free" aria-pressed="false"
                                 onclick="selectSlot('{{ day.date_str }}', '{{ slot.time }}', this)">
                             {{ slot.time }}
                         </button>
@@ -38,13 +45,15 @@
                 {% endfor %}
             </div>
         </div>
+        {% empty %}
+        <p class="booking-empty">Наразі немає доступного часу для запису до цього лікаря.</p>
         {% endfor %}
         
         <!-- Приховані поля -->
         <input type="hidden" name="date" id="selected-date" required>
         <input type="hidden" name="time" id="selected-time" required>
         
-        <div id="selected-info" style="margin-top: 16px; padding: 12px; background: rgba(79, 70, 229, 0.1); border-radius: 8px; display: none;">
+        <div id="selected-info" class="booking-selected-info" role="status" style="display: none;">
             <strong>Обрано:</strong> <span id="selected-text"></span>
         </div>
     </div>
@@ -52,21 +61,21 @@
     <!-- БЛОК 2: СКАРГИ -->
     <div class="form-section">
         <div class="section-header">
-            <span class="section-icon">📝</span>
-            <h3>Скарги</h3>
+            <h3 id="booking-complaints-title">Скарги</h3>
         </div>
         <div class="form-group full-width">
-            <textarea name="complaints" class="form-control" rows="3" 
-                      placeholder="Опишіть ваші скарги..."></textarea>
+            <textarea name="complaints" rows="3" aria-labelledby="booking-complaints-title"
+                      placeholder="Опишіть ваші скарги…"></textarea>
         </div>
     </div>
     
     <!-- КНОПКИ -->
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary btn-lg">📅 Записатися</button>
-        <a href="{% url 'doctors_list' %}" class="btn btn-outline btn-lg">↩ Назад</a>
+    <div class="booking-actions">
+        <button type="submit" {% if not slots %}disabled{% endif %}>Записатися</button>
+        <a href="{% url 'doctors_list' %}">Назад до лікарів</a>
     </div>
 </form>
+</section>
 
 
 {% endblock %}

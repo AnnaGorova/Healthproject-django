@@ -43,7 +43,7 @@ if (chartDataElement && chartCanvas) {
     function updateSummary(key, metric) {
         const averages = metric.fields.map(([field]) => {
             const value = average(data[field]);
-            return key === 'pressure' && value !== null ? Math.round(value) : value;
+            return (key === 'pressure' || key === 'heart_rate') && value !== null ? Math.round(value) : value;
         });
         averageText.textContent = averages
             .map((value) => value === null ? '—' : formatNumber(value)).join('/');

@@ -1,39 +1,43 @@
 {% extends "diary/base.html" %}
 
 {% block title %}Скасувати запис?{% endblock %}
+{% block page_title %}Скасування запису до лікаря{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>⚠️ Скасувати запис?</h2>
-    <p class="subtitle">Цю дію не можна скасувати</p>
-</div>
+<section class="record-delete-confirm appointment-cancel-confirm" aria-labelledby="cancel-appointment-title">
+    <h2 id="cancel-appointment-title">Скасування запису до лікаря</h2>
+    <p class="record-delete-meta">Перевірте дані прийому перед скасуванням.</p>
 
-<div class="record-card" style="max-width: 500px; margin: 0 auto;">
-    <div class="detail-grid">
-        <div class="detail-item">
-            <span class="detail-label">Лікар</span>
-            <span class="detail-value">{{ appointment.doctor.username }}</span>
+    <dl class="appointment-cancel-details">
+        <div>
+            <dt>Лікар</dt>
+            <dd>{{ appointment.doctor.username }}</dd>
         </div>
-        <div class="detail-item">
-            <span class="detail-label">Дата</span>
-            <span class="detail-value">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+        <div>
+            <dt>Дата та час прийому</dt>
+            <dd>{{ appointment.date|date:"d.m.Y H:i" }}</dd>
         </div>
-        <div class="detail-item">
-            <span class="detail-label">Скарги</span>
-            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
+        <div class="appointment-cancel-complaints">
+            <dt>Скарги</dt>
+            <dd>{{ appointment.complaints|default:"Не вказано" }}</dd>
         </div>
+    </dl>
+
+    <div class="record-delete-warning">
+        <h3>Ви впевнені, що хочете скасувати цей запис?</h3>
+        <p>Обраний час стане доступним для інших пацієнтів.</p>
     </div>
 
-    <form method="post" action="{% url 'cancel_appointment' appointment.id %}" style="margin-top: 24px;">
-        {% csrf_token %}
-        <div class="form-actions">
-            <a href="{% url 'my_appointments' %}" class="btn btn-secondary">
+    <div class="record-delete-confirm-actions">
+            <a href="{% url 'my_appointments' %}" class="record-delete-cancel">
                 Ні, залишити
             </a>
-            <button type="submit" class="btn btn-danger">
+        <form method="post" action="{% url 'cancel_appointment' appointment.id %}">
+            {% csrf_token %}
+            <button type="submit" class="record-delete-submit">
                 Так, скасувати
             </button>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</section>
 {% endblock %}

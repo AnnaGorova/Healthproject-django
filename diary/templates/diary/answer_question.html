@@ -1,24 +1,26 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Відповідь на питання{% endblock %}
+{% block page_title %}{% if patient_view %}Діалог із лікарем{% else %}Діалог із пацієнтом{% endif %}{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>💬 Відповісти на питання</h2>
-</div>
-
-<div class="record-card">
-    <div class="detail-grid">
+<section class="doctor-question-chat" data-question-url="{% url 'question_messages' question.id %}" aria-labelledby="chat-title">
+    <div class="doctor-chat-heading">
+        <div><h2 id="chat-title">{% if patient_view %}Діалог із лікарем{% else %}Діалог із пацієнтом{% endif %}</h2><p>Звернення №{{ question.id }}</p></div>
+        <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}">← {% if patient_view %}До моїх питань{% else %}До звернень{% endif %}</a>
+    </div>
+    <div class="doctor-chat-details">
         <div class="detail-item">
-            <span class="detail-label">Пацієнт</span>
-            <span class="detail-value">{{ question.patient.username }}</span>
+            <span class="detail-label">{% if patient_view %}Лікар{% else %}Пацієнт{% endif %}</span>
+            <span class="detail-value">{% if patient_view %}{{ question.doctor.username }}{% else %}{{ question.patient.username }}{% endif %}</span>
         </div>
         <div class="detail-item">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ question.patient.user.email }}</span>
+            <span class="detail-value">{% if patient_view %}{{ question.doctor.user.email }}{% else %}{{ question.patient.user.email }}{% endif %}</span>
         </div>
         <div class="detail-item">
-            <span class="detail-label">Телефон</span>
+            <span class="detail-label">{% if patient_view %}Ваш контактний телефон{% else %}Телефон{% endif %}</span>
             <span class="detail-value">{{ question.phone }}</span>
         </div>
         <div class="detail-item">
@@ -27,31 +29,57 @@
         </div>
     </div>
 
-    <div style="margin-top: 24px; padding: 16px; background: rgba(167, 139, 250, 0.1); border-radius: 12px; border-left: 3px solid #a78bfa;">
-        <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">Питання:</p>
-        <p style="color: #fff;">{{ question.question|linebreaks }}</p>
-    </div>
+    <section class="question-thread" aria-labelledby="thread-title">
+        <h3 id="thread-title">Історія листування</h3>
+        <p data-question-status>{% if patient_view and question.status == 'new' %}Очікує відповіді{% else %}{{ question.get_status_display }}{% endif %}</p>
+        <div data-question-messages data-follow-latest aria-live="polite" aria-relevant="additions text">
+            <article class="question-message">
+                <p class="question-message-author">{{ question.patient.username }} · {{ question.created_at|date:"d.m.Y H:i" }}</p>
+                <p class="question-message-text">{{ question.question }}</p>
+            </article>
+            {% if question.answer %}
+                <article class="question-message question-message-doctor">
+                    <p class="question-message-author">Лікар {{ question.doctor.username }} · {{ question.answered_at|date:"d.m.Y H:i" }}</p>
+                    <p class="question-message-text">{{ question.answer }}</p>
+                </article>
+            {% endif %}
+            {% for msg in question.messages.all %}
+                <article class="question-message{% if msg.author.role == 'doctor' %} question-message-doctor{% endif %}">
+                    <p class="question-message-author">{% if msg.author.role == 'doctor' %}Лікар {% endif %}{{ msg.author.username }} · {{ msg.created_at|date:"d.m.Y H:i" }}</p>
+                    <p class="question-message-text">{{ msg.text }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
 
-    <form method="post" style="margin-top: 24px;">
+    {% if patient_view %}
+        <p class="question-notice" data-question-closed {% if question.status != 'closed' and question.doctor.user.is_active %}hidden{% endif %}>{% if not question.doctor.user.is_active %}Лікар більше не приймає звернення. Листування доступне для перегляду.{% else %}Питання закрито. Історія листування доступна для перегляду.{% endif %}</p>
+    {% else %}
+        <p class="question-notice" data-doctor-closed {% if question.status != 'closed' %}hidden{% endif %}>Питання закрито. Історія листування доступна для перегляду.</p>
+    {% endif %}
+    <form method="post" class="doctor-chat-form" {% if patient_view %}data-question-reply{% else %}data-doctor-answer-form{% endif %} {% if question.status == 'closed' or patient_view and not question.doctor.user.is_active %}hidden{% endif %}>
         {% csrf_token %}
         
         <div class="form-group">
-            <label>Ваша відповідь</label>
-            <textarea name="answer" class="form-control" rows="6" 
-                      placeholder="Введіть відповідь пацієнту..." required></textarea>
+            <label for="doctor-answer">{% if patient_view %}Ваше повідомлення{% else %}Ваша відповідь{% endif %}</label>
+            <textarea id="doctor-answer" name="{% if patient_view %}text{% else %}answer{% endif %}" rows="3"
+                      placeholder="{% if patient_view %}Введіть повідомлення лікарю…{% else %}Введіть відповідь пацієнту…{% endif %}" required>{{ answer_draft }}</textarea>
         </div>
         
-        <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" name="close" style="width: auto;">
+        {% if not patient_view %}<div class="form-group">
+            <label class="doctor-chat-close">
+                <input type="checkbox" name="close" {% if close_checked %}checked{% endif %}>
                 <span>Закрити питання (не потребує подальшої відповіді)</span>
             </label>
-        </div>
+        </div>{% endif %}
         
-        <div class="form-actions">
-            <a href="{% url 'all_questions' %}" class="btn btn-secondary">↩ Назад</a>
-            <button type="submit" class="btn btn-primary">💾 Надіслати відповідь</button>
+        <div class="doctor-chat-actions">
+            <button type="submit">{% if patient_view %}Надіслати повідомлення{% else %}Надіслати відповідь{% endif %}</button>
         </div>
     </form>
-</div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'diary/js/patient-questions.js' %}"></script>
 {% endblock %}

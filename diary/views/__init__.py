@@ -63,6 +63,7 @@ from .questions import (
     all_questions,
     answer_question,
     reply_question,
+    question_messages,
 )
 from .conclusions import (
     create_conclusion,
@@ -125,6 +126,7 @@ __all__ = [
     "my_questions",
     "all_questions",
     "answer_question",
+    "question_messages",
     "reply_question",
     "create_conclusion",
     "view_conclusion",

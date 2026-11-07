@@ -224,7 +224,7 @@ def patient_search(request):
         add_result(
             "Питання та листування", f"Питання до {question.doctor.username}",
             excerpt(question.question),
-            reverse("my_questions") + f"#question-{question.id}",
+            reverse("reply_question", args=[question.id]),
         )
 
     # Висновок має належати пацієнту і бути пов’язаним із його прийомом.

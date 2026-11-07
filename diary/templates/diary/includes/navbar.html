@@ -140,7 +140,10 @@
             {% if request.user.is_authenticated and user.userprofile.role == 'admin' %}
                 <li class="nav-divider">🔑 Адміну</li>
                 <li><a href="{% url "administrator" %}" class="nav-link{% if current_page == 'administrator' %} is-active{% endif %}"
-                   {% if current_page == 'administrator' %}aria-current="page"{% endif %}>Адмін</a></li>
+                   {% if current_page == 'administrator' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/pajamas_log.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Адмін</span>
+                </a></li>
                 <li><a href="{% url 'profile' %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
                    {% if current_page == 'profile' %}aria-current="page"{% endif %}>
                     <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">

@@ -42,6 +42,7 @@ urlpatterns = [
 
 
     path('questions/answer/<int:question_id>/', views.answer_question, name='answer_question'),
+    path('questions/<int:question_id>/messages/', views.question_messages, name='question_messages'),
 
 
 

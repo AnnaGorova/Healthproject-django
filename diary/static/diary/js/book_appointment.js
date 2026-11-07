@@ -5,6 +5,7 @@ function selectSlot(date, time, btn) {
     // Знімаємо виділення з усіх кнопок
     document.querySelectorAll('.slot-btn').forEach(b => {
         b.classList.remove('slot-selected');
+        if (!b.disabled) b.setAttribute('aria-pressed', 'false');
     });
     
     // Очищаємо приховані поля
@@ -19,12 +20,13 @@ function selectSlot(date, time, btn) {
     
     // Інакше — виділяємо обрану
     btn.classList.add('slot-selected');
+    btn.setAttribute('aria-pressed', 'true');
     
     // Записуємо в приховані поля
     document.getElementById('selected-date').value = date;
     document.getElementById('selected-time').value = time;
     
     // Показуємо інформацію
-    document.getElementById('selected-text').textContent = date + ' о ' + time;
+    document.getElementById('selected-text').textContent = date.split('-').reverse().join('.') + ' о ' + time;
     document.getElementById('selected-info').style.display = 'block';
 }

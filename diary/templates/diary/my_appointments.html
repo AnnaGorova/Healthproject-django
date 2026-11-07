@@ -24,6 +24,16 @@
                     {% if appointment.can_cancel %}
                         <a href="{% url 'reschedule_appointment' appointment.id %}" class="patient-appointment-action appointment-action-reschedule">Перенести</a>
                         <a href="{% url 'cancel_appointment' appointment.id %}" class="patient-appointment-action appointment-action-cancel">Скасувати</a>
+                    {% else %}
+                        <p class="appointment-actions-notice">
+                            {% if appointment.status == 'cancelled' %}
+                                Запис скасовано
+                            {% elif appointment.status == 'completed' %}
+                                Прийом завершено
+                            {% else %}
+                                Перенесення та скасування вже недоступні
+                            {% endif %}
+                        </p>
                     {% endif %}
                 </div>
                 <dl class="patient-appointment-dates">

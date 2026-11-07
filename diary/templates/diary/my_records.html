@@ -1,4 +1,5 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Мої записи{% endblock %}
 
@@ -7,20 +8,67 @@
     <div class="patient-records-heading">
         <div>
             <h2 id="records-title">Мої записи</h2>
-            <p>Всього записів: {{ records|length }}</p>
+            <p>{% if selected_period == 'all' %}Всього записів{% else %}Знайдено записів{% endif %}: {{ records|length }}</p>
         </div>
         <a href="{% url 'create_record' %}" class="patient-records-create">+ Новий запис</a>
+    </div>
+    <div class="records-period-filter">
+        <nav class="records-period-links" aria-label="Період записів">
+            {% for key, label in period_options %}
+                <a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>
+            {% endfor %}
+        </nav>
+        <details class="records-custom-period" {% if selected_period == 'custom' %}open{% endif %}>
+            <summary aria-controls="records-date-form">Власний період</summary>
+        </details>
+        <form method="get" id="records-date-form" class="records-date-form">
+            <input type="hidden" name="period" value="custom">
+            <div>
+                <label for="records-date-from">З</label>
+                <div class="records-date-control">
+                    <input type="text" id="records-date-from" name="date_from" value="{{ date_from }}"
+                           placeholder="дд.мм.рррр" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}"
+                           maxlength="10" title="Введіть дату у форматі дд.мм.рррр" required>
+                    <button type="button" class="records-calendar-button" aria-label="Обрати початкову дату" hidden>
+                        <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                    </button>
+                    <input type="date" class="records-native-date" tabindex="-1" aria-hidden="true" hidden>
+                </div>
+            </div>
+            <div>
+                <label for="records-date-to">По</label>
+                <div class="records-date-control">
+                    <input type="text" id="records-date-to" name="date_to" value="{{ date_to }}"
+                           placeholder="дд.мм.рррр" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}"
+                           maxlength="10" title="Введіть дату у форматі дд.мм.рррр" required>
+                    <button type="button" class="records-calendar-button" aria-label="Обрати кінцеву дату" hidden>
+                        <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                    </button>
+                    <input type="date" class="records-native-date" tabindex="-1" aria-hidden="true" hidden>
+                </div>
+            </div>
+            <button type="submit">Застосувати</button>
+        </form>
+        {% if period_error %}<p class="records-period-error" role="alert">{{ period_error }}</p>{% endif %}
     </div>
     <div class="patient-records-list">
         {% for record in records %}
             {% include "diary/includes/record_card.html" with record=record %}
         {% empty %}
             <div class="patient-records-empty">
+                {% if selected_period != 'all' %}
+                <h3>{% if period_error %}Перевірте вибраний період{% else %}За вибраний період записів немає{% endif %}</h3>
+                <a href="{% url 'my_records' %}" class="patient-records-create">Показати всі записи</a>
+                {% else %}
                 <h3>Ще немає записів</h3>
                 <p>Додайте перший запис, щоб відстежувати самопочуття й показники здоров’я.</p>
                 <a href="{% url 'create_record' %}" class="patient-records-create">Створити запис</a>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'diary/js/profile-date.js' %}"></script>
 {% endblock %}
