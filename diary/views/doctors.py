@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django import forms
 from ..models import UserProfile, HealthRecord, Question
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.paginator import Paginator
 from ..models import Appointment
-from datetime import date
+from datetime import date, datetime, time, timedelta
 from django.utils import timezone
 from django.db import models
 from ..models import MedicalConclusion
@@ -14,14 +16,70 @@ from .records import records
 
 @login_required
 def doctor_dashboard(request):
-    """Дашборд лікаря"""
+    """Вибір доступного лікарю пацієнта для перегляду аналітики."""
     user_profile = request.user.userprofile
 
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть бачити дашборд")
 
+    patients = get_accessible_patients(user_profile).order_by('username', 'pk')
+    patient_field = forms.ModelChoiceField(
+        queryset=patients,
+        error_messages={
+            'required': 'Оберіть пацієнта.',
+            'invalid_choice': 'Оберіть пацієнта зі списку доступних.',
+        },
+    )
+    selection_error = ''
+    if 'patient' in request.GET:
+        try:
+            patient = patient_field.clean(request.GET.get('patient'))
+        except ValidationError as error:
+            selection_error = error.messages[0]
+        else:
+            return redirect('patient_analytics', patient_id=patient.pk)
+
+    search = request.GET.get('search', '').strip()
+    if search:
+        patients = patients.filter(
+            models.Q(username__icontains=search) |
+            models.Q(phone__icontains=search)
+        )
+    patients_page = Paginator(patients, 20).get_page(request.GET.get('page'))
+
+    context = get_doctor_home_context(user_profile)
+    context.update({
+        'patients': patients_page.object_list,
+        'patients_page': patients_page,
+        'search': search,
+        'selection_error': selection_error,
+    })
+    return render(request, 'diary/doctor_dashboard.html', context)
+
+
+def get_doctor_home_context(user_profile):
+    """Спільні дані карток головної сторінки та детальних блоків дашборда."""
     now = timezone.now()
     today = timezone.localdate()
+    notifications_from = timezone.make_aware(
+        datetime.combine(today - timedelta(days=6), time.min)
+    )
+    accessible_patients = get_accessible_patients(user_profile)
+    new_records = HealthRecord.objects.filter(
+        user__in=accessible_patients,
+        is_active=True,
+        date__gte=notifications_from,
+        date__lte=now,
+    ).select_related('user').order_by('-date', '-pk')
+    new_patients = accessible_patients.filter(
+        user__date_joined__gte=notifications_from,
+        user__date_joined__lte=now,
+    ).order_by('-user__date_joined', '-pk')
+    new_appointments = Appointment.objects.filter(
+        doctor=user_profile,
+        created_at__gte=notifications_from,
+        created_at__lte=now,
+    ).exclude(status='cancelled').select_related('patient').order_by('-created_at', '-pk')
 
     # Прийоми на сьогодні (крім скасованих)
     today_appointments = Appointment.objects.filter(
@@ -43,26 +101,28 @@ def doctor_dashboard(request):
     # Останні висновки
     recent_conclusions = MedicalConclusion.objects.filter(
         doctor=user_profile
-    ).select_related('patient', 'appointment').order_by('-created_at')[:5]
+    ).select_related('patient', 'appointment', 'icd10').order_by('-created_at')[:5]
 
     # Нові звернення
     new_questions = Question.objects.filter(
         doctor=user_profile,
         status='new'
-    ).order_by('-created_at')
+    ).select_related('patient').order_by('-created_at')
 
-    # Кількість пацієнтів
-    patients_count = get_accessible_patients(user_profile).count()
-
-    return render(request, 'diary/doctor_dashboard.html', {
+    return {
         'now': now,
         'today_appointments': today_appointments,
         'past_pending': past_pending,
         'past_pending_count': past_pending_count,
         'recent_conclusions': recent_conclusions,
         'new_questions': new_questions,
-        'patients_count': patients_count,
-    })
+        'new_records_count': new_records.count(),
+        'new_records': new_records[:10],
+        'new_patients_count': new_patients.count(),
+        'new_patients': new_patients[:10],
+        'new_appointments_count': new_appointments.count(),
+        'new_appointments': new_appointments[:10],
+    }
 
 
 @login_required

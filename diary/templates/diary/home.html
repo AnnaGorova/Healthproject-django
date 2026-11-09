@@ -89,6 +89,33 @@
             </div>
             {{ home_chart_data|json_script:"home-chart-data" }}
         </section>
+    {% elif user.userprofile.role == 'doctor' and not user.is_superuser %}
+        <section class="doctor-home" aria-labelledby="doctor-home-title">
+            <h2 id="doctor-home-title">Важливі повідомлення</h2>
+            <p class="doctor-home-period">Нові дані за останні 7 днів. Запитання — усі, що очікують відповіді.</p>
+            <div class="doctor-home-summary">
+                <article>
+                    <h3>Нові запитання</h3>
+                    <p class="doctor-home-count">{{ new_questions|length }}</p>
+                    <a href="{% url 'doctor_dashboard' %}#doctor-questions" class="doctor-work-button">Детальніше</a>
+                </article>
+                <article>
+                    <h3>Нові записи</h3>
+                    <p class="doctor-home-count">{{ new_records_count }}</p>
+                    <a href="{% url 'doctor_dashboard' %}#doctor-new-records" class="doctor-work-button">Детальніше</a>
+                </article>
+                <article>
+                    <h3>Нові пацієнти</h3>
+                    <p class="doctor-home-count">{{ new_patients_count }}</p>
+                    <a href="{% url 'doctor_dashboard' %}#doctor-new-patients" class="doctor-work-button">Детальніше</a>
+                </article>
+                <article>
+                    <h3>Нові прийоми</h3>
+                    <p class="doctor-home-count">{{ new_appointments_count }}</p>
+                    <a href="{% url 'doctor_dashboard' %}#doctor-new-appointments" class="doctor-work-button">Детальніше</a>
+                </article>
+            </div>
+        </section>
     {% elif user.userprofile.role == 'admin' %}
         <section class="admin-home-errors" aria-labelledby="admin-errors-title">
             <h2 id="admin-errors-title">Помилки</h2>

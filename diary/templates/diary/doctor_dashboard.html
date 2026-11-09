@@ -1,129 +1,189 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Дашборд{% endblock %}
+{% block title %}Дашборд — Smart Health Bridge{% endblock %}
+{% block page_title %}Дашборд{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📊 Дашборд лікаря</h2>
-</div>
-
-<!-- Прийоми на сьогодні -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>📅 Прийоми на сьогодні ({{ today_appointments|length }})</h3>
-
-    {% for apt in today_appointments %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div>
-                <strong style="color: #fff;">{{ apt.date|date:"H:i" }}</strong>
-                <span style="color: #a78bfa; margin-left: 12px;">
-                    {{ apt.patient.username }}
-                </span>
-
-                {% if apt.status == 'completed' %}
-                    <span class="badge" style="margin-left: 8px;">Завершено</span>
-                {% elif apt.is_overdue %}
-                    <span class="badge" style="margin-left: 8px; background: rgba(251, 191, 36, 0.15); color: #FBBF24;">Очікує висновку</span>
-                {% elif apt.date <= now %}
-                    <span class="badge" style="margin-left: 8px;">Триває</span>
-                {% else %}
-                    <span class="badge" style="margin-left: 8px;">Попереду</span>
+<div class="doctor-dashboard">
+<section class="doctor-analytics-picker" aria-labelledby="patient-picker-title">
+    <div class="doctor-patient-heading">
+        <h2 id="patient-picker-title">Аналітика пацієнтів</h2>
+        <p class="doctor-patient-search-count">{% if search %}Знайдено{% else %}Доступно пацієнтів{% endif %} — {{ patients_page.paginator.count }}</p>
+    </div>
+    <form method="get" class="doctor-patient-selection" role="search" aria-label="Пошук пацієнта для аналітики">
+        <input type="search" name="search" value="{{ search }}" aria-label="ПІБ або номер телефону пацієнта" placeholder="Пошук за ПІБ або телефоном…">
+        <button type="submit" class="doctor-work-button">Пошук</button>
+        {% if search %}<a href="{% url 'doctor_dashboard' %}" class="doctor-patient-clear">Очистити</a>{% endif %}
+    </form>
+    {% if selection_error %}
+        <p id="patient-selection-error" class="doctor-selection-error" role="alert">{{ selection_error }}</p>
+    {% endif %}
+    {% if patients %}
+        <ul class="doctor-patient-results" aria-label="Пацієнти для перегляду аналітики">
+            {% for patient in patients %}
+                <li class="doctor-patient-result">
+                    <span class="doctor-patient-avatar" aria-hidden="true">{{ patient.username|first|upper }}</span>
+                    <div class="doctor-patient-identity">
+                        <h3>{{ patient.username }}</h3>
+                        <p>{% if patient.phone %}{{ patient.phone }}{% else %}Телефон не вказано{% endif %}</p>
+                    </div>
+                    <a href="{% url 'patient_analytics' patient.pk %}" class="doctor-work-button doctor-work-secondary" aria-label="Аналітика пацієнта {{ patient.username }}">Аналітика <span aria-hidden="true">→</span></a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if patients_page.has_other_pages %}
+            <nav class="doctor-patient-pagination" aria-label="Сторінки списку пацієнтів">
+                {% if patients_page.has_previous %}
+                    <a href="?search={{ search|urlencode }}&amp;page={{ patients_page.previous_page_number }}">← Попередні</a>
                 {% endif %}
-
-                {% if apt.complaints %}
-                    <br><span style="color: rgba(255,255,255,0.5); font-size: 13px;">
-                        {{ apt.complaints|truncatechars:60 }}
-                    </span>
+                <span>Сторінка {{ patients_page.number }} з {{ patients_page.paginator.num_pages }}</span>
+                {% if patients_page.has_next %}
+                    <a href="?search={{ search|urlencode }}&amp;page={{ patients_page.next_page_number }}">Наступні →</a>
                 {% endif %}
-            </div>
-            <div style="white-space: nowrap;">
-                <a href="{% url 'appointment_detail' apt.id %}" class="btn btn-outline">Деталі</a>
-                {% if apt.conclusion %}
-                    <a href="{% url 'view_conclusion' apt.id %}" class="btn btn-outline">Переглянути висновок</a>
-                {% elif apt.date <= now %}
-                    <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Висновок</a>
-                {% endif %}
-            </div>
-        </div>
-    {% empty %}
-        <p class="text-muted">На сьогодні прийомів немає</p>
-    {% endfor %}
-</div>
-
-<!-- Очікують висновку з попередніх днів -->
-{% if past_pending_count %}
-<div class="record-card" style="margin-bottom: 24px; border-left: 3px solid #FBBF24;">
-    <h3>⏳ Очікують висновку з попередніх днів ({{ past_pending_count }})</h3>
-
-    {% for apt in past_pending %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div>
-                <strong>{{ apt.date|date:"d.m.Y H:i" }}</strong>
-                <span style="color: #a78bfa; margin-left: 12px;">{{ apt.patient.username }}</span>
-            </div>
-            <div style="white-space: nowrap;">
-                <a href="{% url 'appointment_detail' apt.id %}" class="btn btn-outline">Деталі</a>
-                <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Висновок</a>
-            </div>
-        </div>
-    {% endfor %}
-
-    {% if past_pending_count > past_pending|length %}
-        <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 12px;">
-            Показано {{ past_pending|length }} з {{ past_pending_count }}.
-            <a href="{% url 'doctor_appointments' %}?status=active" style="color: #a78bfa;">Усі активні →</a>
+            </nav>
+        {% endif %}
+    {% else %}
+        <p class="doctor-patient-empty">
+            {% if search %}За цим запитом пацієнтів не знайдено. Спробуйте іншу частину ПІБ або телефону.
+            {% else %}Поки немає доступних пацієнтів для перегляду аналітики.{% endif %}
         </p>
     {% endif %}
-</div>
-{% endif %}
+</section>
 
-<!-- Останні висновки -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>📄 Останні висновки</h3>
-
-    {% for c in recent_conclusions %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+<section class="doctor-dashboard-block" id="doctor-new-records" aria-labelledby="doctor-new-records-title">
+    <h3 id="doctor-new-records-title">Нові записи щоденника</h3>
+    <p>За останні 7 днів — {{ new_records_count }}</p>
+    {% for record in new_records %}
+        <article class="doctor-home-row">
             <div>
-                <strong>{{ c.created_at|date:"d.m.Y H:i" }}</strong>
-                <span style="color: #a78bfa; margin-left: 12px;">{{ c.patient.username }}</span>
-                <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 4px;">
-                    {% if c.icd10 %}{{ c.icd10.code }} — {% endif %}{{ c.diagnosis|truncatechars:60 }}
-                </p>
+                <h4>{{ record.user.username }}</h4>
+                <p>{{ record.date|date:"d.m.Y H:i" }}</p>
             </div>
-            <div style="white-space: nowrap;">
-                <a href="{% url 'view_conclusion' c.appointment.id %}" class="btn btn-outline">Переглянути</a>
-                <a href="{% url 'edit_conclusion' c.id %}" class="btn btn-outline">✏️ Редагувати</a>
+            <a href="{% url 'record_detail' record.pk %}" class="doctor-work-button doctor-work-secondary">Деталі запису</a>
+        </article>
+    {% empty %}
+        <p>За цей період нових записів немає.</p>
+    {% endfor %}
+    {% if new_records_count > new_records|length %}
+        <a href="{% url 'records' %}" class="doctor-work-button doctor-work-secondary">Усі записи пацієнтів</a>
+    {% endif %}
+</section>
+
+<section class="doctor-dashboard-block" id="doctor-new-patients" aria-labelledby="doctor-new-patients-title">
+    <h3 id="doctor-new-patients-title">Нові пацієнти</h3>
+    <p>Доступні вам пацієнти, зареєстровані за останні 7 днів — {{ new_patients_count }}</p>
+    {% for patient in new_patients %}
+        <article class="doctor-home-row">
+            <div>
+                <h4>{{ patient.username }}</h4>
+                <p>{% if patient.phone %}{{ patient.phone }}{% else %}Телефон не вказано{% endif %}</p>
             </div>
-        </div>
+            <a href="{% url 'patient_card' patient.pk %}" class="doctor-work-button doctor-work-secondary">Картка пацієнта</a>
+        </article>
     {% empty %}
-        <p class="text-muted">Висновків ще немає</p>
+        <p>За цей період нових пацієнтів немає.</p>
     {% endfor %}
-</div>
+    {% if new_patients_count > new_patients|length %}
+        <a href="{% url 'doctor_patients' %}" class="doctor-work-button doctor-work-secondary">Усі пацієнти</a>
+    {% endif %}
+</section>
 
-<!-- Нові звернення -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>💬 Нові звернення ({{ new_questions|length }})</h3>
-    
-    {% for q in new_questions %}
-        <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p><strong>{{ q.patient.username }}</strong> — {{ q.created_at|date:"d.m.Y H:i" }}</p>
-            <p style="color: rgba(255,255,255,0.7);">{{ q.question|truncatechars:80 }}</p>
-            <a href="{% url 'answer_question' q.id %}" class="btn btn-primary" style="margin-top: 8px;">Відповісти</a>
-        </div>
+<section class="doctor-dashboard-block" id="doctor-new-appointments" aria-labelledby="doctor-new-appointments-title">
+    <h3 id="doctor-new-appointments-title">Нові прийоми</h3>
+    <p>Записи на прийом, створені за останні 7 днів — {{ new_appointments_count }}</p>
+    {% for apt in new_appointments %}
+        <article class="doctor-home-row">
+            <div>
+                <h4>{{ apt.patient.username }}</h4>
+                <p>Прийом {{ apt.date|date:"d.m.Y H:i" }} · {{ apt.get_status_display }}</p>
+            </div>
+            <a href="{% url 'appointment_detail' apt.pk %}" class="doctor-work-button doctor-work-secondary">Деталі прийому</a>
+        </article>
     {% empty %}
-        <p class="text-muted">Немає нових звернень</p>
+        <p>За цей період нових прийомів немає.</p>
     {% endfor %}
-</div>
+    {% if new_appointments_count > new_appointments|length %}
+        <a href="{% url 'doctor_appointments' %}" class="doctor-work-button doctor-work-secondary">Усі прийоми</a>
+    {% endif %}
+</section>
+    <section class="doctor-dashboard-block" id="doctor-today" aria-labelledby="doctor-today-title">
+        <h3 id="doctor-today-title">Прийоми на сьогодні</h3>
+        {% for apt in today_appointments %}
+            <article class="doctor-home-row">
+                <div>
+                    <h4>{{ apt.date|date:"H:i" }} · {{ apt.patient.username }}</h4>
+                    <p>{% if apt.status == 'completed' %}Завершено{% elif apt.is_overdue %}Очікує висновку{% elif apt.date <= now %}Триває{% else %}Попереду{% endif %}</p>
+                    {% if apt.complaints %}<p>{{ apt.complaints|truncatechars:60 }}</p>{% endif %}
+                </div>
+                <div class="doctor-home-actions">
+                    <a href="{% url 'appointment_detail' apt.id %}" class="doctor-work-button doctor-work-secondary">Деталі</a>
+                    {% if apt.conclusion %}
+                        <a href="{% url 'view_conclusion' apt.id %}" class="doctor-work-button">Переглянути висновок</a>
+                    {% elif apt.date <= now %}
+                        <a href="{% url 'create_conclusion' apt.id %}" class="doctor-work-button">Висновок</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <p>На сьогодні прийомів немає.</p>
+        {% endfor %}
+    </section>
 
-<!-- Посилання на всіх пацієнтів -->
-<div class="record-card">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <h3>👥 Мої пацієнти</h3>
-            <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 4px;">
-                Всього: {{ patients_count }}
-            </p>
-        </div>
-        <a href="{% url 'doctor_patients' %}" class="btn btn-primary">Всі пацієнти →</a>
-    </div>
+    <section class="doctor-dashboard-block" id="doctor-pending" aria-labelledby="doctor-pending-title">
+        <h3 id="doctor-pending-title">Очікують висновку з попередніх днів</h3>
+        {% for apt in past_pending %}
+            <article class="doctor-home-row">
+                <div>
+                    <h4>{{ apt.patient.username }}</h4>
+                    <p>{{ apt.date|date:"d.m.Y H:i" }}</p>
+                </div>
+                <div class="doctor-home-actions">
+                    <a href="{% url 'appointment_detail' apt.id %}" class="doctor-work-button doctor-work-secondary">Деталі</a>
+                    <a href="{% url 'create_conclusion' apt.id %}" class="doctor-work-button">Висновок</a>
+                </div>
+            </article>
+        {% empty %}
+            <p>Прийомів, що очікують висновку, немає.</p>
+        {% endfor %}
+        {% if past_pending_count > past_pending|length %}
+            <p>Показано {{ past_pending|length }} з {{ past_pending_count }}.</p>
+            <a href="{% url 'doctor_appointments' %}?status=active" class="doctor-work-button doctor-work-secondary">Усі активні прийоми</a>
+        {% endif %}
+    </section>
+
+    <section class="doctor-dashboard-block" aria-labelledby="doctor-conclusions-title">
+        <h3 id="doctor-conclusions-title">Останні висновки</h3>
+        {% for conclusion in recent_conclusions %}
+            <article class="doctor-home-row">
+                <div>
+                    <h4>{{ conclusion.patient.username }}</h4>
+                    <p>{{ conclusion.created_at|date:"d.m.Y H:i" }}</p>
+                    <p>{% if conclusion.icd10 %}{{ conclusion.icd10.code }} — {% endif %}{{ conclusion.diagnosis|truncatechars:60 }}</p>
+                </div>
+                <div class="doctor-home-actions">
+                    <a href="{% url 'view_conclusion' conclusion.appointment_id %}" class="doctor-work-button doctor-work-secondary">Переглянути</a>
+                    <a href="{% url 'edit_conclusion' conclusion.id %}" class="doctor-work-button doctor-work-secondary">Редагувати</a>
+                </div>
+            </article>
+        {% empty %}
+            <p>Висновків ще немає.</p>
+        {% endfor %}
+    </section>
+
+    <section class="doctor-dashboard-block" id="doctor-questions" aria-labelledby="doctor-questions-title">
+        <h3 id="doctor-questions-title">Нові звернення</h3>
+        {% for question in new_questions %}
+            <article class="doctor-home-row">
+                <div>
+                    <h4>{{ question.patient.username }}</h4>
+                    <p>{{ question.created_at|date:"d.m.Y H:i" }}</p>
+                    <p>{{ question.question|truncatechars:80 }}</p>
+                </div>
+                <a href="{% url 'answer_question' question.id %}" class="doctor-work-button">Відповісти</a>
+            </article>
+        {% empty %}
+            <p>Немає нових звернень.</p>
+        {% endfor %}
+    </section>
 </div>
 {% endblock %}

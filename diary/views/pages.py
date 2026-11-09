@@ -30,13 +30,18 @@ class HomeView(TemplateView):
         return ['diary/landing.html']
 
     def get_context_data(self, **kwargs):
-        """Додає останні заповнені показники пацієнта для карток на головній сторінці."""
+        """Додає показники пацієнта або огляд роботи лікаря."""
         context = super().get_context_data(**kwargs)
         user = self.request.user
         profile = (
             getattr(user, 'userprofile', None)
             if user.is_authenticated else None
         )
+        if profile and profile.role == 'doctor' and not user.is_superuser:
+            from .doctors import get_doctor_home_context
+
+            context.update(get_doctor_home_context(profile))
+            return context
         if not profile or profile.role != 'patient' or user.is_superuser:
             return context
 

@@ -3,6 +3,8 @@ from ..models import UserProfile, HealthRecord
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.contrib import messages
 from ..forms import HealthRecordForm
 from django.http import Http404
@@ -15,6 +17,42 @@ from .access import doctor_can_access_patient, get_accessible_patients, is_admin
 class RecordPeriodForm(forms.Form):
     date_from = forms.DateField(required=True, input_formats=['%d.%m.%Y', '%Y-%m-%d'])
     date_to = forms.DateField(required=True, input_formats=['%d.%m.%Y', '%Y-%m-%d'])
+
+
+def filter_record_period(request, records):
+    """Спільна фільтрація періоду особистих і доступних лікарю записів."""
+    period = request.GET.get('period', 'all')
+    period_options = [('all', 'Усі'), ('week', '7 днів'), ('month', '30 днів'), ('year', 'Рік')]
+    if period not in {'all', 'week', 'month', 'year', 'custom'}:
+        period = 'all'
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    period_error = ''
+    if period == 'custom':
+        form = RecordPeriodForm(request.GET)
+        if not form.is_valid():
+            period_error = 'Вкажіть коректні початкову та кінцеву дати.'
+        elif form.cleaned_data['date_from'] > form.cleaned_data['date_to']:
+            period_error = 'Дата «З» має бути не пізнішою за дату «По».'
+        else:
+            date_from = form.cleaned_data['date_from'].strftime('%d.%m.%Y')
+            date_to = form.cleaned_data['date_to'].strftime('%d.%m.%Y')
+            records = records.filter(date__date__range=(
+                form.cleaned_data['date_from'], form.cleaned_data['date_to'],
+            ))
+        if period_error:
+            records = records.none()
+    elif period != 'all':
+        days = {'week': 7, 'month': 30, 'year': 365}[period]
+        today = timezone.localdate()
+        records = records.filter(date__date__range=(today - timedelta(days=days - 1), today))
+    return records, {
+        'selected_period': period,
+        'period_options': period_options,
+        'date_from': date_from,
+        'date_to': date_to,
+        'period_error': period_error,
+    }
 
 
 @login_required
@@ -41,10 +79,24 @@ def records(request):
         # 4. Аномалія (нова роль тощо) → 404
         raise Http404("Сторінку не знайдено")
 
-    context = {
-        'records': all_records,
+    search = request.GET.get('search', '').strip()
+    if search:
+        all_records = all_records.filter(
+            Q(user__username__icontains=search) | Q(user__phone__icontains=search)
+        )
+    all_records, context = filter_record_period(request, all_records)
+    records_page = Paginator(all_records, 10).get_page(request.GET.get('page'))
+    pagination_query = request.GET.copy()
+    pagination_query.pop('page', None)
+    context.update({
+        'records': records_page.object_list,
+        'records_page': records_page,
+        'records_count': records_page.paginator.count,
+        'search': search,
+        'is_filtered': bool(search) or context['selected_period'] != 'all',
+        'pagination_query': pagination_query.urlencode(),
         'user_profile': user_profile,
-    }
+    })
     return render(request, 'diary/records.html', context)
 
 
@@ -154,39 +206,9 @@ def my_records(request):
     
     
     records = HealthRecord.objects.filter(user=user_profile, is_active=True)
-    period = request.GET.get('period', 'all')
-    period_options = [('all', 'Усі'), ('week', '7 днів'), ('month', '30 днів'), ('year', 'Рік')]
-    if period not in {'all', 'week', 'month', 'year', 'custom'}:
-        period = 'all'
-    date_from = request.GET.get('date_from', '')
-    date_to = request.GET.get('date_to', '')
-    period_error = ''
-    if period == 'custom':
-        form = RecordPeriodForm(request.GET)
-        if not form.is_valid():
-            period_error = 'Вкажіть коректні початкову та кінцеву дати.'
-        elif form.cleaned_data['date_from'] > form.cleaned_data['date_to']:
-            period_error = 'Дата «З» має бути не пізнішою за дату «По».'
-        else:
-            date_from = form.cleaned_data['date_from'].strftime('%d.%m.%Y')
-            date_to = form.cleaned_data['date_to'].strftime('%d.%m.%Y')
-            records = records.filter(date__date__range=(
-                form.cleaned_data['date_from'], form.cleaned_data['date_to'],
-            ))
-        if period_error:
-            records = records.none()
-    elif period != 'all':
-        days = {'week': 7, 'month': 30, 'year': 365}[period]
-        today = timezone.localdate()
-        records = records.filter(date__date__range=(today - timedelta(days=days - 1), today))
-    return render(request, 'diary/my_records.html', {
-        'records': records.order_by('-date', '-pk'),
-        'selected_period': period,
-        'period_options': period_options,
-        'date_from': date_from,
-        'date_to': date_to,
-        'period_error': period_error,
-    })
+    records, context = filter_record_period(request, records)
+    context['records'] = records.order_by('-date', '-pk')
+    return render(request, 'diary/my_records.html', context)
 
 
 @login_required
