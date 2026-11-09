@@ -666,6 +666,10 @@ body.health-theme {
     border-color: #a52e35;
     background: #a52e35;
 }
+.health-theme .patient-appointment-filters a.appointment-filter-all[aria-current="page"] {
+    border-color: #315e9e;
+    background: #315e9e;
+}
 .health-theme .patient-appointment-list { display: grid; gap: 24px; }
 .health-theme .patient-appointment-card {
     display: grid;
@@ -2540,6 +2544,17 @@ body.health-theme::before {
     display: none;
 }
 
+.health-theme .profile-professional {
+    margin-top: 28px;
+}
+
+.health-theme .profile-professional h3 {
+    margin: 0 0 16px;
+    color: #1b303e;
+    font-size: 16px;
+    font-weight: 500;
+}
+
 .health-theme .patient-profile-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2680,6 +2695,37 @@ body.health-theme::before {
 .health-theme .patient-profile-back {
     color: #217568;
     font-size: 12px;
+}
+
+.health-theme .profile-professional-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid #166534;
+    border-radius: 999px;
+    color: #166534;
+    background: #f7f9f8;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+}
+
+.health-theme .profile-professional > .profile-professional-button {
+    margin-top: 16px;
+}
+
+.health-theme .profile-professional-button:hover {
+    background: #e8f3e5;
+}
+
+.health-theme .profile-professional-button:focus-visible {
+    outline: 3px solid #217568;
+    outline-offset: 3px;
 }
 
 .health-theme .patient-profile-help {

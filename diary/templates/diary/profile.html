@@ -4,7 +4,7 @@
 {% block page_title %}Мій профіль{% endblock %}
 
 {% block content %}
-{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
 <section class="patient-profile" aria-labelledby="profile-title">
     <h2 id="profile-title">Мій профіль</h2>
 
@@ -44,6 +44,29 @@
             <dd>{{ user_profile.get_role_display }}</dd>
         </div>
     </dl>
+
+    {% if user_profile.role == 'doctor' %}
+        <section class="profile-professional" aria-labelledby="profile-professional-title">
+            <h3 id="profile-professional-title">Професійна інформація</h3>
+            {% if user_profile.doctor_profile %}
+                <dl class="patient-profile-grid">
+                    <div class="patient-profile-field">
+                        <dt>Спеціалізація</dt>
+                        <dd>{{ user_profile.doctor_profile.specialty|default:"—" }}</dd>
+                    </div>
+                    <div class="patient-profile-field">
+                        <dt>Стаж роботи</dt>
+                        <dd>{{ user_profile.doctor_profile.year_of_experience|default_if_none:"—" }} років</dd>
+                    </div>
+                    <div class="patient-profile-field">
+                        <dt>Робочий телефон</dt>
+                        <dd>{{ user_profile.doctor_profile.phone|default:"—" }}</dd>
+                    </div>
+                </dl>
+            {% endif %}
+            <a href="{% url 'edit_doctor_profile' %}" class="profile-professional-button">Редагувати професійну інформацію</a>
+        </section>
+    {% endif %}
 
     <div class="patient-profile-actions">
         <a href="{% url 'edit_profile' %}" class="profile-edit-button">

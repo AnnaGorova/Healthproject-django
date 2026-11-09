@@ -1,32 +1,35 @@
 {% extends "diary/base.html" %}
 
 {% block title %}Редагування профілю лікаря{% endblock %}
+{% block page_title %}Редагування професійної інформації{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>✏️ Редагування професійної інформації</h2>
-</div>
-
-<div class="record-card">
-    <form method="post">
+    <form method="post" class="patient-profile patient-profile-edit" aria-labelledby="professional-title">
         {% csrf_token %}
-        
+        <h2 id="professional-title">Редагування професійної інформації</h2>
+        {% if form.non_field_errors %}
+            <div class="patient-profile-errors" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="patient-profile-grid">
         {% for field in form %}
-            <div class="form-group">
+            <div class="patient-profile-field">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
+                {% if field.help_text %}
+                    <p class="patient-profile-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>
+                {% endif %}
                 {% if field.errors %}
-                    <p style="color: #F87171; font-size: 13px; margin-top: 4px;">
-                        {{ field.errors.0 }}
-                    </p>
+                    <div class="patient-profile-errors" id="{{ field.auto_id }}_error" role="alert">{{ field.errors }}</div>
                 {% endif %}
             </div>
         {% endfor %}
-        
-        <div class="form-actions">
-            <a href="{% url 'profile' %}" class="btn btn-outline">↩ Назад</a>
-            <button type="submit" class="btn btn-primary">💾 Зберегти</button>
+        </div>
+
+        <div class="patient-profile-actions">
+            <button type="submit" class="profile-edit-button">Зберегти</button>
+            <a href="{% url 'edit_profile' %}" class="profile-professional-button">Редагувати особисту інформацію</a>
+            <a href="{% url 'profile' %}" class="profile-professional-button">Назад до профілю</a>
         </div>
     </form>
-</div>
 {% endblock %}

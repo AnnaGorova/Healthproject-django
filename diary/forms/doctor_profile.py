@@ -3,7 +3,12 @@ from ..models import DoctorProfile
 
 
 class DoctorProfileForm(forms.ModelForm):
-    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Стару текстову підказку показуємо як порожнє поле.
+        if not self.is_bound and str(self.initial.get('phone') or '').strip() in ('+380...', '+380…'):
+            self.initial['phone'] = ''
+
     class Meta:
         model = DoctorProfile
         fields = ['specialty', 'year_of_experience', 'phone']

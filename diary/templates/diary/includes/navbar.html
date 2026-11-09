@@ -116,19 +116,36 @@
             {% endif %}
 
             {% if request.user.is_authenticated and user.userprofile.role == 'doctor' %}
-                <li class="nav-divider">👨‍⚕️ Лікарю</li>
                 <li><a href="{% url 'doctor_dashboard' %}" class="nav-link{% if current_page == 'doctor_dashboard' %} is-active{% endif %}"
-                   {% if current_page == 'doctor_dashboard' %}aria-current="page"{% endif %}>📊 Дашборд</a></li>
+                   {% if current_page == 'doctor_dashboard' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_heart.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Дашборд</span>
+                </a></li>
                 <li><a href="{% url 'doctor_patients' %}" class="nav-link{% if current_page == 'doctor_patients' %} is-active{% endif %}"
-                   {% if current_page == 'doctor_patients' %}aria-current="page"{% endif %}>👥 Мої пацієнти</a></li>
+                   {% if current_page == 'doctor_patients' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/create-record.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Мої пацієнти</span>
+                </a></li>
                 <li><a href="{% url 'records' %}" class="nav-link{% if current_page == 'records' %} is-active{% endif %}"
-                   {% if current_page == 'records' %}aria-current="page"{% endif %}>📋 Записи пацієнтів</a></li>
+                   {% if current_page == 'records' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/my-records.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Записи пацієнтів</span>
+                </a></li>
                 <li><a href="{% url 'manage_schedule' %}" class="nav-link{% if current_page == 'manage_schedule' %} is-active{% endif %}"
-                   {% if current_page == 'manage_schedule' %}aria-current="page"{% endif %}>🗓️ Мій розклад</a></li>
+                   {% if current_page == 'manage_schedule' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/akar-icons_calendar.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Мій розклад</span>
+                </a></li>
                 <li><a href="{% url 'doctor_appointments' %}" class="nav-link{% if current_page == 'doctor_appointments' %} is-active{% endif %}"
-                   {% if current_page == 'doctor_appointments' %}aria-current="page"{% endif %}>📋 Мої прийоми</a></li>
+                   {% if current_page == 'doctor_appointments' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/my-appointments.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Мої прийоми</span>
+                </a></li>
                 <li><a href="{% url 'all_questions' %}" class="nav-link{% if current_page == 'all_questions' %} is-active{% endif %}"
-                   {% if current_page == 'all_questions' %}aria-current="page"{% endif %}>💬 Питання пацієнтів</a></li>
+                   {% if current_page == 'all_questions' %}aria-current="page"{% endif %}>
+                    <img src="{% static 'diary/images/andrsrxn_message.svg' %}" width="40" height="40" alt="" class="nav-icon">
+                    <span>Питання пацієнтів</span>
+                </a></li>
                 
                 <li><a href="{% url 'profile' %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
                    {% if current_page == 'profile' %}aria-current="page"{% endif %}>

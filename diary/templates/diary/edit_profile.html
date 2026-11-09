@@ -5,7 +5,7 @@
 {% block page_title %}Редагування профілю{% endblock %}
 
 {% block content %}
-{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
 <form method="post" class="patient-profile patient-profile-edit" aria-labelledby="profile-title">
     {% csrf_token %}
     <h2 id="profile-title">Редагування профілю</h2>
@@ -60,7 +60,10 @@
 
     <div class="patient-profile-actions">
         <button type="submit" class="profile-edit-button">Зберегти</button>
-        <a href="{% url 'profile' %}" class="patient-profile-back">Назад до профілю</a>
+        {% if user_profile.role == 'doctor' %}
+            <a href="{% url 'edit_doctor_profile' %}" class="profile-professional-button">Редагувати професійну інформацію</a>
+        {% endif %}
+        <a href="{% url 'profile' %}" class="profile-professional-button">Назад до профілю</a>
     </div>
 </form>
 {% else %}
@@ -118,7 +121,7 @@
 {% endblock %}
 
 {% block extra_js %}
-{% if user_profile.role == 'patient' or user_profile.role == 'admin' %}
+{% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
 <script src="{% static 'diary/js/profile-date.js' %}"></script>
 {% endif %}
 {% endblock %}

@@ -10,7 +10,7 @@
         <a href="?status=active" data-status="active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
         <a href="?status=completed" data-status="completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
         <a href="?status=cancelled" data-status="cancelled" {% if current_status == 'cancelled' %}aria-current="page"{% endif %}>Скасовані {{ counts.cancelled }}</a>
-        <a href="?status=all" {% if current_status == 'all' %}aria-current="page"{% endif %}>Усі {{ counts.total }}</a>
+        <a href="?status=all" class="appointment-filter-all" {% if current_status == 'all' %}aria-current="page"{% endif %}>Усі {{ counts.total }}</a>
     </nav>
     <div class="patient-appointment-list">
         {% for appointment in appointments %}
