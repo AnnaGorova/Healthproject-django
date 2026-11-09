@@ -857,6 +857,229 @@ body.health-theme {
     .health-theme .patient-appointment-dates dd { font-size: 12px; }
 }
 
+.health-theme .doctor-appointments .patient-appointment-card {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 190px) minmax(260px, 1.3fr);
+}
+
+.health-theme .doctor-appointments .patient-appointment-dates {
+    max-width: none;
+    padding-left: 24px;
+    grid-column: auto;
+}
+
+.health-theme .doctor-appointment-overdue {
+    margin: 12px 0 0;
+    color: #8a5d16;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.health-theme .doctor-appointment-complaints {
+    grid-column: 1 / -1;
+    min-width: 0;
+    color: #52657c;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.health-theme .doctor-appointment-complaints summary {
+    cursor: pointer;
+}
+
+.health-theme .doctor-appointment-complaints p {
+    margin: 12px 0 0;
+    color: #1b303e;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) {
+    .health-theme .doctor-appointments .patient-appointment-card {
+        grid-template-columns: minmax(0, 1fr) minmax(150px, 190px);
+    }
+
+    .health-theme .doctor-appointments .patient-appointment-dates {
+        grid-column: 1 / -1;
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .health-theme .doctor-appointments .patient-appointment-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+.health-theme .content-wrapper:has(> .appointment-detail-page) {
+    padding: 0;
+}
+
+.health-theme .appointment-detail-page {
+    padding: 26px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+}
+
+.health-theme .appointment-detail-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.health-theme .appointment-detail-heading h2 {
+    margin: 0;
+    color: #1b303e;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.health-theme .appointment-detail-heading p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.health-theme .appointment-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0;
+}
+
+.health-theme .appointment-detail-grid dt {
+    margin-bottom: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.health-theme .appointment-detail-grid dd {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.health-theme .appointment-detail-complaints {
+    grid-column: 1 / -1;
+    padding: 20px;
+    border-radius: 10px;
+    background: #edf3ee;
+}
+
+.health-theme .appointment-detail-notice {
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #fff4ce;
+    color: #8a5d16;
+    font-size: 14px;
+}
+
+.health-theme .appointment-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #dfe9e2;
+}
+
+.health-theme .appointment-detail-page .appointment-detail-primary {
+    background: #166534;
+    color: #fff;
+}
+
+.health-theme .appointment-detail-page .appointment-detail-primary:hover {
+    background: #12532b;
+}
+
+.health-theme .appointment-detail-page .appointment-detail-cancel {
+    border-color: #a52e35;
+    color: #a52e35;
+}
+
+.health-theme .appointment-detail-page .appointment-detail-cancel:hover {
+    background: #fff0f1;
+}
+
+.health-theme .appointment-detail-back {
+    margin-top: 24px;
+}
+
+@media (max-width: 700px) {
+    .health-theme .appointment-detail-page { padding: 20px; }
+    .health-theme .appointment-detail-grid { grid-template-columns: 1fr; }
+    .health-theme .appointment-detail-actions > a { width: 100%; }
+}
+
+.health-theme .conclusion-editor .form-group {
+    margin: 0 0 20px;
+}
+
+.health-theme .conclusion-editor label {
+    display: block;
+    margin-bottom: 8px;
+    color: #52657c;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.health-theme .conclusion-editor textarea,
+.health-theme .conclusion-editor .icd10-search-input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #b3d5b4;
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.health-theme .conclusion-editor textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.health-theme .conclusion-editor textarea:focus,
+.health-theme .conclusion-editor .icd10-search-input:focus {
+    outline: 2px solid #217568;
+    outline-offset: 2px;
+    border-color: #217568;
+    box-shadow: none;
+}
+
+.health-theme .conclusion-editor .icd10-results {
+    border-color: #b3d5b4;
+}
+
+.health-theme .conclusion-editor .icd10-result-item:hover,
+.health-theme .conclusion-editor .icd10-result-item.is-active {
+    background: #e8f3e5;
+}
+
+.health-theme .conclusion-editor .icd10-result-item .code {
+    color: #166534;
+}
+
+.health-theme .conclusion-editor .error {
+    margin-top: 8px;
+    color: #a52e35;
+    font-size: 13px;
+}
+
+.health-theme .conclusion-editor .appointment-detail-actions button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
 /* Єдиний пошук пацієнта. */
 .health-theme .patient-search {
     position: relative;

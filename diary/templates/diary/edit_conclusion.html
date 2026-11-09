@@ -2,19 +2,22 @@
 {% load static %}
 
 {% block title %}Редагування висновку{% endblock %}
+{% block page_title %}Редагування висновку{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>✏️ Редагування висновку</h2>
-    <p class="subtitle">{{ conclusion.patient.username }} — {{ conclusion.appointment.date|date:"d.m.Y H:i" }}</p>
-</div>
+<section class="appointment-detail-page conclusion-editor" aria-labelledby="conclusion-editor-title">
+    <header class="appointment-detail-heading">
+        <div>
+            <h2 id="conclusion-editor-title">Редагування висновку</h2>
+            <p>{{ conclusion.patient.username }} · {{ conclusion.appointment.date|date:"d.m.Y H:i" }}</p>
+        </div>
+    </header>
 
-<div class="record-card">
     <form method="post">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            <div class="patient-profile-errors" role="alert">{{ form.non_field_errors }}</div>
         {% endif %}
 
         {% for field in form %}
@@ -28,7 +31,7 @@
         {% endfor %}
 
         <div class="form-group icd10-group">
-            <label for="icd10_search_input">🔎 Шифр МКХ-10</label>
+            <label for="icd10_search_input">Шифр МКХ-10</label>
             <div class="icd10-autocomplete">
                 <input type="text"
                     id="icd10_search_input"
@@ -45,7 +48,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.diagnosis.id_for_label }}">📝 Діагноз (текстом)</label>
+            <label for="{{ form.diagnosis.id_for_label }}">Діагноз (текстом)</label>
             {{ form.diagnosis }}
             {% if form.diagnosis.errors %}
                 <div class="error">{{ form.diagnosis.errors }}</div>
@@ -53,7 +56,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.prescriptions.id_for_label }}">💊 Призначення</label>
+            <label for="{{ form.prescriptions.id_for_label }}">Призначення</label>
             {{ form.prescriptions }}
             {% if form.prescriptions.errors %}
                 <div class="error">{{ form.prescriptions.errors }}</div>
@@ -61,19 +64,19 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.recommendations.id_for_label }}">📋 Рекомендації</label>
+            <label for="{{ form.recommendations.id_for_label }}">Рекомендації</label>
             {{ form.recommendations }}
             {% if form.recommendations.errors %}
                 <div class="error">{{ form.recommendations.errors }}</div>
             {% endif %}
         </div>
 
-        <div class="form-actions">
-            <a href="{% url 'view_conclusion' conclusion.appointment.id %}" class="btn btn-secondary">← Скасувати</a>
-            <button type="submit" class="btn btn-primary">💾 Зберегти зміни</button>
+        <div class="appointment-detail-actions">
+            <button type="submit" class="profile-professional-button appointment-detail-primary">Зберегти зміни</button>
+            <a href="{% url 'view_conclusion' conclusion.appointment.id %}" class="profile-professional-button">Скасувати</a>
         </div>
     </form>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

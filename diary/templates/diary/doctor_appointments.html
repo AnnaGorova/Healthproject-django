@@ -1,59 +1,53 @@
 {% extends "diary/base.html" %}
 
 {% block title %}Мої прийоми{% endblock %}
+{% block page_title %}Мої прийоми{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📋 Мої прийоми</h2>
-    <p class="subtitle">Показано: {{ appointments|length }} з {{ counts.total }}</p>
-</div>
-
-{% include "diary/includes/appointment_filters.html" %}
-
-{% for appointment in appointments %}
-<div class="record-card">
-    <div class="record-top">
-        {% if appointment.is_overdue %}
-            <span class="badge" style="background: rgba(251, 191, 36, 0.15); color: #FBBF24;">
-                Минув, очікує висновку
-            </span>
-        {% else %}
-            <span class="badge">{{ appointment.status_label }}</span>
-        {% endif %}
-        <span class="record-date">{{ appointment.date|date:"d.m.Y H:i" }}</span>
+<section class="patient-appointments doctor-appointments" aria-labelledby="doctor-appointments-title">
+    <h2 id="doctor-appointments-title" class="patient-appointments-title">Мої прийоми</h2>
+    <nav class="patient-appointment-filters" aria-label="Фільтр прийомів">
+        <a href="?status=active" data-status="active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
+        <a href="?status=completed" data-status="completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
+        <a href="?status=cancelled" data-status="cancelled" {% if current_status == 'cancelled' %}aria-current="page"{% endif %}>Скасовані {{ counts.cancelled }}</a>
+        <a href="?status=all" class="appointment-filter-all" {% if current_status == 'all' %}aria-current="page"{% endif %}>Усі {{ counts.total }}</a>
+    </nav>
+    <div class="patient-appointment-list">
+        {% for appointment in appointments %}
+            <article class="patient-appointment-card" id="appointment-{{ appointment.id }}">
+                <div class="patient-appointment-doctor">
+                    <span class="patient-appointment-status status-{{ appointment.status }}">{{ appointment.status_label }}</span>
+                    <p class="patient-appointment-label">Пацієнт</p>
+                    <h3>{{ appointment.patient.username }}</h3>
+                    {% if appointment.is_overdue %}
+                        <p class="doctor-appointment-overdue">Минув, очікує висновку</p>
+                    {% endif %}
+                </div>
+                <div class="patient-appointment-actions">
+                    <a href="{% url 'appointment_detail' appointment.id %}" class="patient-appointment-action">Про прийом</a>
+                    {% if appointment.status != 'cancelled' %}
+                        {% if appointment.conclusion %}
+                            <a href="{% url 'view_conclusion' appointment.id %}" class="patient-appointment-action">Переглянути висновок</a>
+                        {% else %}
+                            <a href="{% url 'create_conclusion' appointment.id %}" class="patient-appointment-action">Створити висновок</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <dl class="patient-appointment-dates">
+                    <div><dt>Дата створення</dt><dd>{{ appointment.created_at|date:"d.m.Y" }}</dd></div>
+                    <div><dt>Дата призначення</dt><dd>{{ appointment.date|date:"d.m.Y" }}</dd></div>
+                    <div class="patient-appointment-time"><dt>Час прибуття</dt><dd>{{ appointment.date|date:"H:i" }}</dd></div>
+                </dl>
+                {% if appointment.complaints %}
+                    <details class="doctor-appointment-complaints">
+                        <summary>Скарги</summary>
+                        <p>{{ appointment.complaints|linebreaksbr }}</p>
+                    </details>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p class="patient-appointments-empty">Записів у цій категорії немає.</p>
+        {% endfor %}
     </div>
-    <div class="detail-grid">
-        <div class="detail-item">
-            <span class="detail-label">Пацієнт</span>
-            <span class="detail-value">{{ appointment.patient.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Скарги</span>
-            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
-        </div>
-    </div>
-
-    <div style="margin-top: 16px; text-align: right;">
-        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-outline">
-            🔍 Деталі
-        </a>
-        {% if appointment.status != 'cancelled' %}
-            {% if appointment.conclusion %}
-                <a href="{% url 'view_conclusion' appointment.id %}" class="btn btn-outline">
-                    📄 Переглянути висновок
-                </a>
-            {% else %}
-                <a href="{% url 'create_conclusion' appointment.id %}" class="btn btn-primary">
-                    ✍️ Створити висновок
-                </a>
-            {% endif %}
-        {% endif %}
-    </div>
-</div>
-{% empty %}
-<div class="empty-state">
-    <div class="empty-icon">📭</div>
-    <h3>Записів у цій категорії немає</h3>
-</div>
-{% endfor %}
+</section>
 {% endblock %}

@@ -1,66 +1,67 @@
 {% extends "diary/base.html" %}
 
 {% block title %}Деталі прийому{% endblock %}
+{% block page_title %}Деталі прийому{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>📋 Деталі прийому</h2>
-    <p class="subtitle">{{ appointment.date|date:"d.m.Y H:i" }}</p>
-</div>
+<section class="appointment-detail-page" aria-labelledby="appointment-detail-title">
+    <header class="appointment-detail-heading">
+        <div>
+            <h2 id="appointment-detail-title">Деталі прийому</h2>
+            <p>Прийом №{{ appointment.id }} · {{ appointment.date|date:"d.m.Y H:i" }}</p>
+        </div>
+        <span class="patient-appointment-status status-{{ appointment.status }}">{{ appointment.status_label }}</span>
+    </header>
 
-<div class="record-card" style="margin-bottom: 24px;">
-    <div class="detail-grid">
-        <div class="detail-item">
-            <span class="detail-label">Пацієнт</span>
-            <span class="detail-value">{{ appointment.patient.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Статус</span>
-            <span class="detail-value">
-                {% if appointment.is_overdue %}
-                    Минув, очікує висновку
-                {% else %}
-                    {{ appointment.status_label }}
-                {% endif %}
-            </span>
-        </div>
-        <div class="detail-item full-width">
-            <span class="detail-label">Скарги</span>
-            <span class="detail-value">{{ appointment.complaints|default:"—" }}</span>
-        </div>
-    </div>
-</div>
+    {% if appointment.is_overdue %}
+        <p class="appointment-detail-notice">Прийом минув, очікує висновку.</p>
+    {% endif %}
 
-<div class="form-actions" style="margin-bottom: 24px;">
-    <a href="{% url 'patient_card' appointment.patient.id %}" class="btn btn-outline">
-        👤 Картка пацієнта
+    <dl class="appointment-detail-grid">
+        <div>
+            <dt>Пацієнт</dt>
+            <dd>{{ appointment.patient.username }}</dd>
+        </div>
+        <div>
+            <dt>Дата створення</dt>
+            <dd>{{ appointment.created_at|date:"d.m.Y H:i"|default:"—" }}</dd>
+        </div>
+        <div class="appointment-detail-complaints">
+            <dt>Скарги</dt>
+            <dd>{{ appointment.complaints|default:"—"|linebreaksbr }}</dd>
+        </div>
+    </dl>
+
+<div class="appointment-detail-actions">
+    <a href="{% url 'patient_card' appointment.patient.id %}" class="profile-professional-button">
+        Картка пацієнта
     </a>
 
     {% if appointment.status != 'cancelled' %}
         {% if appointment.conclusion %}
-            <a href="{% url 'view_conclusion' appointment.id %}" class="btn btn-outline">
-                📄 Переглянути висновок
+            <a href="{% url 'view_conclusion' appointment.id %}" class="profile-professional-button appointment-detail-primary">
+                Переглянути висновок
             </a>
-            <a href="{% url 'edit_conclusion' appointment.conclusion.id %}" class="btn btn-outline">
-                ✏️ Редагувати висновок
+            <a href="{% url 'edit_conclusion' appointment.conclusion.id %}" class="profile-professional-button">
+                Редагувати висновок
             </a>
         {% else %}
-            <a href="{% url 'create_conclusion' appointment.id %}" class="btn btn-primary">
-                ✍️ Створити висновок
+            <a href="{% url 'create_conclusion' appointment.id %}" class="profile-professional-button appointment-detail-primary">
+                Створити висновок
             </a>
         {% endif %}
     {% endif %}
 
     {% if appointment.status == 'scheduled' %}
         <a href="{% url 'doctor_cancel_appointment' appointment.id %}"
-           class="btn btn-outline"
-           style="color:#F87171; border-color:#F87171;">
-            ❌ Скасувати прийом
+           class="profile-professional-button appointment-detail-cancel">
+            Скасувати прийом
         </a>
     {% endif %}
 </div>
 
-<div class="form-actions">
-    <a href="{% url 'doctor_appointments' %}" class="btn btn-secondary">← Назад до прийомів</a>
+<div class="appointment-detail-back">
+    <a href="{% url 'doctor_appointments' %}" class="profile-professional-button">← Назад до прийомів</a>
 </div>
+</section>
 {% endblock %}
