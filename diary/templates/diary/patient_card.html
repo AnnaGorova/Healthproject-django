@@ -1,111 +1,110 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Картка пацієнта{% endblock %}
+{% block page_title %}Картка пацієнта{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>👤 {{ patient.username }}</h2>
-    <p class="subtitle">Картка пацієнта</p>
-</div>
-
-<!-- Особиста інформація -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>📋 Особиста інформація</h3>
-    <div class="detail-grid">
-        <div class="detail-item">
-            <span class="detail-label">ПІП</span>
-            <span class="detail-value">{{ patient.username }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Email</span>
-            <span class="detail-value">{{ patient.user.email }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Телефон</span>
-            <span class="detail-value">{{ patient.phone|default:"—" }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Стать</span>
-            <span class="detail-value">{{ patient.get_gender_display|default:"—" }}</span>
-        </div>
-    </div>
-</div>
-
-<!-- Висновки -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>📄 Висновки лікарів ({{ conclusions|length }})</h3>
-    
-    {% for c in conclusions %}
-        <div style="padding: 16px; margin-bottom: 12px; background: rgba(52, 211, 153, 0.05); border-left: 3px solid #34D399; border-radius: 8px;">
-            <p style="color: #34D399; font-size: 13px; margin-bottom: 8px;">
-                {{ c.doctor.username }} — {{ c.created_at|date:"d.m.Y" }}
-            </p>
-            {% if c.icd10 %}
-                <p style="color: #000;"><strong>Шифр МКХ-10:</strong> {{ c.icd10.code }} — {{ c.icd10.name }}</p>
-            {% endif %}
-            <p><strong>Діагноз:</strong> {{ c.diagnosis }}</p>
-            <p><strong>Призначення:</strong> {{ c.prescriptions }}</p>
-            <p><strong>Рекомендації:</strong> {{ c.recommendations }}</p>
-        </div>
-    {% empty %}
-        <p class="text-muted">Висновків ще немає</p>
-    {% endfor %}
-</div>
-
-<!-- Історія прийомів -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>📅 Історія прийомів</h3>
-    
-    {% for apt in appointments %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+<div class="patient-card-page doctor-appointments">
+    <section class="patient-card-panel" aria-labelledby="patient-card-title">
+        <header class="patient-card-heading">
             <div>
-                <strong>{{ apt.date|date:"d.m.Y H:i" }}</strong>
-                {% if apt.is_overdue %}
-                    <span class="badge" style="margin-left: 12px; background: rgba(251, 191, 36, 0.15); color: #FBBF24;">
-                        Минув, очікує висновку
-                    </span>
-                {% else %}
-                    <span class="badge" style="margin-left: 12px;">{{ apt.status_label }}</span>
-                {% endif %}
+                <h2 id="patient-card-title">{{ patient.username }}</h2>
+                <p>Картка пацієнта</p>
             </div>
-            {% if apt.status != 'cancelled' %}
-                {% if apt.conclusion %}
-                    <a href="{% url 'view_conclusion' apt.id %}" class="btn btn-outline">Переглянути висновок</a>
-                {% else %}
-                    <a href="{% url 'create_conclusion' apt.id %}" class="btn btn-primary">Створити висновок</a>
-                {% endif %}
-            {% endif %}
+            <a href="{% url 'doctor_patients' %}" class="profile-professional-button">← До моїх пацієнтів</a>
+        </header>
+        <dl class="patient-card-personal">
+            <div><dt>Email</dt><dd>{{ patient.user.email|default:"—" }}</dd></div>
+            <div><dt>Особистий телефон</dt><dd>{{ patient.phone|default:"—" }}</dd></div>
+            <div><dt>Стать</dt><dd>{{ patient.get_gender_display|default:"—" }}</dd></div>
+            <div>
+                <dt>Дата народження</dt>
+                <dd>{{ patient.date_of_birth|date:"d.m.Y"|default:"—" }}{% if patient.age != None %} ({{ patient.age }} р.){% endif %}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section aria-labelledby="patient-appointments-title">
+        <h2 id="patient-appointments-title" class="patient-card-section-title">Прийоми пацієнта</h2>
+        <div class="patient-appointment-list">
+            {% for apt in appointments %}
+                <article class="patient-appointment-card">
+                    <div class="patient-appointment-doctor">
+                        <span class="patient-appointment-status status-{{ apt.status }}">{{ apt.status_label }}</span>
+                        <p class="patient-appointment-label">Лікар</p>
+                        <h3>{{ apt.doctor.username }}</h3>
+                        {% if apt.is_overdue %}<p class="doctor-appointment-overdue">Минув, очікує висновку</p>{% endif %}
+                    </div>
+                    <div class="patient-appointment-actions">
+                        <a href="{% url 'appointment_detail' apt.id %}" class="patient-appointment-action">Про прийом</a>
+                        {% if apt.status != 'cancelled' %}
+                            {% if apt.conclusion %}
+                                <a href="{% url 'view_conclusion' apt.id %}" class="patient-appointment-action">Переглянути висновок</a>
+                            {% else %}
+                                <a href="{% url 'create_conclusion' apt.id %}" class="patient-appointment-action">Створити висновок</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <dl class="patient-appointment-dates">
+                        <div><dt>Дата створення</dt><dd>{{ apt.created_at|date:"d.m.Y" }}</dd></div>
+                        <div><dt>Дата призначення</dt><dd>{{ apt.date|date:"d.m.Y" }}</dd></div>
+                        <div class="patient-appointment-time"><dt>Час прибуття</dt><dd>{{ apt.date|date:"H:i" }}</dd></div>
+                    </dl>
+                </article>
+            {% empty %}
+                <p class="patient-card-empty">Прийомів ще немає.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p class="text-muted">Прийомів ще немає</p>
-    {% endfor %}
-</div>
+    </section>
 
-<!-- Медичні записи -->
-<div class="record-card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 style="margin: 0;">📊 Останні записи здоров'я</h3>
-        <a href="{% url 'patient_analytics' patient.id %}" class="btn btn-primary">
-            📈 Повна аналітика
-        </a>
-    </div>
-    
-    {% for r in records %}
-        <div style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <p><strong>{{ r.date|date:"d.m.Y H:i" }}</strong></p>
-            {% if r.temperature %}<span>🌡️ {{ r.temperature }}°C</span>{% endif %}
-            {% if r.heart_rate %}<span style="margin-left: 12px;">❤️ {{ r.heart_rate }} уд/хв</span>{% endif %}
-            {% if r.spo2 %}<span style="margin-left: 12px;">💨 {{ r.spo2 }}%</span>{% endif %}
-            {% if r.pressure_systolic %}<span style="margin-left: 12px;">🩸 {{ r.pressure_systolic }}/{{ r.pressure_diastolic }}</span>{% endif %}
+    <section class="patient-card-panel" aria-labelledby="patient-parameters-title">
+        <header class="patient-card-heading">
+            <div>
+                <h2 id="patient-parameters-title">Показники здоров’я</h2>
+                <p>Останні заповнені вимірювання</p>
+            </div>
+        </header>
+        <div class="parameters-grid">
+            {% for parameter in patient_parameters %}
+                <article class="parameter-card parameter-{{ parameter.theme }}">
+                    <img src="{% static parameter.icon %}" class="parameter-icon" width="64" height="64" alt="">
+                    <h3>{{ parameter.label }}</h3>
+                    {% if parameter.value != None %}
+                        <p class="parameter-value">{{ parameter.value }} <span>{{ parameter.unit }}</span></p>
+                        <p class="parameter-date">{{ parameter.date|date:"d.m.Y H:i" }}</p>
+                    {% else %}
+                        <p class="parameter-empty">Немає даних</p>
+                    {% endif %}
+                </article>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p class="text-muted">Записів ще немає</p>
-    {% endfor %}
+        <div class="patient-card-links">
+            <a href="{% url 'patient_analytics' patient.id %}" class="profile-professional-button patient-card-primary">Детальна аналітика</a>
+        </div>
+    </section>
 
-    
-</div>
-
-<div class="form-actions" style="margin-top: 24px;">
-        <a href="{% url 'doctor_patients' %}" class="btn btn-secondary">← Назад до моїх пацієнтів</a>
+    <section class="patient-card-panel" aria-labelledby="patient-recent-records-title">
+        <header class="patient-card-heading">
+            <h2 id="patient-recent-records-title">Останні записи щоденника</h2>
+            <a href="{% url 'user_records' patient.id %}" class="profile-professional-button">Усі записи щоденника</a>
+        </header>
+        <div class="patient-card-recent-records">
+            {% for record in records %}
+                <details class="patient-card-record">
+                    <summary>{{ record.date|date:"d.m.Y H:i" }}</summary>
+                    <dl class="patient-card-record-values">
+                        <div><dt>Температура</dt><dd>{{ record.temperature|default_if_none:"—" }} °C</dd></div>
+                        <div><dt>Пульс</dt><dd>{{ record.heart_rate|default_if_none:"—" }} уд/хв</dd></div>
+                        <div><dt>SpO₂</dt><dd>{{ record.spo2|default_if_none:"—" }} %</dd></div>
+                        <div><dt>Артеріальний тиск</dt><dd>{{ record.pressure_systolic|default_if_none:"—" }}/{{ record.pressure_diastolic|default_if_none:"—" }} мм рт. ст.</dd></div>
+                    </dl>
+                    <a href="{% url 'record_detail' record.pk %}" class="profile-professional-button">Деталі запису</a>
+                </details>
+            {% empty %}
+                <p class="patient-card-empty">Записів ще немає.</p>
+            {% endfor %}
+        </div>
+    </section>
 </div>
 {% endblock %}

@@ -149,6 +149,7 @@ header {
 
 header::before {
     content: '';
+    pointer-events: none;
     position: absolute;
     top: -50%;
     right: -50%;

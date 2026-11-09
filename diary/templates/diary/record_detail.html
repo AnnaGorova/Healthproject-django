@@ -8,6 +8,9 @@
 <div class="record-create">
     <h2 class="record-create-title">Запис №{{ record.id }}</h2>
     <div class="record-edit-meta">
+        {% if request.user.userprofile.role == 'doctor' %}
+            <p class="record-detail-patient">Пацієнт: <strong>{{ record.user.username }}</strong></p>
+        {% endif %}
         <p>{{ record.date|date:"d.m.Y H:i" }}</p>
         {% if record.updated_at %}
             <p>Оновлено: {{ record.updated_at|date:"d.m.Y H:i" }}</p>
@@ -87,8 +90,8 @@
             {% endif %}
             {% if request.user.userprofile.role == 'patient' %}
                 <a href="{% url 'my_records' %}" class="record-create-back">Назад до моїх записів</a>
-            {% else %}
-                <a href="{% url 'records' %}" class="record-create-back">Назад до записів</a>
+            {% elif request.user.userprofile.role == 'doctor' %}
+                <a href="{% url 'patient_card' record.user_id %}#patient-recent-records-title" class="profile-professional-button">← Назад до картки пацієнта</a>
             {% endif %}
         </div>
     </div>

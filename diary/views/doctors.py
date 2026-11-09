@@ -172,23 +172,41 @@ def patient_card(request, patient_id):
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть переглядати картки")
     
-    patient = get_object_or_404(UserProfile, id=patient_id, role='patient')
+    patient = get_object_or_404(UserProfile.objects.select_related('user'), id=patient_id, role='patient')
 
     # Використовуємо спільну функцію
     if not doctor_can_access_patient(user_profile, patient):
         raise PermissionDenied("Ви не маєте доступу до цього пацієнта")
     
     # Дані пацієнта
-    records = HealthRecord.objects.filter(user=patient, is_active=True).order_by('date')[:10]
+    active_records = HealthRecord.objects.filter(user=patient, is_active=True).order_by('-date', '-pk')
+    records = active_records[:10]
+    parameters = []
+    for key, label, unit, theme, icon in [
+        ('temperature', 'Температура', '°C', 'mint', 'temperature.svg'),
+        ('heart_rate', 'Пульс', 'уд/хв', 'pink', 'pulse.svg'),
+        ('pressure', 'Артеріальний тиск', 'мм рт. ст.', 'yellow', 'blood-pressure.svg'),
+        ('spo2', 'SpO₂', '%', 'blue', 'spo2.svg'),
+        ('blood_sugar', 'Глюкоза', 'ммоль/л', 'purple', 'glucose.svg'),
+    ]:
+        fields = ['pressure_systolic', 'pressure_diastolic'] if key == 'pressure' else [key]
+        measurement = active_records.filter(**{f'{field}__isnull': False for field in fields}).first()
+        value = None
+        if measurement is not None:
+            value = '/'.join(f'{getattr(measurement, field):g}' for field in fields)
+        parameters.append({
+            'label': label, 'value': value, 'unit': unit, 'theme': theme,
+            'icon': 'diary/images/' + icon,
+            'date': measurement.date if measurement else None,
+        })
     appointments = Appointment.objects.filter(
         doctor=user_profile,
         patient=patient
-    ).order_by('date')
-    conclusions = MedicalConclusion.objects.filter(patient=patient).order_by('created_at')
+    ).select_related('doctor', 'cancelled_by', 'conclusion').order_by('-date', '-pk')
     
     return render(request, 'diary/patient_card.html', {
         'patient': patient,
         'records': records,
         'appointments': appointments,
-        'conclusions': conclusions,
+        'patient_parameters': parameters,
     })

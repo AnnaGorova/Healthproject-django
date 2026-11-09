@@ -36,7 +36,7 @@ def records(request):
         all_records = HealthRecord.objects.filter(
             user__in=accessible_patients,
             is_active=True
-        )
+        ).select_related('user').order_by('-date', '-pk')
     else:
         # 4. Аномалія (нова роль тощо) → 404
         raise Http404("Сторінку не знайдено")
@@ -70,11 +70,12 @@ def user_records(request, user_id):
     if current_user.role not in ['patient', 'doctor']:
         raise Http404("Сторінку не знайдено")
 
-    all_records = HealthRecord.objects.filter(user=target_user, is_active=True)
+    all_records = HealthRecord.objects.filter(user=target_user, is_active=True).select_related('user').order_by('-date', '-pk')
 
     context = {
         'records': all_records,
         'user_profile': target_user,
+        'records_patient': target_user,
     }
     return render(request, 'diary/records.html', context)
 

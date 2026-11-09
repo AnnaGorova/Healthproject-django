@@ -121,8 +121,8 @@
                     <img src="{% static 'diary/images/akar-icons_heart.svg' %}" width="40" height="40" alt="" class="nav-icon">
                     <span>Дашборд</span>
                 </a></li>
-                <li><a href="{% url 'doctor_patients' %}" class="nav-link{% if current_page == 'doctor_patients' %} is-active{% endif %}"
-                   {% if current_page == 'doctor_patients' %}aria-current="page"{% endif %}>
+                <li><a href="{% url 'doctor_patients' %}" class="nav-link{% if current_page == 'doctor_patients' or current_page == 'patient_card' %} is-active{% endif %}"
+                   {% if current_page == 'doctor_patients' or current_page == 'patient_card' %}aria-current="page"{% endif %}>
                     <img src="{% static 'diary/images/create-record.svg' %}" width="40" height="40" alt="" class="nav-icon">
                     <span>Мої пацієнти</span>
                 </a></li>
