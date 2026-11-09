@@ -18,7 +18,10 @@ def is_slot_booked(doctor, slot_start):
     ).exists()
 
 
-def get_available_slots(doctor, days=14):
+def get_available_slots(
+    doctor, days=14, *, start_date=None, include_past=False,
+    include_days_off=False, include_completed=False,
+):
     """
     Повертає список доступних слотів для лікаря.
     
@@ -36,7 +39,9 @@ def get_available_slots(doctor, days=14):
         ...
     ]
     
-    Використовується і для показу, і для валідації POST.
+    За замовчуванням показує майбутні слоти для запису пацієнта.
+    Календар лікаря додатково може показувати минулий час, вихідні
+    та завершені прийоми. Перевірку бронювання виконує is_slot_available.
     """
    
     
@@ -46,20 +51,43 @@ def get_available_slots(doctor, days=14):
     }
     
     slots_by_day = []
-    today = date.today()
+    today = start_date if start_date is not None else date.today()
     now = timezone.now()
+    slot_duration = timedelta(minutes=30)
+    end_date = today + timedelta(days=days)
+    range_start = timezone.make_aware(dt_class.combine(today, time.min))
+    range_end = timezone.make_aware(dt_class.combine(end_date, time.min))
+    schedules_by_date = {}
+    schedules = Schedule.objects.filter(doctor=doctor, date__gte=today, date__lt=end_date)
+    for schedule in schedules:
+        schedules_by_date.setdefault(schedule.date, []).append(schedule)
+    statuses = ['scheduled', 'completed'] if include_completed else ['scheduled']
+    appointments = list(Appointment.objects.filter(
+        doctor=doctor, status__in=statuses,
+        date__gt=range_start - slot_duration, date__lt=range_end,
+    ).only('id', 'date').order_by('date', 'pk'))
     
     for i in range(days):
         current_date = today + timedelta(days=i)
         day_of_week = current_date.weekday()
         
         # Розклад на цю дату
-        day_schedules = Schedule.objects.filter(doctor=doctor, date=current_date)
+        day_schedules = schedules_by_date.get(current_date, [])
+        is_day_off = any(schedule.is_day_off for schedule in day_schedules)
+        if not day_schedules:
+            is_day_off = day_of_week > 4
+
+        if is_day_off and include_days_off:
+            slots_by_day.append({
+                'date': current_date, 'date_str': current_date.isoformat(),
+                'day_name': DAYS_UA[day_of_week], 'is_day_off': True, 'slots': [],
+            })
+            continue
         
-        if day_schedules.exists():
-            if day_schedules.filter(is_day_off=True).exists():
+        if day_schedules:
+            if is_day_off:
                 continue
-            schedules_to_use = day_schedules.exclude(is_day_off=True)
+            schedules_to_use = day_schedules
         else:
             if day_of_week > 4:
                 continue
@@ -78,29 +106,34 @@ def get_available_slots(doctor, days=14):
             else:
                 start = schedule.start_time
                 end = schedule.end_time
-            duration = 30
-            
             current_time = dt_class.combine(current_date, start)
             end_datetime = dt_class.combine(current_date, end)
             
-            while current_time + timedelta(minutes=duration) <= end_datetime:
-                # Тільки майбутні
-                if timezone.make_aware(current_time) > now:
-                    is_booked = is_slot_booked(doctor, current_time)
+            while current_time + slot_duration <= end_datetime:
+                slot_start = timezone.make_aware(current_time)
+                if include_past or slot_start > now:
+                    appointment = next(
+                        (item for item in appointments
+                         if slot_start - slot_duration < item.date < slot_start + slot_duration),
+                        None,
+                    )
                     
                     day_slots.append({
                         'time': current_time.strftime('%H:%M'),
                         'datetime': current_time,
-                        'is_booked': is_booked,
+                        'is_booked': appointment is not None,
+                        'appointment_id': appointment.pk if appointment else None,
+                        'is_past': slot_start <= now,
                     })
                 
-                current_time += timedelta(minutes=duration)
+                current_time += slot_duration
         
-        if day_slots:
+        if day_slots or include_days_off:
             slots_by_day.append({
                 'date': current_date,
                 'date_str': current_date.strftime('%Y-%m-%d'),
                 'day_name': DAYS_UA[current_date.weekday()],
+                'is_day_off': False,
                 'slots': day_slots,
             })
     

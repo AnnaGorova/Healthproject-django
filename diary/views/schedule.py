@@ -4,8 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from ..models import Appointment, Schedule
-from datetime import date
+from datetime import date, timedelta
 from django.db import models
+from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
+from .slots import get_available_slots
 
 
 @login_required
@@ -17,7 +22,38 @@ def manage_schedule(request):
         raise PermissionDenied("Тільки лікарі можуть налаштовувати розклад")
     
     schedules = Schedule.objects.filter(doctor=user_profile).order_by('date', 'start_time')
-    today = date.today()
+    today = timezone.localdate()
+    selected_period = request.GET.get('period', 'day')
+    period_days = {'day': 1, 'week': 7, 'month': 30}
+    if selected_period not in (*period_days, 'custom'):
+        selected_period = 'day'
+    selected_date = today
+    period_end = today
+    days = period_days.get(selected_period, 1)
+    date_error = ''
+    date_field = forms.DateField(
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        validators=[MinValueValidator(date(1900, 1, 1)), MaxValueValidator(date(9998, 12, 31))],
+    )
+    try:
+        if selected_period == 'custom':
+            selected_date = date_field.clean(request.GET.get('date_from'))
+            period_end = date_field.clean(request.GET.get('date_to'))
+            days = (period_end - selected_date).days + 1
+            if days < 1:
+                date_error = 'Дата «По» має бути не раніше дати «З».'
+            elif days > 366:
+                date_error = 'Виберіть період до 366 днів включно.'
+        else:
+            selected_date = date_field.clean(request.GET.get('date') or today.isoformat())
+            period_end = selected_date + timedelta(days=days - 1)
+    except ValidationError:
+        date_error = 'Заповніть дати у форматі ДД.ММ.РРРР.'
+
+    schedule_days = [] if date_error else get_available_slots(
+        user_profile, days=days, start_date=selected_date,
+        include_past=True, include_days_off=True, include_completed=True,
+    )
     
     if request.method == 'POST':
         date_str = request.POST.get('date')
@@ -97,6 +133,15 @@ def manage_schedule(request):
         'schedules': schedules,
         'hours': hours,
         'today': today,
+        'schedule_days': schedule_days,
+        'selected_date': selected_date,
+        'selected_date_text': request.GET.get('date', '') if date_error and selected_period != 'custom' else selected_date.strftime('%d.%m.%Y'),
+        'date_from_text': request.GET.get('date_from', '') if date_error else selected_date.strftime('%d.%m.%Y'),
+        'date_to_text': request.GET.get('date_to', '') if date_error else period_end.strftime('%d.%m.%Y'),
+        'selected_period': selected_period,
+        'period_end': period_end,
+        'date_error': date_error,
+        'settings_open': request.method == 'POST',
     })
 
 

@@ -1080,6 +1080,218 @@ body.health-theme {
     font-family: inherit;
 }
 
+.health-theme .content-wrapper:has(> .doctor-schedule) {
+    padding: 0;
+}
+
+.health-theme .doctor-schedule,
+.health-theme .schedule-settings {
+    padding: 24px;
+    border-radius: 15px;
+    background: #f7f9f8;
+    color: #1b303e;
+}
+
+.health-theme .doctor-schedule h2 {
+    margin: 0 0 24px;
+    color: #1b303e;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.health-theme .schedule-filters {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.health-theme .schedule-date-field label,
+.health-theme .schedule-settings-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.health-theme .schedule-date-submit {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.health-theme .schedule-date-submit > .schedule-save-button {
+    min-height: 44px;
+}
+
+.health-theme .schedule-date-field input[type="text"],
+.health-theme .schedule-settings-field input,
+.health-theme .schedule-settings-field select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #b3d5b4;
+    border-radius: 8px;
+    background: #f7f9f8;
+    color: #1b303e;
+    font: inherit;
+    font-size: 14px;
+}
+
+.health-theme .schedule-date-control { position: relative; }
+.health-theme .schedule-date-field input[type="text"] { padding-right: 44px; }
+.health-theme .schedule-calendar-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.health-theme .schedule-native-date {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+.health-theme .schedule-date-control [hidden] { display: none; }
+
+.health-theme .schedule-periods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.health-theme .schedule-custom-period {
+    margin-top: 16px;
+}
+
+.health-theme .schedule-custom-period > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: 8px 16px;
+    border: 1px solid #b3d5b4;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 14px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.health-theme .schedule-custom-period > summary::-webkit-details-marker { display: none; }
+.health-theme .schedule-custom-period[open] > summary { background: #349747; border-color: #349747; color: #fff; }
+.health-theme .schedule-custom-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin-top: 16px; }
+.health-theme .schedule-custom-hint { flex-basis: 100%; margin: 0; color: #64748b; font-size: 13px; }
+.health-theme .schedule-custom-period > summary:focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
+
+.health-theme .schedule-periods button,
+.health-theme .schedule-save-button,
+.health-theme .schedule-delete-button {
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.health-theme .schedule-periods button {
+    background: #d4e6ce;
+    color: #1b303e;
+}
+.health-theme .schedule-periods button[aria-pressed="true"],
+.health-theme .schedule-save-button {
+    background: #349747;
+    color: #fff;
+}
+.health-theme .schedule-save-button:hover { background: #287b38; }
+.health-theme .schedule-delete-button {
+    border-color: #e3b5b7;
+    background: #fff0f1;
+    color: #a52e35;
+}
+.health-theme .schedule-delete-button:hover { background: #fbe5e5; }
+
+.health-theme .schedule-range { margin: 24px 0 12px; font-size: 16px; }
+.health-theme .schedule-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 13px;
+}
+.health-theme .schedule-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.health-theme .schedule-legend i { width: 10px; height: 10px; border-radius: 50%; }
+.health-theme .legend-free { background: #349747; }
+.health-theme .legend-booked { background: #a52e35; }
+.health-theme .legend-past { background: #94a3b8; }
+.health-theme .schedule-days { display: grid; gap: 28px; }
+.health-theme .schedule-day h3 { margin: 0 0 12px; font-size: 16px; font-weight: 500; }
+.health-theme .schedule-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 8px;
+}
+.health-theme .schedule-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 38px;
+    padding: 8px;
+    border: 1px solid;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    transform: none;
+    box-shadow: none;
+}
+.health-theme .doctor-schedule .slot-free { border-color: #b3d5b4; background: #f7f9f8; color: #1b303e; }
+.health-theme .doctor-schedule .slot-booked { border-color: #e3b5b7; background: #fbe5e5; color: #8d2830; cursor: pointer; }
+.health-theme .doctor-schedule .slot-booked:hover { background: #f5d1d3; }
+.health-theme .doctor-schedule .slot-past { border-color: #d8dfdb; background: #edf0ee; color: #64748b; }
+.health-theme .schedule-day-off { margin: 8px 0; color: #a52e35; font-size: 14px; }
+.health-theme .schedule-error { flex-basis: 100%; margin: 0; color: #a52e35; font-size: 14px; }
+.health-theme .schedule-settings { margin-top: 20px; }
+.health-theme .schedule-settings > summary { color: #166534; font-weight: 500; cursor: pointer; }
+.health-theme .schedule-settings-content { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
+.health-theme .schedule-settings-card { min-width: 0; padding: 20px; border: 1px solid #dfe9e2; border-radius: 10px; }
+.health-theme .schedule-settings-card h3 { margin: 0 0 20px; font-size: 18px; font-weight: 500; }
+.health-theme .schedule-settings-field { min-width: 0; margin-bottom: 16px; }
+.health-theme .schedule-time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.health-theme .schedule-settings-hint,
+.health-theme .schedule-default-note { color: #64748b; font-size: 14px; line-height: 1.5; }
+.health-theme .schedule-current { grid-column: 1 / -1; }
+.health-theme .schedule-setting-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px 0; border-bottom: 1px solid #dfe9e2; font-size: 14px; }
+.health-theme .schedule-setting-row p { margin: 8px 0 0; }
+.health-theme .doctor-schedule :is(a, input, button):focus-visible,
+.health-theme .schedule-settings :is(summary, input, select, button):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
+@media (max-width: 900px) {
+    .health-theme .schedule-settings-content { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    .health-theme .doctor-schedule,
+    .health-theme .schedule-settings { padding: 20px 16px; }
+    .health-theme .schedule-date-field { width: 100%; }
+    .health-theme .schedule-time-fields { grid-template-columns: 1fr; gap: 0; }
+}
+
 /* Єдиний пошук пацієнта. */
 .health-theme .patient-search {
     position: relative;

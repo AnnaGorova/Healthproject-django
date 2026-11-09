@@ -1,145 +1,171 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Мій розклад{% endblock %}
+{% block page_title %}Мій розклад{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>🗓️ Мій розклад</h2>
-    <p class="subtitle">Налаштуйте дати та години прийому</p>
-</div>
-
-<!-- Форма 1: Робочий день -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>➕ Додати робочий день</h3>
-    <form method="post" style="margin-top: 16px;">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label>Дата</label>
-            <input type="date" name="date" class="form-control" 
-                    min="{{ today|date:'Y-m-d' }}" required>
-        </div>
-        
-        <div style="display: flex; gap: 12px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Час початку</label>
-                <select name="start_time" class="form-control" required>
-                    {% for hour in hours %}
-                        <option value="{{ hour }}" {% if hour == "09:00" %}selected{% endif %}>
-                            {{ hour }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="form-group" style="flex: 1;">
-                <label>Час кінця</label>
-                <select name="end_time" class="form-control" required>
-                    {% for hour in hours %}
-                        <option value="{{ hour }}" {% if hour == "17:00" %}selected{% endif %}>
-                            {{ hour }}
-                        </option>
-                    {% endfor %}
-                </select>
+<section class="doctor-schedule" aria-labelledby="schedule-title">
+    <h2 id="schedule-title">Мій розклад</h2>
+    <form method="get" class="schedule-filters">
+        <div class="schedule-date-submit">
+        <div class="schedule-date-field">
+            <label for="schedule-date">Виберіть дату</label>
+            <div class="profile-date-control schedule-date-control">
+                <input type="text" id="schedule-date" name="date" value="{{ selected_date_text }}"
+                       placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
+                       {% if date_error and selected_period != 'custom' %}aria-invalid="true" aria-describedby="schedule-date-error"{% endif %}>
+                <button type="button" class="schedule-calendar-button" aria-label="Вибрати дату" hidden>
+                    <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                </button>
+                <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар розкладу" hidden>
             </div>
         </div>
-        
-        <div class="form-group">
-            <label>Тривалість прийому</label>
-            <p style="color: rgba(255,255,255,0.7); font-size: 14px;">
-                ⏱️ 30 хвилин (фіксовано)
-            </p>
-            <input type="hidden" name="slot_duration" value="30">
+            <button type="submit" name="period" value="{% if selected_period == 'custom' %}day{% else %}{{ selected_period }}{% endif %}" class="schedule-save-button">Показати</button>
         </div>
-        
-        <button type="submit" class="btn btn-primary">💾 Зберегти робочий день</button>
-    </form>
-</div>
-
-<!-- Форма 2: Вихідний -->
-<div class="record-card" style="margin-bottom: 24px;">
-    <h3>"Вихідний" - Додати вихідний</h3>
-    <form method="post" style="margin-top: 16px;">
-        {% csrf_token %}
-        <input type="hidden" name="is_day_off" value="on">
-        
-        <div class="form-group">
-            <label>Дата</label>
-            <input type="date" name="date" class="form-control" 
-                    min="{{ today|date:'Y-m-d' }}" required>
+        <div class="schedule-periods" role="group" aria-label="Період">
+            <button type="submit" name="period" value="day" aria-pressed="{% if selected_period == 'day' %}true{% else %}false{% endif %}">1 день</button>
+            <button type="submit" name="period" value="week" aria-pressed="{% if selected_period == 'week' %}true{% else %}false{% endif %}">7 днів</button>
+            <button type="submit" name="period" value="month" aria-pressed="{% if selected_period == 'month' %}true{% else %}false{% endif %}">30 днів</button>
         </div>
-        
-        <button type="submit" class="btn btn-danger"> Зберегти вихідний</button>
+        {% if date_error and selected_period != 'custom' %}<p id="schedule-date-error" class="schedule-error" role="alert">{{ date_error }}</p>{% endif %}
     </form>
-</div>
-
-<!-- Список розкладів -->
-<div class="record-card">
-    <h3>📋 Поточний розклад</h3>
-    
-    {% if schedules %}
-        {% for schedule in schedules %}
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div>
-                    <strong style="color: #fff; font-size: 16px;">
-                        {{ schedule.date|date:"d.m.Y" }}
-                    </strong>
-                    <br>
-                    {% if schedule.is_day_off %}
-                        <span style="color: #F87171; font-size: 15px; font-weight: 600;">
-                            🚫 Вихідний
-                        </span>
-                    {% else %}
-                        <span style="color: #a78bfa; font-size: 15px; font-weight: 600;">
-                            🕐 {{ schedule.start_time|time:"H:i" }} — {{ schedule.end_time|time:"H:i" }}
-                        </span>
-                        <span style="color: rgba(255,255,255,0.5); margin-left: 12px; font-size: 13px;">
-                            ({{ schedule.slot_duration }} хв)
-                        </span>
-                    {% endif %}
-                </div>
-                <form method="post" action="{% url 'delete_schedule' schedule.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" title="Видалити">
-                        🗑️
+    <details class="schedule-custom-period" {% if selected_period == 'custom' %}open{% endif %}>
+        <summary>Власний період</summary>
+        <form method="get" class="schedule-custom-form">
+            <input type="hidden" name="period" value="custom">
+            <div class="schedule-date-field">
+                <label for="schedule-date-from">З</label>
+                <div class="profile-date-control schedule-date-control">
+                    <input type="text" id="schedule-date-from" name="date_from" value="{{ date_from_text }}"
+                           placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
+                           {% if date_error and selected_period == 'custom' %}aria-invalid="true" aria-describedby="schedule-range-error"{% endif %}>
+                    <button type="button" class="schedule-calendar-button" aria-label="Вибрати початкову дату" hidden>
+                        <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
                     </button>
-                </form>
+                    <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар початкової дати" hidden>
+                </div>
             </div>
-        {% endfor %}
-        
-        <div style="padding: 16px; background: rgba(167, 139, 250, 0.08); border-radius: 12px; margin-top: 12px; border-left: 3px solid #a78bfa;">
-            <p style="color: #a78bfa; font-weight: 600; margin-bottom: 8px;">
-                ℹ️ Для інших днів використовується стандартний розклад:
-            </p>
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <strong style="color: #fff;">📅 Пн, Вт, Ср, Чт, Пт</strong>
-                <span style="color: #a78bfa; font-weight: 600;">
-                    🕐 08:00 — 17:00
-                </span>
-                <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
-                    (30 хв)
-                </span>
+            <div class="schedule-date-field">
+                <label for="schedule-date-to">По</label>
+                <div class="profile-date-control schedule-date-control">
+                    <input type="text" id="schedule-date-to" name="date_to" value="{{ date_to_text }}"
+                           placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
+                           {% if date_error and selected_period == 'custom' %}aria-invalid="true" aria-describedby="schedule-range-error"{% endif %}>
+                    <button type="button" class="schedule-calendar-button" aria-label="Вибрати кінцеву дату" hidden>
+                        <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                    </button>
+                    <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар кінцевої дати" hidden>
+                </div>
             </div>
+            <button type="submit" class="schedule-save-button">Показати</button>
+            <p class="schedule-custom-hint">Обидві дати включно, до 366 днів.</p>
+            {% if date_error and selected_period == 'custom' %}<p id="schedule-range-error" class="schedule-error" role="alert">{{ date_error }}</p>{% endif %}
+        </form>
+    </details>
+    {% if not date_error %}
+        <p class="schedule-range">{{ selected_date|date:"d.m.Y" }}{% if selected_period != 'day' %} — {{ period_end|date:"d.m.Y" }}{% endif %}</p>
+        <div class="schedule-legend">
+            <span><i class="legend-free" aria-hidden="true"></i>Вільний</span>
+            <span><i class="legend-booked" aria-hidden="true"></i>Зайнятий / прийом відбувся</span>
+            <span><i class="legend-past" aria-hidden="true"></i>Час минув</span>
         </div>
-    
-    {% else %}
-        <div style="padding: 16px; background: rgba(167, 139, 250, 0.1); border-radius: 12px;">
-            <p style="color: #a78bfa; font-weight: 600; margin-bottom: 12px;">
-                ℹ️ Ви не налаштували розклад — використовується стандартний:
-            </p>
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <strong style="color: #fff;">📅 Пн, Вт, Ср, Чт, Пт</strong>
-                <span style="color: #a78bfa; font-weight: 600;">
-                    🕐 08:00 — 17:00
-                </span>
-                <span style="color: rgba(255,255,255,0.5); font-size: 13px;">
-                    (30 хв)
-                </span>
-            </div>
-            <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 12px;">
-                💡 Додайте свій розклад вище, щоб змінити його.
-            </p>
+        <div class="schedule-days">
+            {% for day in schedule_days %}
+                <section class="schedule-day" aria-labelledby="schedule-day-{{ day.date_str }}">
+                    <h3 id="schedule-day-{{ day.date_str }}">{{ day.day_name }}, {{ day.date|date:"d.m.Y" }}</h3>
+                    {% if day.is_day_off %}
+                        <p class="schedule-day-off">Вихідний</p>
+                    {% else %}
+                        <div class="schedule-slots">
+                            {% for slot in day.slots %}
+                                {% if slot.appointment_id %}
+                                    <a href="{% url 'appointment_detail' slot.appointment_id %}" class="schedule-slot slot-booked"
+                                       aria-label="{{ slot.time }} — деталі прийому">{{ slot.time }}</a>
+                                {% elif slot.is_past %}
+                                    <span class="schedule-slot slot-past" title="Час минув">{{ slot.time }}</span>
+                                {% else %}
+                                    <span class="schedule-slot slot-free" title="Вільний час">{{ slot.time }}</span>
+                                {% endif %}
+                            {% empty %}
+                                <p>На цей день години прийому не задані.</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </section>
+            {% endfor %}
         </div>
     {% endif %}
-</div>
+</section>
+
+<details class="schedule-settings" {% if settings_open %}open{% endif %}>
+    <summary>Налаштувати розклад</summary>
+    <div class="schedule-settings-content">
+        <section class="schedule-settings-card" aria-labelledby="workday-title">
+            <h3 id="workday-title">Додати робочий день</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="schedule-settings-field">
+                    <label for="workday-date">Дата</label>
+                    <input type="date" id="workday-date" name="date" min="{{ today|date:'Y-m-d' }}" required>
+                </div>
+                <div class="schedule-time-fields">
+                    <div class="schedule-settings-field">
+                        <label for="workday-start">Час початку</label>
+                        <select id="workday-start" name="start_time" required>
+                            {% for hour in hours %}<option value="{{ hour }}" {% if hour == '09:00' %}selected{% endif %}>{{ hour }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="schedule-settings-field">
+                        <label for="workday-end">Час кінця</label>
+                        <select id="workday-end" name="end_time" required>
+                            {% for hour in hours %}<option value="{{ hour }}" {% if hour == '17:00' %}selected{% endif %}>{{ hour }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <p class="schedule-settings-hint">Тривалість прийому — 30 хвилин.</p>
+                <input type="hidden" name="slot_duration" value="30">
+                <button type="submit" class="schedule-save-button">Зберегти робочий день</button>
+            </form>
+        </section>
+        <section class="schedule-settings-card" aria-labelledby="dayoff-title">
+            <h3 id="dayoff-title">Додати вихідний</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="is_day_off" value="on">
+                <div class="schedule-settings-field">
+                    <label for="dayoff-date">Дата</label>
+                    <input type="date" id="dayoff-date" name="date" min="{{ today|date:'Y-m-d' }}" required>
+                </div>
+                <button type="submit" class="schedule-save-button">Зберегти вихідний</button>
+            </form>
+        </section>
+        <section class="schedule-settings-card schedule-current" aria-labelledby="current-schedule-title">
+            <h3 id="current-schedule-title">Індивідуальний розклад</h3>
+            {% for schedule in schedules %}
+                <div class="schedule-setting-row">
+                    <div>
+                        <strong>{{ schedule.date|date:"d.m.Y" }}</strong>
+                        {% if schedule.is_day_off %}
+                            <p class="schedule-day-off">Вихідний</p>
+                        {% else %}
+                            <p>{{ schedule.start_time|time:"H:i" }} — {{ schedule.end_time|time:"H:i" }} · {{ schedule.slot_duration }} хв</p>
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'delete_schedule' schedule.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="schedule-delete-button" aria-label="Видалити розклад на {{ schedule.date|date:'d.m.Y' }}">Видалити</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p>Індивідуальний розклад ще не налаштовано.</p>
+            {% endfor %}
+            <p class="schedule-default-note">Для днів без індивідуальних налаштувань діє стандартний графік — Пн–Пт, 08:00–17:00, прийоми по 30 хвилин.</p>
+        </section>
+    </div>
+</details>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'diary/js/profile-date.js' %}"></script>
 {% endblock %}
