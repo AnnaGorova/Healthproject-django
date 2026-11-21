@@ -4,12 +4,9 @@
 
 {% block content %}
 <div class="admin-users-page">
-    <section class="admin-users-toolbar" aria-label="Створення користувача">
-        <a href="{% url 'admin_user_create' %}" class="admin-users-primary">Створити користувача</a>
-    </section>
-
-    <section class="admin-users-filters" aria-label="Пошук користувачів">
+    <section class="admin-users-filters" aria-label="Керування та пошук користувачів">
         <form method="get" role="search">
+            <a href="{% url 'admin_user_create' %}" class="admin-users-primary admin-users-create">Створити користувача</a>
             <div class="admin-filter-fields">
                 <div>
                     <label for="admin-user-search">Пошук</label>

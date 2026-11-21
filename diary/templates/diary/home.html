@@ -3,9 +3,6 @@
 {% block title %}Головна — Smart Health Bridge{% endblock %}
 {% block content %}
     {% if health_parameters %}
-        <div class="home-welcome">
-            <h2>Доброго дня, {{ user.first_name|default:user.userprofile.username }}!</h2>
-        </div>
         <section class="health-parameters" aria-labelledby="parameters-title">
             <div class="parameters-heading">
                 <h2 id="parameters-title">Мої параметри</h2>

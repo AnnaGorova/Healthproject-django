@@ -239,8 +239,23 @@ button {
     border-radius: 10px;
     box-shadow: 0 16px 48px rgba(26,77,43,.08);
 }
-.login-body .login-illustration { min-width: 0; background: #e6f4e9; }
+.login-body .login-illustration { position: relative; container-type: inline-size; min-width: 0; background: #e6f4e9; }
 .login-body .login-illustration img { display: block; width: 100%; height: auto; }
+.login-body .login-brand {
+    position: absolute;
+    top: 4%;
+    left: 14.8%;
+    display: flex;
+    align-items: center;
+    gap: 1.8cqw;
+    color: #176b67;
+    font-size: 3.4cqw;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.login-body .login-brand img { width: 11.2cqw; height: auto; flex-shrink: 0; }
+.login-body .login-brand small { display: block; margin-top: .15em; color: #1b303e; font-size: inherit; font-weight: 400; }
 .login-body .login-form-panel {
     min-width: 0;
     padding: 64px 48px 48px;
@@ -276,6 +291,7 @@ button {
 .login-body .form-group input:focus { border-color: #176b3b; outline: none; box-shadow: 0 0 0 3px rgba(23,107,59,.12); }
 .login-body .password-wrapper { position: relative; }
 .login-body .password-wrapper input { padding-right: 48px; }
+.login-body input[type="password"]::-ms-reveal { display: none; }
 .login-body .toggle-password {
     position: absolute;
     top: 50%;

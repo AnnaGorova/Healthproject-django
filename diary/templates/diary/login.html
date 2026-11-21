@@ -10,9 +10,13 @@
 <body class="login-body">
     <main class="login-layout" aria-labelledby="login-title">
         <div class="login-illustration">
-            <img src="{% static 'diary/images/login-illustration.png' %}"
+            <img src="{% static 'diary/images/login-illustration-unbranded.png' %}"
                  alt="Ваше здоров’я в одному місці. Сучасні медичні послуги, турбота та зручний доступ."
                  width="676" height="905">
+            <div class="login-brand" aria-label="Smart Health Bridge">
+                <img src="{% static 'diary/images/logo.svg' %}" alt="" width="97" height="92">
+                <span>SMART HEALTH<small>BRIDGE</small></span>
+            </div>
         </div>
         <section class="login-form-panel">
             <h1 id="login-title">З поверненням</h1>

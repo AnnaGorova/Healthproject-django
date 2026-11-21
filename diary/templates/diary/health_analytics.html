@@ -6,37 +6,6 @@
 <div class="analytics-page">
 <h1 class="visually-hidden">Моя аналітика</h1>
 {% if is_doctor_view %}<p class="analytics-caption">Пацієнт: <strong>{{ patient.username }}</strong> · <a href="{% url 'patient_card' patient.id %}">До картки пацієнта</a></p>{% endif %}
-<section class="analytics-overview" aria-label="Огляд артеріального тиску та пульсу">
-<div class="analytics-overview-period"><nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav></div>
-<article class="analytics-pressure" data-overview-metric="pressure">
-<div class="chart-summary">
-<div class="chart-summary-main"><img src="{% static 'diary/images/pressure-chart-icon.svg' %}" class="chart-summary-icon" width="56" height="56" alt=""><div><h3>Артеріальний тиск</h3><p class="chart-summary-caption">Середнє за вибраний період</p><p class="chart-summary-value"><strong data-average>—</strong><span>мм рт. ст.</span></p></div></div>
-<div class="chart-assessment" data-assessment hidden><span class="chart-risk-badge" data-risk></span><p>Оцінка останнього вимірювання.</p></div>
-<div class="chart-pressure-details"><div><span class="chart-dot chart-dot-systolic"></span><span>Систолічний</span><strong data-systolic>—</strong><small>мм рт. ст.</small></div><div><span class="chart-dot chart-dot-diastolic"></span><span>Діастолічний</span><strong data-diastolic>—</strong><small>мм рт. ст.</small></div></div>
-</div><p class="analytics-chart-empty" hidden></p><div class="analytics-pressure-chart"><canvas role="img" aria-label="Артеріальний тиск за вибраний період"></canvas></div>
-</article>
-<article class="analytics-pressure" data-overview-metric="heart_rate">
-    <div class="chart-summary">
-        <div class="chart-summary-main">
-            <img src="{% static 'diary/images/chart-pulse.svg' %}"
-                 class="chart-summary-icon" width="56" height="56" alt="">
-            <div>
-                <h3>Пульс</h3>
-                <p class="chart-summary-caption">Середнє за вибраний період</p>
-                <p class="chart-summary-value"><strong data-average>—</strong><span>уд/хв</span></p>
-            </div>
-        </div>
-        <div class="chart-assessment" data-assessment hidden>
-            <span class="chart-risk-badge" data-risk></span>
-            <p>Оцінка останнього вимірювання.</p>
-        </div>
-    </div>
-    <p class="analytics-chart-empty" hidden></p>
-    <div class="analytics-pressure-chart">
-        <canvas role="img" aria-label="Пульс за вибраний період"></canvas>
-    </div>
-</article>
-</section>
 <section class="health-parameters" aria-labelledby="parameters-title">
 <div class="parameters-heading"><h2 id="parameters-title">{% if is_doctor_view %}Параметри пацієнта{% else %}Мої параметри{% endif %}</h2><nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav></div>
 <div class="parameters-grid">

@@ -4,9 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 from ..models import Appointment
 from django.db.models import Q, Count
-from datetime import datetime as dt_class
+from datetime import date, datetime as dt_class, timedelta
 from .access import is_admin_or_superuser
 from .slots import get_available_slots, is_slot_available
 
@@ -51,12 +55,32 @@ def book_appointment(request, doctor_id):
         messages.success(request, "✅ Ви успішно записані!")
         return redirect('my_appointments')
     
-    # GET — показуємо доступні слоти
-    slots = get_available_slots(doctor, days=14)
+    # Показуємо сім календарних днів від обраної дати або від сьогодні.
+    today = timezone.localdate()
+    selected_date_text = request.GET.get('start_date', '').strip() or today.strftime('%d.%m.%Y')
+    date_field = forms.DateField(
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        validators=[MinValueValidator(today), MaxValueValidator(date(9998, 12, 31))],
+    )
+    date_error = ''
+    period_end = None
+    slots = []
+    try:
+        selected_date = date_field.clean(selected_date_text)
+        selected_date_text = selected_date.strftime('%d.%m.%Y')
+        period_end = selected_date + timedelta(days=6)
+        slots = get_available_slots(doctor, days=7, start_date=selected_date, include_days_off=True)
+    except ValidationError:
+        date_error = 'Вкажіть дату у форматі ДД.ММ.РРРР, не раніше сьогоднішньої.'
     
     return render(request, 'diary/book_appointment.html', {
         'doctor': doctor,
         'slots': slots,
+        'selected_date_text': selected_date_text,
+        'period_end': period_end,
+        'date_error': date_error,
+        'today': today,
+        'has_available_slots': any(not slot['is_booked'] for day in slots for slot in day['slots']),
     })
 
 

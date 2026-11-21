@@ -93,7 +93,9 @@
             </div>
         
 
-            {% include "diary/includes/footer.html" %}
+            {% if request.resolver_match.url_name != 'home' %}
+                {% include "diary/includes/footer.html" %}
+            {% endif %}
         </main>
 
     </div>

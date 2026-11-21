@@ -1,20 +1,23 @@
+function clearSelectedSlot(form) {
+    form.querySelectorAll('.slot-btn').forEach(button => {
+        button.classList.remove('slot-selected');
+        if (!button.disabled) button.setAttribute('aria-pressed', 'false');
+    });
+    form.querySelector('#selected-date').value = '';
+    form.querySelector('#selected-time').value = '';
+    form.querySelector('#selected-info').style.display = 'none';
+    form.querySelector('.booking-actions button[type="submit"]').disabled = true;
+}
+
 function selectSlot(date, time, btn) {
+    const form = btn.closest('.patient-booking-form');
+    if (!form || btn.disabled || btn.closest('[data-booking-panel]')?.hidden) return;
     // Перевіряємо, чи цей слот вже обраний
     const isAlreadySelected = btn.classList.contains('slot-selected');
-    
-    // Знімаємо виділення з усіх кнопок
-    document.querySelectorAll('.slot-btn').forEach(b => {
-        b.classList.remove('slot-selected');
-        if (!b.disabled) b.setAttribute('aria-pressed', 'false');
-    });
-    
-    // Очищаємо приховані поля
-    document.getElementById('selected-date').value = '';
-    document.getElementById('selected-time').value = '';
+    clearSelectedSlot(form);
     
     // Якщо слот вже був обраний — знімаємо вибір і виходимо
     if (isAlreadySelected) {
-        document.getElementById('selected-info').style.display = 'none';
         return;
     }
     
@@ -23,10 +26,36 @@ function selectSlot(date, time, btn) {
     btn.setAttribute('aria-pressed', 'true');
     
     // Записуємо в приховані поля
-    document.getElementById('selected-date').value = date;
-    document.getElementById('selected-time').value = time;
+    form.querySelector('#selected-date').value = date;
+    form.querySelector('#selected-time').value = time;
     
     // Показуємо інформацію
-    document.getElementById('selected-text').textContent = date.split('-').reverse().join('.') + ' о ' + time;
-    document.getElementById('selected-info').style.display = 'block';
+    form.querySelector('#selected-text').textContent = date.split('-').reverse().join('.') + ' о ' + time;
+    form.querySelector('#selected-info').style.display = 'block';
+    form.querySelector('.booking-actions button[type="submit"]').disabled = false;
 }
+
+// Перемикаємо лише час обраного дня, зберігаючи введені скарги.
+(() => {
+    'use strict';
+    const form = document.querySelector('.patient-booking-form');
+    if (!form) return;
+    const week = form.querySelector('.booking-week');
+    const buttons = [...form.querySelectorAll('[data-booking-day]')];
+    const panels = [...form.querySelectorAll('[data-booking-panel]')];
+    if (!week || !panels.length) return;
+    let activeDate;
+    function showDay(date) {
+        if (activeDate === date) return;
+        activeDate = date;
+        clearSelectedSlot(form);
+        panels.forEach(panel => { panel.hidden = panel.dataset.bookingPanel !== date; });
+        buttons.forEach(button => {
+            button.setAttribute('aria-pressed', String(button.dataset.bookingDay === date));
+        });
+    }
+    buttons.forEach(button => button.addEventListener('click', () => showDay(button.dataset.bookingDay)));
+    const firstAvailable = panels.find(panel => panel.querySelector('.slot-free:not(:disabled)')) || panels[0];
+    showDay(firstAvailable.dataset.bookingPanel);
+    week.hidden = false;
+})();

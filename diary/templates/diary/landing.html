@@ -28,6 +28,32 @@
                     <p>Поєднуємо самопочуття пацієнта, спілкування з лікарем і медичну історію — все в одному місці.</p>
                     <a href="{% url 'login' %}" class="landing-button">Увійти до системи →</a>
                 </div>
+                <div class="hero-highlights" aria-label="Можливості платформи">
+                    <span class="hero-tablet-logo" aria-hidden="true">
+                        <img src="{% static 'diary/images/logo.svg' %}" alt="">
+                    </span>
+                    <div class="hero-highlight hero-highlight-records">
+                        <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/my-records.svg' %}" alt=""></span>
+                        <span>Медичні записи<br>в одному місці</span>
+                    </div>
+                    <div class="hero-highlight hero-highlight-booking">
+                        <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/akar-icons_calendar.svg' %}" alt=""></span>
+                        <span>Зручний запис<br>на прийом</span>
+                    </div>
+                    <div class="hero-audiences">
+                        <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/doctor-avatar.svg' %}" alt=""></span><span>Для<br>пацієнтів</span></div>
+                        <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/akar-icons_heart.svg' %}" alt=""></span><span>Для<br>лікарів</span></div>
+                        <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/my-records.svg' %}" alt=""></span><span>Для всієї<br>родини</span></div>
+                    </div>
+                    <div class="hero-highlight hero-highlight-chat">
+                        <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/andrsrxn_message.svg' %}" alt=""></span>
+                        <span>Спілкування<br>з лікарем</span>
+                    </div>
+                    <div class="hero-highlight hero-highlight-dynamics">
+                        <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/andrsrxn_target.svg' %}" alt=""></span>
+                        <span>Динаміка<br>показників здоров’я</span>
+                    </div>
+                </div>
             </section>
             <section class="landing-cards" aria-label="Про платформу">
                 <article class="landing-card" id="patients">

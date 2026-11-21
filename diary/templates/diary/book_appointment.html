@@ -7,9 +7,40 @@
 
 {% block content %}
 <section class="patient-booking" aria-labelledby="booking-title">
+<div class="booking-header">
 <div class="booking-heading">
     <h2 id="booking-title">Запис до лікаря</h2>
-    <p>Лікар: <strong>{{ doctor.username }}</strong> · {{ doctor.doctorprofile.specialty|default:"Терапевт" }}</p>
+    <div class="booking-doctor">
+        <img src="{% static 'diary/images/doctor-avatar.svg' %}" class="booking-doctor-avatar"
+             width="72" height="72" alt="">
+        <div class="booking-doctor-details">
+            <p class="booking-doctor-name"><strong>{{ doctor.username }}</strong></p>
+            <p class="booking-doctor-specialty">{{ doctor.doctor_profile.specialty|default:"Спеціальність не вказана" }}</p>
+        </div>
+    </div>
+</div>
+
+<form method="get" class="booking-date-filter" autocomplete="off">
+    <div class="booking-date-field">
+        <label for="booking-start-date">Показати 7 днів від дати</label>
+        <div class="profile-date-control booking-date-control">
+            <input type="text" id="booking-start-date" name="start_date" value="{{ selected_date_text }}"
+                   placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
+                   {% if date_error %}aria-invalid="true" aria-describedby="booking-date-error"{% endif %}>
+            <button type="button" class="booking-calendar-button" aria-label="Вибрати початкову дату" hidden>
+                <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+            </button>
+            <input type="date" class="booking-native-date" min="{{ today|date:'Y-m-d' }}" max="9998-12-31"
+                   tabindex="-1" aria-label="Календар початкової дати" hidden>
+        </div>
+    </div>
+    <button type="submit" class="booking-show-button">Показати</button>
+    {% if date_error %}
+        <p id="booking-date-error" class="booking-date-error" role="alert">{{ date_error }}</p>
+    {% else %}
+        <p class="booking-range">{{ selected_date_text }} — {{ period_end|date:"d.m.Y" }}</p>
+    {% endif %}
+</form>
 </div>
 
 <form method="post" class="patient-booking-form">
@@ -27,9 +58,24 @@
             <span><i class="booking-dot-booked" aria-hidden="true"></i>Зайнятий час</span>
         </div>
         
+        <div class="booking-week" role="group" aria-label="Дні вибраного тижня" hidden>
+            {% for day in slots %}
+                <button type="button" class="booking-day-button{% if day.is_day_off %} booking-day-button-off{% endif %}"
+                        data-booking-day="{{ day.date_str }}" aria-pressed="false" aria-controls="booking-day-{{ day.date_str }}">
+                    <span class="booking-day-name">{{ day.day_name }}</span>
+                    <strong>{{ day.date|date:"d.m" }}</strong>
+                    <small>{% if day.is_day_off %}Вихідний{% else %}Робочий день{% endif %}</small>
+                </button>
+            {% endfor %}
+        </div>
+        <div class="booking-days">
         {% for day in slots %}
-        <div class="day-slots">
-            <h4>{{ day.date|date:"d.m.Y" }} ({{ day.day_name }})</h4>
+        <div class="day-slots" id="booking-day-{{ day.date_str }}" data-booking-panel="{{ day.date_str }}"
+             role="region" aria-labelledby="booking-day-title-{{ day.date_str }}">
+            <h4 id="booking-day-title-{{ day.date_str }}">{{ day.date|date:"d.m.Y" }} ({{ day.day_name }})</h4>
+            {% if day.is_day_off %}
+                <p class="booking-empty">Вихідний</p>
+            {% else %}
             <div class="slots-grid" role="group" aria-label="Час прийому {{ day.date|date:'d.m.Y' }}">
                 {% for slot in day.slots %}
                     {% if slot.is_booked %}
@@ -42,12 +88,16 @@
                             {{ slot.time }}
                         </button>
                     {% endif %}
+                {% empty %}
+                    <p class="booking-empty">Доступного часу на цей день немає.</p>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
         {% empty %}
         <p class="booking-empty">Наразі немає доступного часу для запису до цього лікаря.</p>
         {% endfor %}
+        </div>
         
         <!-- Приховані поля -->
         <input type="hidden" name="date" id="selected-date" required>
@@ -59,7 +109,7 @@
     </div>
     
     <!-- БЛОК 2: СКАРГИ -->
-    <div class="form-section">
+    <div class="form-section booking-complaints">
         <div class="section-header">
             <h3 id="booking-complaints-title">Скарги</h3>
         </div>
@@ -71,7 +121,7 @@
     
     <!-- КНОПКИ -->
     <div class="booking-actions">
-        <button type="submit" {% if not slots %}disabled{% endif %}>Записатися</button>
+        <button type="submit" {% if not has_available_slots %}disabled{% endif %}>Записатися</button>
         <a href="{% url 'doctors_list' %}">Назад до лікарів</a>
     </div>
 </form>
@@ -81,5 +131,6 @@
 {% endblock %}
 
 {% block extra_js %}  
+<script src="{% static 'diary/js/profile-date.js' %}"></script>
 <script src="{% static 'diary/js/book_appointment.js' %}"></script>
 {% endblock %}

@@ -9,14 +9,16 @@ body {
     background-color: #dbead7;
 }
 .landing-page {
+    position: relative;
     max-width: 1440px;
     min-height: min(156.3542vw, 2251.5px);
     margin: 0 auto;
     padding: clamp(20px, 2.5vw, 40px);
-    background: #dbead7 url("../images/landing-background.png") center top / 100% auto no-repeat;
+    background: #dbead7 url("../images/landing-background-screens-uk.png") center top / 100% auto no-repeat;
 }
 .landing-header, .landing-brand, .landing-header nav { display: flex; align-items: center; }
 .landing-header { justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+.landing-header, .hero-content { position: relative; z-index: 1; }
 .landing-brand { gap: 10px; color: #176b67; text-decoration: none; font-size: 14px; font-weight: 500; }
 .landing-brand img { display: block; flex-shrink: 0; }
 .landing-brand small { display: block; margin-top: 4px; color: #1b303e; font-size: 10px; }
@@ -45,6 +47,82 @@ body {
 .hero-content h1 { margin: 0 0 24px; font-size: clamp(32px, 5.5vw, 80px); font-weight: 400; line-height: .95; letter-spacing: -.05em; }
 .hero-content h1 span { display: block; color: #23976e; }
 .hero-content p { max-width: 370px; margin: 0 0 28px; font-size: 16px; line-height: 1.6; }
+/* HTML-плашки перекривають нечіткі написи на декоративному фоні. */
+.hero-highlights {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 1920 / 3002;
+    container-type: inline-size;
+    pointer-events: none;
+}
+.hero-highlight, .hero-audiences {
+    pointer-events: auto;
+    cursor: default;
+}
+/* Логотип повторює нахил екрана планшета на фоновому зображенні. */
+.hero-tablet-logo {
+    position: absolute;
+    left: 40%;
+    top: 13.45%;
+    width: 3.4%;
+    padding: .2cqw;
+    background: #f7f9f8;
+    transform: rotate(5deg) skewX(-6deg);
+    pointer-events: auto;
+}
+.hero-tablet-logo img { display: block; width: 100%; height: auto; }
+.hero-highlight {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1cqw;
+    padding: .8cqw;
+    border: 1px solid #d8eee2;
+    border-radius: 4cqw;
+    background: #f7fcf9;
+    box-shadow: 0 .5cqw 2cqw #21834b12;
+    color: #1b303e;
+    font-size: clamp(11px, 1.25cqw, 18px);
+    font-weight: 600;
+    line-height: 1.35;
+}
+.hero-highlight-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 4.5cqw;
+    height: 4.5cqw;
+    border-radius: 50%;
+    background: #dcf4e8;
+}
+.hero-highlight-icon img { width: 60%; height: 60%; object-fit: contain; }
+.hero-highlight-records { left: 34.7%; top: 5.8%; width: 21%; min-height: 4.1%; }
+.hero-highlight-booking { left: 71.8%; top: 7%; width: 21%; min-height: 4%; }
+.hero-highlight-chat { left: 48.8%; top: 44.2%; width: 24%; min-height: 4%; }
+.hero-highlight-dynamics { right: 0; top: 45.7%; width: 20.2%; min-height: 4%; }
+.hero-audiences {
+    position: absolute;
+    left: 2.8%;
+    top: 28%;
+    width: 22%;
+    min-height: 5.2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: .3cqw;
+    padding: .5cqw;
+    border-radius: 1.5cqw;
+    background: #e0f5e9;
+    font-size: clamp(10px, 1.05cqw, 15px);
+    line-height: 1.4;
+    text-align: center;
+}
+.hero-audiences > div { display: grid; justify-items: center; gap: .5cqw; }
+.hero-audiences .hero-highlight-icon { width: 3.6cqw; height: 3.6cqw; }
 .landing-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
 .landing-card { padding: 32px; border-radius: 24px; background: #f7f9f8; scroll-margin-top: 24px; }
 .card-label { margin: 0 0 16px; font-size: 11px; font-weight: 600; letter-spacing: .08em; }
@@ -136,19 +214,27 @@ a:focus-visible { outline: 3px solid #176b67; outline-offset: 5px; }
         font-size: 14px;
     }
 
-    /* Верхня частина картинки містить основну композицію. */
-    .landing-hero::after {
-        content: "";
-        display: block;
+    .hero-highlights {
+        position: relative;
         width: 100%;
         aspect-ratio: 1 / 1;
         margin-top: 28px;
         border-radius: 16px;
-        background-image: url("../images/landing-background.png");
+        background-image: url("../images/landing-background-screens-uk.png");
         background-position: center top;
         background-size: 100% auto;
         background-repeat: no-repeat;
     }
+
+    .hero-highlight { display: block; padding: 1cqw; font-size: clamp(6px, 2cqw, 14px); text-align: center; }
+    .hero-tablet-logo { top: 21.03%; }
+    .hero-highlight > .hero-highlight-icon { display: none; }
+    .hero-highlight-icon { width: 6cqw; height: 6cqw; }
+    .hero-highlight-records { top: 9%; min-height: 6.8%; }
+    .hero-highlight-booking { top: 11%; min-height: 6.5%; }
+    .hero-highlight-chat { top: 69.1%; min-height: 6.7%; }
+    .hero-highlight-dynamics { top: 71.5%; min-height: 6.8%; }
+    .hero-audiences { top: 43.8%; min-height: 9%; font-size: clamp(7px, 1.8cqw, 12px); }
 
     .landing-cards {
         grid-template-columns: 1fr;
