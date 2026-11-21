@@ -1,12 +1,12 @@
 {% extends "diary/base.html" %}
 {% load static %}
 
-{% block title %}Задати питання лікарю{% endblock %}
-{% block page_title %}Задати питання лікарю{% endblock %}
+{% block title %}Звернутися до лікаря{% endblock %}
+{% block page_title %}Звернутися до лікаря{% endblock %}
 
 {% block content %}
 <section class="patient-ask-question">
-    <h2>Задати питання лікарю</h2>
+    <h2>Звернутися до лікаря</h2>
 
     <form method="post" class="patient-ask-form">
         {% csrf_token %}
@@ -26,19 +26,19 @@
         <div class="patient-ask-field">
             <label for="{{ form.phone.id_for_label }}" class="patient-ask-label">Номер телефону</label>
             {{ form.phone }}
-            <p class="patient-ask-hint">За потреби ви можете змінити номер телефону для цього запитання.</p>
+            <p class="patient-ask-hint">За потреби ви можете змінити номер телефону для цього звернення.</p>
             {{ form.phone.errors }}
         </div>
 
         <div class="patient-ask-field">
-            <label for="{{ form.question.id_for_label }}" class="patient-ask-label">Ваше запитання</label>
+            <label for="{{ form.question.id_for_label }}" class="patient-ask-label">Ваше звернення</label>
             {{ form.question }}
             {{ form.question.errors }}
         </div>
 
         <div class="patient-ask-actions">
-            <button type="submit">Надіслати запитання</button>
-            <a href="{% url 'my_questions' %}">Існуючі запитання</a>
+            <button type="submit">Надіслати звернення</button>
+            <a href="{% url 'my_questions' %}">Мої звернення</a>
         </div>
     </form>
 

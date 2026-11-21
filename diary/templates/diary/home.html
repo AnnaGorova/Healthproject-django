@@ -89,10 +89,10 @@
     {% elif user.userprofile.role == 'doctor' and not user.is_superuser %}
         <section class="doctor-home" aria-labelledby="doctor-home-title">
             <h2 id="doctor-home-title">Важливі повідомлення</h2>
-            <p class="doctor-home-period">Нові дані за останні 7 днів. Запитання — усі, що очікують відповіді.</p>
+            <p class="doctor-home-period">Нові дані за останні 7 днів. Звернення — усі, що очікують відповіді.</p>
             <div class="doctor-home-summary">
                 <article>
-                    <h3>Нові запитання</h3>
+                    <h3>Нові звернення</h3>
                     <p class="doctor-home-count">{{ new_questions|length }}</p>
                     <a href="{% url 'doctor_dashboard' %}#doctor-questions" class="doctor-work-button">Детальніше</a>
                 </article>

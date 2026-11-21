@@ -4,8 +4,7 @@
 {% block page_title %}Мої прийоми{% endblock %}
 
 {% block content %}
-<section class="patient-appointments doctor-appointments" aria-labelledby="doctor-appointments-title">
-    <h2 id="doctor-appointments-title" class="patient-appointments-title">Мої прийоми</h2>
+<section class="patient-appointments doctor-appointments" aria-label="Мої прийоми">
     <nav class="patient-appointment-filters" aria-label="Фільтр прийомів">
         <a href="?status=active" data-status="active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
         <a href="?status=completed" data-status="completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
@@ -24,7 +23,7 @@
                     {% endif %}
                 </div>
                 <div class="patient-appointment-actions">
-                    <a href="{% url 'appointment_detail' appointment.id %}" class="patient-appointment-action">Про прийом</a>
+                    <a href="{% url 'appointment_detail' appointment.id %}?next={{ request.get_full_path|urlencode }}%23appointment-{{ appointment.id }}" class="patient-appointment-action">Про прийом</a>
                     {% if appointment.status != 'cancelled' %}
                         {% if appointment.conclusion %}
                             <a href="{% url 'view_conclusion' appointment.id %}" class="patient-appointment-action">Переглянути висновок</a>
@@ -49,5 +48,16 @@
             <p class="patient-appointments-empty">Записів у цій категорії немає.</p>
         {% endfor %}
     </div>
+    {% if appointments_page.has_other_pages %}
+        <nav class="records-pagination" aria-label="Сторінки прийомів">
+            {% if appointments_page.has_previous %}
+                <a href="?status={{ current_status }}&amp;page={{ appointments_page.previous_page_number }}">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ appointments_page.number }} з {{ appointments_page.paginator.num_pages }}</span>
+            {% if appointments_page.has_next %}
+                <a href="?status={{ current_status }}&amp;page={{ appointments_page.next_page_number }}">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 </section>
 {% endblock %}

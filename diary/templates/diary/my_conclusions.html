@@ -33,7 +33,7 @@
                                 <td>{% if c.icd10 %}{{ c.icd10.code }}{% else %}—{% endif %}</td>
                                 <td>{{ c.diagnosis|truncatechars:60 }}</td>
                                 <td class="patient-conclusions-action">
-                                    <a href="{% url 'view_conclusion' c.appointment.id %}" class="patient-conclusions-view"
+                                    <a href="{% url 'view_conclusion' c.appointment.id %}?next={{ request.get_full_path|urlencode }}" class="patient-conclusions-view"
                                        aria-label="Переглянути висновок: {{ c.doctor.username }}, {{ c.appointment.date|date:'d.m.Y H:i' }}">Переглянути</a>
                                 </td>
                             </tr>

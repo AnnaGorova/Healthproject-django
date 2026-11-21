@@ -33,6 +33,7 @@
     </dl>
 
 <div class="appointment-detail-actions">
+    <a href="{{ back_url }}" class="profile-professional-button">← Назад</a>
     <a href="{% url 'patient_card' appointment.patient.id %}" class="profile-professional-button">
         Картка пацієнта
     </a>
@@ -60,8 +61,5 @@
     {% endif %}
 </div>
 
-<div class="appointment-detail-back">
-    <a href="{% url 'doctor_appointments' %}" class="profile-professional-button">← Назад до прийомів</a>
-</div>
 </section>
 {% endblock %}

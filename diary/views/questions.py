@@ -64,7 +64,7 @@ def ask_question(request):
        
     # Тільки пацієнти
     if user_profile.role != 'patient':
-        raise PermissionDenied("Тільки пацієнти можуть задавати питання")
+        raise PermissionDenied("Тільки пацієнти можуть надсилати звернення")
 
     if request.method == 'POST':
         form = DoctorQuestionForm(request.POST)
@@ -90,7 +90,7 @@ def my_questions(request):
     user_profile = request.user.userprofile
     # Тільки пацієнти
     if user_profile.role != 'patient':
-        raise PermissionDenied("Тільки пацієнти можуть бачити свої питання")
+        raise PermissionDenied("Тільки пацієнти можуть бачити свої звернення")
     
     context = _question_list_context(
         request, Question.objects.filter(patient=user_profile), 'doctor',
@@ -151,7 +151,7 @@ def _question_list_context(request, questions, counterpart):
         ).distinct()
     if status:
         questions = questions.filter(status=status)
-    page = Paginator(questions.order_by('-last_activity', '-pk'), 15).get_page(request.GET.get('page'))
+    page = Paginator(questions.order_by('-last_activity', '-pk'), 10).get_page(request.GET.get('page'))
     for question in page:
         question.preview = question.question
         if question.answer:
@@ -185,12 +185,12 @@ def answer_question(request, question_id):
     
     # 2. Перевіряємо доступ → 403 (замість 404)
     if question.doctor != user_profile:
-        raise PermissionDenied("Це питання адресовано іншому лікарю")
+        raise PermissionDenied("Це звернення адресовано іншому лікарю")
 
     if question.status == 'closed' and request.method == 'POST':
         if wants_json:
-            return JsonResponse({'error': 'Це питання закрито'}, status=409)
-        messages.error(request, "Це питання закрито")
+            return JsonResponse({'error': 'Це звернення закрито'}, status=409)
+        messages.error(request, "Це звернення закрито")
         return redirect('all_questions')
     
     if request.method == 'POST':
@@ -256,8 +256,8 @@ def reply_question(request, question_id):
 
     if request.method == 'POST' and question.status == 'closed':
         if wants_json:
-            return JsonResponse({'error': 'Це питання закрито'}, status=409)
-        messages.error(request, "❌ Це питання закрито")
+            return JsonResponse({'error': 'Це звернення закрито'}, status=409)
+        messages.error(request, "❌ Це звернення закрито")
         return redirect('my_questions')
     
     if request.method == 'POST':

@@ -62,7 +62,7 @@
         if (closed) {
             closed.hidden = result.status !== 'closed' && result.doctor_active;
             closed.textContent = result.doctor_active
-                ? 'Питання закрито.'
+                ? 'Звернення закрито.'
                 : 'Лікар більше не приймає звернення. Листування доступне для перегляду.';
         }
         const answer = dialog.querySelector('[data-question-answer]');

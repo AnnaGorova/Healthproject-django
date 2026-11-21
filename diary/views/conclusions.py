@@ -9,6 +9,9 @@ from ..models import MedicalConclusion
 from ..models import ICD10Code
 from django.http import JsonResponse
 from django.db.models import Q
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from urllib.parse import urlsplit
 from ..forms.conclusion import MedicalConclusionForm
 
 
@@ -86,9 +89,22 @@ def view_conclusion(request, appointment_id):
         messages.error(request, "❌ Висновок ще не створено")
         return redirect('my_appointments')
     
+    back_url = (
+        reverse('my_appointments') if user_profile.role == 'patient'
+        else reverse('appointment_detail', args=[appointment.id])
+    )
+    # Зберігаємо джерело переходу, дозволяючи повернення лише в межах сайту.
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ) and urlsplit(candidate).path != request.path:
+            back_url = candidate
+            break
+
     return render(request, 'diary/view_conclusion.html', {
         'appointment': appointment,
         'conclusion': appointment.conclusion,
+        'back_url': back_url,
     })
 
 

@@ -5,8 +5,8 @@
 
 {% block content %}
 {% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
-<section class="patient-profile" aria-labelledby="profile-title">
-    <h2 id="profile-title">Мій профіль</h2>
+<section class="patient-profile" {% if user_profile.role == 'doctor' %}aria-label="Мій профіль"{% else %}aria-labelledby="profile-title"{% endif %}>
+    {% if user_profile.role != 'doctor' %}<h2 id="profile-title">Мій профіль</h2>{% endif %}
 
     <dl class="patient-profile-grid">
         <div class="patient-profile-field">

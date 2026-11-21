@@ -11,6 +11,9 @@ from django.http import Http404
 from datetime import timedelta
 from django import forms
 from django.utils import timezone
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from urllib.parse import urlsplit
 from .access import doctor_can_access_patient, get_accessible_patients, is_admin_or_superuser
 
 
@@ -85,7 +88,7 @@ def records(request):
             Q(user__username__icontains=search) | Q(user__phone__icontains=search)
         )
     all_records, context = filter_record_period(request, all_records)
-    records_page = Paginator(all_records, 10).get_page(request.GET.get('page'))
+    records_page = Paginator(all_records, 5).get_page(request.GET.get('page'))
     pagination_query = request.GET.copy()
     pagination_query.pop('page', None)
     context.update({
@@ -123,9 +126,15 @@ def user_records(request, user_id):
         raise Http404("Сторінку не знайдено")
 
     all_records = HealthRecord.objects.filter(user=target_user, is_active=True).select_related('user').order_by('-date', '-pk')
+    records_page = Paginator(all_records, 5).get_page(request.GET.get('page'))
+    pagination_query = request.GET.copy()
+    pagination_query.pop('page', None)
 
     context = {
-        'records': all_records,
+        'records': records_page.object_list,
+        'records_page': records_page,
+        'records_count': records_page.paginator.count,
+        'pagination_query': pagination_query.urlencode(),
         'user_profile': target_user,
         'records_patient': target_user,
     }
@@ -155,9 +164,19 @@ def record_detail(request, pk):
     else:
         raise Http404("Сторінку не знайдено")
 
+    back_url = reverse('records' if user_profile.role == 'doctor' else 'my_records')
+    # Повертаємо до джерела переходу зі збереженням фільтрів і сторінки.
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ) and urlsplit(candidate).path != request.path:
+            back_url = candidate
+            break
+
     context = {
         'record': record,
-        'record_date': record.date
+        'record_date': record.date,
+        'back_url': back_url,
     }
     return render(request, 'diary/record_detail.html', context)
 

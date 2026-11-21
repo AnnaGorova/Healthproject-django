@@ -29,7 +29,7 @@ class DoctorQuestionForm(forms.ModelForm):
             'question': forms.Textarea(attrs={
                 'class': 'form-control', 
                 'rows': 6, 
-                'placeholder': 'Опишіть ваше питання...'
+                'placeholder': 'Опишіть ваше звернення...'
             }),
         }
 
@@ -43,6 +43,6 @@ class DoctorQuestionForm(forms.ModelForm):
             raise forms.ValidationError('Можна будь-ласка без трьох знаків питання?')
 
         if len(question) < 10:
-            raise forms.ValidationError('Питання має містити не менше 10 символів')
+            raise forms.ValidationError('Звернення має містити не менше 10 символів')
 
         return question

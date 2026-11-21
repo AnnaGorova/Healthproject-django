@@ -1,18 +1,18 @@
 {% extends "diary/base.html" %}
 
-{% block title %}Питання надіслано{% endblock %}
-{% block page_title %}Питання надіслано{% endblock %}
+{% block title %}Звернення надіслано{% endblock %}
+{% block page_title %}Звернення надіслано{% endblock %}
 
 {% block content %}
 <section class="question-sent">
-    <h2>Питання успішно надіслано</h2>
+    <h2>Звернення успішно надіслано</h2>
     <p class="question-sent-subtitle">
-        Відповідь лікаря з’явиться в розділі «Мої питання».
+        Відповідь лікаря з’явиться в розділі «Мої звернення».
     </p>
 
     <dl class="question-sent-info">
         <div>
-            <dt>Автор запитання</dt>
+            <dt>Автор звернення</dt>
             <dd>{{ user_profile.username }}</dd>
         </div>
         <div>
@@ -26,12 +26,12 @@
     </dl>
 
     <div class="question-sent-message">
-        <h3>Ваше запитання</h3>
+        <h3>Ваше звернення</h3>
         <p>{{ data.question }}</p>
     </div>
 
     <div class="question-sent-actions">
-        <a href="{% url 'my_questions' %}" class="question-sent-primary">Мої питання</a>
+        <a href="{% url 'my_questions' %}" class="question-sent-primary">Мої звернення</a>
         <a href="{% url 'home' %}" class="question-sent-secondary">На головну</a>
     </div>
 </section>

@@ -45,19 +45,28 @@ def doctor_dashboard(request):
             models.Q(username__icontains=search) |
             models.Q(phone__icontains=search)
         )
-    patients_page = Paginator(patients, 20).get_page(request.GET.get('page'))
-
-    context = get_doctor_home_context(user_profile)
+    context = get_doctor_home_context(user_profile, full_lists=True)
     context.update({
-        'patients': patients_page.object_list,
-        'patients_page': patients_page,
+        'patients': patients,
         'search': search,
         'selection_error': selection_error,
     })
+    # Кожен блок має власну сторінку; інші параметри адреси зберігаємо.
+    for key in (
+        'patients', 'new_records', 'new_patients', 'new_appointments',
+        'today_appointments', 'past_pending', 'recent_conclusions', 'new_questions',
+    ):
+        page_param = 'page' if key == 'patients' else f'{key}_page'
+        page = Paginator(context[key], 5).get_page(request.GET.get(page_param))
+        pagination_params = request.GET.copy()
+        pagination_params.pop(page_param, None)
+        context[key] = page.object_list
+        context[f'{key}_page'] = page
+        context[f'{key}_pagination_query'] = pagination_params.urlencode()
     return render(request, 'diary/doctor_dashboard.html', context)
 
 
-def get_doctor_home_context(user_profile):
+def get_doctor_home_context(user_profile, *, full_lists=False):
     """Спільні дані карток головної сторінки та детальних блоків дашборда."""
     now = timezone.now()
     today = timezone.localdate()
@@ -71,10 +80,19 @@ def get_doctor_home_context(user_profile):
         date__gte=notifications_from,
         date__lte=now,
     ).select_related('user').order_by('-date', '-pk')
-    new_patients = accessible_patients.filter(
-        user__date_joined__gte=notifications_from,
-        user__date_joined__lte=now,
-    ).order_by('-user__date_joined', '-pk')
+    # Новий пацієнт — за першим нескасованим записом саме до цього лікаря,
+    # незалежно від дати реєстрації та запланованої дати прийому.
+    first_appointment = Appointment.objects.filter(
+        doctor=user_profile,
+        patient_id=models.OuterRef('pk'),
+        status__in=['scheduled', 'completed'],
+    ).order_by('created_at', 'pk').values('created_at')[:1]
+    new_patients = accessible_patients.select_related('user').annotate(
+        first_appointment_created_at=models.Subquery(first_appointment),
+    ).filter(
+        first_appointment_created_at__gte=notifications_from,
+        first_appointment_created_at__lte=now,
+    ).order_by('-first_appointment_created_at', '-pk')
     new_appointments = Appointment.objects.filter(
         doctor=user_profile,
         created_at__gte=notifications_from,
@@ -87,7 +105,7 @@ def get_doctor_home_context(user_profile):
         date__date=today,
     ).exclude(
         status='cancelled'
-    ).select_related('patient', 'conclusion').order_by('date')
+    ).select_related('patient', 'conclusion').order_by('date', 'pk')
 
     # Прийоми з попередніх днів без висновку
     past_pending_qs = Appointment.objects.filter(
@@ -96,32 +114,32 @@ def get_doctor_home_context(user_profile):
         date__date__lt=today,
     )
     past_pending_count = past_pending_qs.count()
-    past_pending = past_pending_qs.select_related('patient').order_by('date')[:10]
+    past_pending = past_pending_qs.select_related('patient').order_by('date', 'pk')
 
     # Останні висновки
     recent_conclusions = MedicalConclusion.objects.filter(
         doctor=user_profile
-    ).select_related('patient', 'appointment', 'icd10').order_by('-created_at')[:5]
+    ).select_related('patient', 'appointment', 'icd10').order_by('-created_at', '-pk')
 
     # Нові звернення
     new_questions = Question.objects.filter(
         doctor=user_profile,
         status='new'
-    ).select_related('patient').order_by('-created_at')
+    ).select_related('patient').order_by('-created_at', '-pk')
 
     return {
         'now': now,
         'today_appointments': today_appointments,
-        'past_pending': past_pending,
+        'past_pending': past_pending if full_lists else past_pending[:10],
         'past_pending_count': past_pending_count,
-        'recent_conclusions': recent_conclusions,
+        'recent_conclusions': recent_conclusions if full_lists else recent_conclusions[:5],
         'new_questions': new_questions,
         'new_records_count': new_records.count(),
-        'new_records': new_records[:10],
+        'new_records': new_records if full_lists else new_records[:10],
         'new_patients_count': new_patients.count(),
-        'new_patients': new_patients[:10],
+        'new_patients': new_patients if full_lists else new_patients[:10],
         'new_appointments_count': new_appointments.count(),
-        'new_appointments': new_appointments[:10],
+        'new_appointments': new_appointments if full_lists else new_appointments[:10],
     }
 
 
@@ -136,7 +154,7 @@ def doctor_patients(request):
     patients = (
         get_accessible_patients(user_profile)
         .select_related('user')
-        .order_by('username')
+        .order_by('username', 'pk')
     )
     
     search = request.GET.get('search', '').strip()
@@ -171,8 +189,14 @@ def doctor_patients(request):
         except ValueError:
             pass
     
+    patients_page = Paginator(patients, 10).get_page(request.GET.get('page'))
+    pagination_params = request.GET.copy()
+    pagination_params.pop('page', None)
+
     return render(request, 'diary/doctor_patients.html', {
-        'patients': patients,
+        'patients': patients_page.object_list,
+        'patients_page': patients_page,
+        'pagination_query': pagination_params.urlencode(),
         'search': search,
         'gender': gender,
         'age_from': age_from,
@@ -240,7 +264,9 @@ def patient_card(request, patient_id):
     
     # Дані пацієнта
     active_records = HealthRecord.objects.filter(user=patient, is_active=True).order_by('-date', '-pk')
-    records = active_records[:10]
+    records_page = Paginator(active_records, 5).get_page(request.GET.get('records_page'))
+    records_pagination_query = request.GET.copy()
+    records_pagination_query.pop('records_page', None)
     parameters = []
     for key, label, unit, theme, icon in [
         ('temperature', 'Температура', '°C', 'mint', 'temperature.svg'),
@@ -263,10 +289,17 @@ def patient_card(request, patient_id):
         doctor=user_profile,
         patient=patient
     ).select_related('doctor', 'cancelled_by', 'conclusion').order_by('-date', '-pk')
+    appointments_page = Paginator(appointments, 5).get_page(request.GET.get('appointments_page'))
+    appointments_pagination_query = request.GET.copy()
+    appointments_pagination_query.pop('appointments_page', None)
     
     return render(request, 'diary/patient_card.html', {
         'patient': patient,
-        'records': records,
-        'appointments': appointments,
+        'records': records_page.object_list,
+        'records_page': records_page,
+        'records_pagination_query': records_pagination_query.urlencode(),
+        'appointments': appointments_page.object_list,
+        'appointments_page': appointments_page,
+        'appointments_pagination_query': appointments_pagination_query.urlencode(),
         'patient_parameters': parameters,
     })

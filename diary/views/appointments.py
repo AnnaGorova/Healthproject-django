@@ -3,11 +3,15 @@ from ..models import UserProfile
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.contrib import messages
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from urllib.parse import urlsplit
 from ..models import Appointment
 from django.db.models import Q, Count
 from datetime import date, datetime as dt_class, timedelta
@@ -180,12 +184,18 @@ def my_appointments(request):
     
     appointments = Appointment.objects.filter(
         patient=user_profile
-    ).select_related('doctor', 'cancelled_by')
+    ).select_related('doctor__doctor_profile', 'cancelled_by', 'conclusion__icd10')
 
     appointments, current_status, counts = filter_appointments(request, appointments)
 
+    # Однакові дати впорядковуємо за ID, щоб записи не повторювалися між сторінками.
+    descending = current_status != 'active'
+    appointments = appointments.order_by('-date' if descending else 'date', '-pk' if descending else 'pk')
+    appointments_page = Paginator(appointments, 10).get_page(request.GET.get('page'))
+
     return render(request, 'diary/my_appointments.html', {
-        'appointments': appointments,
+        'appointments': appointments_page.object_list,
+        'appointments_page': appointments_page,
         'current_status': current_status,
         'counts': counts,
     })
@@ -201,12 +211,17 @@ def doctor_appointments(request):
 
     appointments = Appointment.objects.filter(
         doctor=user_profile
-    ).select_related('patient', 'cancelled_by')
+    ).select_related('patient', 'cancelled_by', 'conclusion')
 
     appointments, current_status, counts = filter_appointments(request, appointments)
 
+    descending = current_status != 'active'
+    appointments = appointments.order_by('-date' if descending else 'date', '-pk' if descending else 'pk')
+    appointments_page = Paginator(appointments, 10).get_page(request.GET.get('page'))
+
     return render(request, 'diary/doctor_appointments.html', {
-        'appointments': appointments,
+        'appointments': appointments_page.object_list,
+        'appointments_page': appointments_page,
         'current_status': current_status,
         'counts': counts,
     })
@@ -226,8 +241,18 @@ def appointment_detail(request, appointment_id):
         doctor=user_profile
     )
 
+    back_url = reverse('doctor_appointments')
+    # Зберігаємо джерело переходу, зокрема дату, період і слот розкладу.
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ) and urlsplit(candidate).path != request.path:
+            back_url = candidate
+            break
+
     return render(request, 'diary/appointment_detail.html', {
         'appointment': appointment,
+        'back_url': back_url,
     })
 
 

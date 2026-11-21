@@ -1,4 +1,5 @@
 {% extends "diary/base.html" %}
+{% load static %}
 
 {% block title %}Мої записи до лікаря{% endblock %}
 {% block page_title %}Мої записи до лікаря{% endblock %}
@@ -17,14 +18,19 @@
             <article class="patient-appointment-card" id="appointment-{{ appointment.id }}">
                 <div class="patient-appointment-doctor">
                     <span class="patient-appointment-status status-{{ appointment.status }}">{{ appointment.status_label }}</span>
-                    <p class="patient-appointment-label">Лікар</p>
-                    <h3>{{ appointment.doctor.username }}</h3>
+                    <div class="patient-appointment-doctor-summary">
+                        <img src="{% static 'diary/images/doctor-avatar.svg' %}" width="48" height="48" alt="" class="patient-appointment-avatar">
+                        <div class="patient-appointment-doctor-info">
+                            <h3>{{ appointment.doctor.username }}</h3>
+                            <p>{{ appointment.doctor.doctor_profile.specialty|default:"Спеціальність не вказана" }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="patient-appointment-actions">
                     {% if appointment.can_cancel %}
                         <a href="{% url 'reschedule_appointment' appointment.id %}" class="patient-appointment-action appointment-action-reschedule">Перенести</a>
                         <a href="{% url 'cancel_appointment' appointment.id %}" class="patient-appointment-action appointment-action-cancel">Скасувати</a>
-                    {% else %}
+                    {% elif not appointment.conclusion %}
                         <p class="appointment-actions-notice">
                             {% if appointment.status == 'cancelled' %}
                                 Запис скасовано
@@ -35,27 +41,36 @@
                             {% endif %}
                         </p>
                     {% endif %}
+                    {% if appointment.conclusion %}
+                        <a href="{% url 'view_conclusion' appointment.id %}?next={{ request.get_full_path|urlencode }}%23appointment-{{ appointment.id }}" class="patient-appointment-action appointment-action-conclusion">Переглянути висновок</a>
+                    {% endif %}
                 </div>
                 <dl class="patient-appointment-dates">
                     <div><dt>Дата створення</dt><dd>{{ appointment.created_at|date:"d/m/Y" }}</dd></div>
                     <div><dt>Дата призначення</dt><dd>{{ appointment.date|date:"d/m/Y" }}</dd></div>
                     <div class="patient-appointment-time"><dt>Час прибуття</dt><dd>{{ appointment.date|date:"H:i" }}</dd></div>
                 </dl>
-                {% if appointment.conclusion %}
-                    <div class="patient-appointment-conclusion">
-                        <h4>Висновок лікаря</h4>
-                        {% if appointment.conclusion.icd10 %}
-                            <p>Шифр МКХ-10: {{ appointment.conclusion.icd10.code }} — {{ appointment.conclusion.icd10.name }}</p>
-                        {% endif %}
-                        <p>{{ appointment.conclusion.diagnosis|truncatechars:100 }}</p>
-                        <a href="{% url 'view_conclusion' appointment.id %}">Переглянути висновок →</a>
-                    </div>
+                {% if appointment.conclusion.icd10 %}
+                    <p class="patient-appointment-icd10">
+                        <strong>МКХ-10: {{ appointment.conclusion.icd10.code }}</strong> — {{ appointment.conclusion.icd10.name }}
+                    </p>
                 {% endif %}
             </article>
         {% empty %}
             <p class="patient-appointments-empty">Записів у цій категорії немає.</p>
         {% endfor %}
     </div>
+    {% if appointments_page.has_other_pages %}
+        <nav class="records-pagination" aria-label="Сторінки записів до лікаря">
+            {% if appointments_page.has_previous %}
+                <a href="?status={{ current_status }}&amp;page={{ appointments_page.previous_page_number }}">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ appointments_page.number }} з {{ appointments_page.paginator.num_pages }}</span>
+            {% if appointments_page.has_next %}
+                <a href="?status={{ current_status }}&amp;page={{ appointments_page.next_page_number }}">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
     <div class="patient-appointments-footer">
         <a href="{% url 'doctors_list' %}">Новий запис до лікаря</a>
     </div>

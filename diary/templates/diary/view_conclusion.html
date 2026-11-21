@@ -75,10 +75,9 @@
     </article>
 
     <nav class="conclusion-actions" aria-label="Повернення з висновку">
+        <a href="{{ back_url }}">← Назад</a>
         {% if request.user.userprofile.role == 'patient' %}
-            <a href="{% url 'my_conclusions' %}">← Назад до висновків</a>
-        {% else %}
-            <a href="{% url 'appointment_detail' appointment.id %}">← Назад до прийому</a>
+            <a href="{% url 'my_conclusions' %}">Усі висновки</a>
         {% endif %}
     </nav>
 </div>

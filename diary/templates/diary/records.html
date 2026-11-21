@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block title %}{% if records_patient %}Записи щоденника — {{ records_patient.username }}{% else %}Записи пацієнтів{% endif %}{% endblock %}
-{% block page_title %}Записи щоденника{% endblock %}
+{% block page_title %}{% if records_patient %}Записи щоденника{% else %}Записи пацієнтів{% endif %}{% endblock %}
 
 {% block content %}
-<section class="patient-records" aria-labelledby="records-title">
+<section class="patient-records" aria-label="Записи пацієнтів">
+    {% if records_patient %}
     <header class="patient-records-heading">
         <div>
-            <h2 id="records-title">{% if records_patient %}Записи щоденника{% else %}Записи пацієнтів{% endif %}</h2>
             {% if records_patient %}<p class="patient-record-owner">Пацієнт: <strong>{{ records_patient.username }}</strong></p>{% endif %}
-            <p>{% if is_filtered %}Знайдено записів{% else %}Всього записів{% endif %}: {% if period_options %}{{ records_count }}{% else %}{{ records|length }}{% endif %}</p>
+            <p>{% if is_filtered %}Знайдено записів{% else %}Всього записів{% endif %}: {{ records_count }}</p>
         </div>
         {% if request.user.userprofile.role == 'doctor' %}
             {% if records_patient %}
@@ -22,6 +22,7 @@
             <a href="{% url 'my_records' %}" class="profile-professional-button">← До моїх записів</a>
         {% endif %}
     </header>
+    {% endif %}
 
     {% if period_options %}
         <div class="records-period-filter">
@@ -43,6 +44,11 @@
             <details class="records-custom-period" {% if selected_period == 'custom' %}open{% endif %}>
                 <summary aria-controls="records-date-form">Власний період</summary>
             </details>
+            {% if not records_patient and request.user.userprofile.role == 'doctor' %}
+                <nav class="records-navigation" aria-label="Навігація записів пацієнтів">
+                    <a href="{% url 'doctor_patients' %}" class="profile-professional-button">Мої пацієнти</a>
+                </nav>
+            {% endif %}
             <form method="get" id="records-date-form" class="records-date-form" autocomplete="off">
                 <input type="hidden" name="period" value="custom">
                 <input type="hidden" name="search" value="{{ search }}">

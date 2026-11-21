@@ -97,8 +97,8 @@ def patient_search(request):
          "лікарі записатися прийом спеціальність"),
         ("Мої записи до лікаря", "my_appointments", "мої прийоми записи до лікаря"),
         ("Мої висновки", "my_conclusions", "висновки діагноз призначення рекомендації"),
-        ("Задати питання лікарю", "ask_question", "задати написати питання лікарю"),
-        ("Мої питання", "my_questions", "питання відповіді повідомлення листування"),
+        ("Звернутися до лікаря", "ask_question", "звернення звернутися задати написати питання лікарю"),
+        ("Мої звернення", "my_questions", "звернення питання відповіді повідомлення листування"),
         ("Профіль користувача", "profile", "профіль користувач особисті дані"),
     ]
     for title, route, keywords in sections:
@@ -222,7 +222,7 @@ def patient_search(request):
     ).select_related("doctor").distinct().order_by("-created_at", "-pk")[:5]
     for question in questions:
         add_result(
-            "Питання та листування", f"Питання до {question.doctor.username}",
+            "Звернення та листування", f"Звернення до {question.doctor.username}",
             excerpt(question.question),
             reverse("reply_question", args=[question.id]),
         )

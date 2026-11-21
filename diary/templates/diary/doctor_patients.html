@@ -5,11 +5,6 @@
 
 {% block content %}
 <div class="doctor-patients-page">
-    <header class="doctor-patients-heading">
-        <h2>Мої пацієнти</h2>
-        <p>{% if search or gender or age_from or age_to %}Знайдено пацієнтів{% else %}Всього пацієнтів{% endif %}: {{ patients|length }}</p>
-    </header>
-
     <section class="doctor-patients-panel" aria-label="Пошук і фільтри пацієнтів">
         <form method="get" class="doctor-patients-filters">
             <div class="doctor-patients-search">
@@ -74,6 +69,17 @@
                     </tbody>
                 </table>
             </div>
+            {% if patients_page.has_other_pages %}
+                <nav class="records-pagination" aria-label="Сторінки пацієнтів">
+                    {% if patients_page.has_previous %}
+                        <a href="?{{ pagination_query }}&amp;page={{ patients_page.previous_page_number }}">← Попередні</a>
+                    {% endif %}
+                    <span>Сторінка {{ patients_page.number }} з {{ patients_page.paginator.num_pages }}</span>
+                    {% if patients_page.has_next %}
+                        <a href="?{{ pagination_query }}&amp;page={{ patients_page.next_page_number }}">Наступні →</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
         {% else %}
             <p class="doctor-patients-empty">
                 {% if search or gender or age_from or age_to %}

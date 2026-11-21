@@ -88,10 +88,9 @@
                 <a href="{% url 'edit_record' record.id %}" class="record-detail-edit">Редагувати</a>
                 <a href="{% url 'delete_record' record.id %}" class="record-detail-delete">Видалити</a>
             {% endif %}
-            {% if request.user.userprofile.role == 'patient' %}
-                <a href="{% url 'my_records' %}" class="record-create-back">Назад до моїх записів</a>
-            {% elif request.user.userprofile.role == 'doctor' %}
-                <a href="{% url 'patient_card' record.user_id %}#patient-recent-records-title" class="profile-professional-button">← Назад до картки пацієнта</a>
+            <a href="{{ back_url }}" class="profile-professional-button">← Назад</a>
+            {% if request.user.userprofile.role == 'doctor' %}
+                <a href="{% url 'patient_card' record.user_id %}" class="profile-professional-button">Картка пацієнта</a>
             {% endif %}
         </div>
     </div>

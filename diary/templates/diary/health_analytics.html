@@ -1,12 +1,18 @@
 {% extends "diary/base.html" %}
 {% load static %}
-{% block title %}Моя аналітика — OpenMRC{% endblock %}
+{% block title %}{% if is_doctor_view %}Аналітика пацієнта{% else %}Моя аналітика{% endif %} — OpenMRC{% endblock %}
+{% block page_title %}{% if is_doctor_view %}Аналітика пацієнта{% else %}Моя аналітика{% endif %}{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'diary/css/analytics.css' %}">{% endblock %}
 {% block content %}
 <div class="analytics-page">
-<h1 class="visually-hidden">Моя аналітика</h1>
-{% if is_doctor_view %}<p class="analytics-caption">Пацієнт: <strong>{{ patient.username }}</strong> · <a href="{% url 'patient_card' patient.id %}">До картки пацієнта</a></p>{% endif %}
+<h1 class="visually-hidden">{% if is_doctor_view %}Аналітика пацієнта{% else %}Моя аналітика{% endif %}</h1>
 <section class="health-parameters" aria-labelledby="parameters-title">
+{% if is_doctor_view %}
+<div class="analytics-patient-heading">
+    <p class="analytics-patient-name"><span>Пацієнт</span><strong>{{ patient.username }}</strong></p>
+    <a href="{% url 'patient_card' patient.id %}" class="profile-professional-button">Картка пацієнта</a>
+</div>
+{% endif %}
 <div class="parameters-heading"><h2 id="parameters-title">{% if is_doctor_view %}Параметри пацієнта{% else %}Мої параметри{% endif %}</h2><nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav></div>
 <div class="parameters-grid">
 {% for parameter in analytics_parameters %}

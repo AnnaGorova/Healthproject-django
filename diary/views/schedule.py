@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.core.paginator import Paginator
 from ..models import Appointment, Schedule
 from datetime import date, timedelta
 from django.db import models
@@ -21,7 +22,10 @@ def manage_schedule(request):
     if user_profile.role != 'doctor':
         raise PermissionDenied("Тільки лікарі можуть налаштовувати розклад")
     
-    schedules = Schedule.objects.filter(doctor=user_profile).order_by('date', 'start_time')
+    schedules = Schedule.objects.filter(doctor=user_profile).order_by('date', 'start_time', 'pk')
+    schedules_page = Paginator(schedules, 7).get_page(request.GET.get('schedule_page'))
+    schedule_pagination_query = request.GET.copy()
+    schedule_pagination_query.pop('schedule_page', None)
     today = timezone.localdate()
     selected_period = request.GET.get('period', 'day')
     period_days = {'day': 1, 'week': 7, 'month': 30}
@@ -56,15 +60,21 @@ def manage_schedule(request):
     )
     
     if request.method == 'POST':
-        date_str = request.POST.get('date')
+        submitted_date = request.POST.get('date')
+        try:
+            date_str = date_field.clean(submitted_date).isoformat()
+        except ValidationError:
+            date_str = None
         is_day_off = request.POST.get('is_day_off') == 'on'
         start = request.POST.get('start_time')
         end = request.POST.get('end_time')
         duration = 30
 
         # ===== ВАЛІДАЦІЯ =====
-        if not date_str:
+        if not submitted_date:
             messages.error(request, "⚠️ Оберіть дату")
+        elif date_str is None:
+            messages.error(request, "⚠️ Вкажіть коректну дату у форматі ДД.ММ.РРРР")
         elif date_str < str(today):
             messages.error(request, "⚠️ Не можна додавати розклад на минулі дати")
           # чи вже є запис на цю дату
@@ -130,7 +140,9 @@ def manage_schedule(request):
     hours = [f"{h:02d}:{m:02d}" for h in range(7, 22) for m in [0, 30]]
     
     return render(request, 'diary/manage_schedule.html', {
-        'schedules': schedules,
+        'schedules': schedules_page.object_list,
+        'schedules_page': schedules_page,
+        'schedule_pagination_query': schedule_pagination_query.urlencode(),
         'hours': hours,
         'today': today,
         'schedule_days': schedule_days,
@@ -141,7 +153,7 @@ def manage_schedule(request):
         'selected_period': selected_period,
         'period_end': period_end,
         'date_error': date_error,
-        'settings_open': request.method == 'POST',
+        'settings_open': request.method == 'POST' or 'schedule_page' in request.GET,
     })
 
 

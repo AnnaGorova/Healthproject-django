@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="doctor-dashboard">
-<section class="doctor-analytics-picker" aria-labelledby="patient-picker-title">
+<section class="doctor-analytics-picker" id="doctor-analytics-picker" aria-labelledby="patient-picker-title">
     <div class="doctor-patient-heading">
         <h2 id="patient-picker-title">Аналітика пацієнтів</h2>
         <p class="doctor-patient-search-count">{% if search %}Знайдено{% else %}Доступно пацієнтів{% endif %} — {{ patients_page.paginator.count }}</p>
@@ -34,11 +34,11 @@
         {% if patients_page.has_other_pages %}
             <nav class="doctor-patient-pagination" aria-label="Сторінки списку пацієнтів">
                 {% if patients_page.has_previous %}
-                    <a href="?search={{ search|urlencode }}&amp;page={{ patients_page.previous_page_number }}">← Попередні</a>
+                    <a href="?{{ patients_pagination_query }}&amp;page={{ patients_page.previous_page_number }}#doctor-analytics-picker">← Попередні</a>
                 {% endif %}
                 <span>Сторінка {{ patients_page.number }} з {{ patients_page.paginator.num_pages }}</span>
                 {% if patients_page.has_next %}
-                    <a href="?search={{ search|urlencode }}&amp;page={{ patients_page.next_page_number }}">Наступні →</a>
+                    <a href="?{{ patients_pagination_query }}&amp;page={{ patients_page.next_page_number }}#doctor-analytics-picker">Наступні →</a>
                 {% endif %}
             </nav>
         {% endif %}
@@ -59,7 +59,7 @@
                 <h4>{{ record.user.username }}</h4>
                 <p>{{ record.date|date:"d.m.Y H:i" }}</p>
             </div>
-            <a href="{% url 'record_detail' record.pk %}" class="doctor-work-button doctor-work-secondary">Деталі запису</a>
+            <a href="{% url 'record_detail' record.pk %}?next={{ request.get_full_path|urlencode }}%23doctor-new-records" class="doctor-work-button doctor-work-secondary">Деталі запису</a>
         </article>
     {% empty %}
         <p>За цей період нових записів немає.</p>
@@ -67,11 +67,22 @@
     {% if new_records_count > new_records|length %}
         <a href="{% url 'records' %}" class="doctor-work-button doctor-work-secondary">Усі записи пацієнтів</a>
     {% endif %}
+    {% if new_records_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-new-records-title">
+            {% if new_records_page.has_previous %}
+                <a href="?{{ new_records_pagination_query }}&amp;new_records_page={{ new_records_page.previous_page_number }}#doctor-new-records">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ new_records_page.number }} з {{ new_records_page.paginator.num_pages }}</span>
+            {% if new_records_page.has_next %}
+                <a href="?{{ new_records_pagination_query }}&amp;new_records_page={{ new_records_page.next_page_number }}#doctor-new-records">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 </section>
 
 <section class="doctor-dashboard-block" id="doctor-new-patients" aria-labelledby="doctor-new-patients-title">
     <h3 id="doctor-new-patients-title">Нові пацієнти</h3>
-    <p>Доступні вам пацієнти, зареєстровані за останні 7 днів — {{ new_patients_count }}</p>
+    <p>Вперше записалися до вас за останні 7 днів — {{ new_patients_count }}</p>
     {% for patient in new_patients %}
         <article class="doctor-home-row">
             <div>
@@ -85,6 +96,17 @@
     {% endfor %}
     {% if new_patients_count > new_patients|length %}
         <a href="{% url 'doctor_patients' %}" class="doctor-work-button doctor-work-secondary">Усі пацієнти</a>
+    {% endif %}
+    {% if new_patients_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-new-patients-title">
+            {% if new_patients_page.has_previous %}
+                <a href="?{{ new_patients_pagination_query }}&amp;new_patients_page={{ new_patients_page.previous_page_number }}#doctor-new-patients">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ new_patients_page.number }} з {{ new_patients_page.paginator.num_pages }}</span>
+            {% if new_patients_page.has_next %}
+                <a href="?{{ new_patients_pagination_query }}&amp;new_patients_page={{ new_patients_page.next_page_number }}#doctor-new-patients">Наступні →</a>
+            {% endif %}
+        </nav>
     {% endif %}
 </section>
 
@@ -104,6 +126,17 @@
     {% endfor %}
     {% if new_appointments_count > new_appointments|length %}
         <a href="{% url 'doctor_appointments' %}" class="doctor-work-button doctor-work-secondary">Усі прийоми</a>
+    {% endif %}
+    {% if new_appointments_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-new-appointments-title">
+            {% if new_appointments_page.has_previous %}
+                <a href="?{{ new_appointments_pagination_query }}&amp;new_appointments_page={{ new_appointments_page.previous_page_number }}#doctor-new-appointments">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ new_appointments_page.number }} з {{ new_appointments_page.paginator.num_pages }}</span>
+            {% if new_appointments_page.has_next %}
+                <a href="?{{ new_appointments_pagination_query }}&amp;new_appointments_page={{ new_appointments_page.next_page_number }}#doctor-new-appointments">Наступні →</a>
+            {% endif %}
+        </nav>
     {% endif %}
 </section>
     <section class="doctor-dashboard-block" id="doctor-today" aria-labelledby="doctor-today-title">
@@ -127,7 +160,18 @@
         {% empty %}
             <p>На сьогодні прийомів немає.</p>
         {% endfor %}
-    </section>
+        {% if today_appointments_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-today-title">
+            {% if today_appointments_page.has_previous %}
+                <a href="?{{ today_appointments_pagination_query }}&amp;today_appointments_page={{ today_appointments_page.previous_page_number }}#doctor-today">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ today_appointments_page.number }} з {{ today_appointments_page.paginator.num_pages }}</span>
+            {% if today_appointments_page.has_next %}
+                <a href="?{{ today_appointments_pagination_query }}&amp;today_appointments_page={{ today_appointments_page.next_page_number }}#doctor-today">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</section>
 
     <section class="doctor-dashboard-block" id="doctor-pending" aria-labelledby="doctor-pending-title">
         <h3 id="doctor-pending-title">Очікують висновку з попередніх днів</h3>
@@ -146,12 +190,22 @@
             <p>Прийомів, що очікують висновку, немає.</p>
         {% endfor %}
         {% if past_pending_count > past_pending|length %}
-            <p>Показано {{ past_pending|length }} з {{ past_pending_count }}.</p>
             <a href="{% url 'doctor_appointments' %}?status=active" class="doctor-work-button doctor-work-secondary">Усі активні прийоми</a>
         {% endif %}
-    </section>
+        {% if past_pending_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-pending-title">
+            {% if past_pending_page.has_previous %}
+                <a href="?{{ past_pending_pagination_query }}&amp;past_pending_page={{ past_pending_page.previous_page_number }}#doctor-pending">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ past_pending_page.number }} з {{ past_pending_page.paginator.num_pages }}</span>
+            {% if past_pending_page.has_next %}
+                <a href="?{{ past_pending_pagination_query }}&amp;past_pending_page={{ past_pending_page.next_page_number }}#doctor-pending">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</section>
 
-    <section class="doctor-dashboard-block" aria-labelledby="doctor-conclusions-title">
+    <section class="doctor-dashboard-block" id="doctor-conclusions" aria-labelledby="doctor-conclusions-title">
         <h3 id="doctor-conclusions-title">Останні висновки</h3>
         {% for conclusion in recent_conclusions %}
             <article class="doctor-home-row">
@@ -168,7 +222,18 @@
         {% empty %}
             <p>Висновків ще немає.</p>
         {% endfor %}
-    </section>
+        {% if recent_conclusions_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-conclusions-title">
+            {% if recent_conclusions_page.has_previous %}
+                <a href="?{{ recent_conclusions_pagination_query }}&amp;recent_conclusions_page={{ recent_conclusions_page.previous_page_number }}#doctor-conclusions">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ recent_conclusions_page.number }} з {{ recent_conclusions_page.paginator.num_pages }}</span>
+            {% if recent_conclusions_page.has_next %}
+                <a href="?{{ recent_conclusions_pagination_query }}&amp;recent_conclusions_page={{ recent_conclusions_page.next_page_number }}#doctor-conclusions">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</section>
 
     <section class="doctor-dashboard-block" id="doctor-questions" aria-labelledby="doctor-questions-title">
         <h3 id="doctor-questions-title">Нові звернення</h3>
@@ -184,6 +249,17 @@
         {% empty %}
             <p>Немає нових звернень.</p>
         {% endfor %}
-    </section>
+        {% if new_questions_page.has_other_pages %}
+        <nav class="records-pagination" aria-labelledby="doctor-questions-title">
+            {% if new_questions_page.has_previous %}
+                <a href="?{{ new_questions_pagination_query }}&amp;new_questions_page={{ new_questions_page.previous_page_number }}#doctor-questions">← Попередні</a>
+            {% endif %}
+            <span>Сторінка {{ new_questions_page.number }} з {{ new_questions_page.paginator.num_pages }}</span>
+            {% if new_questions_page.has_next %}
+                <a href="?{{ new_questions_pagination_query }}&amp;new_questions_page={{ new_questions_page.next_page_number }}#doctor-questions">Наступні →</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</section>
 </div>
 {% endblock %}

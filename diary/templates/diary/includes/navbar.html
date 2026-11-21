@@ -103,9 +103,9 @@
                         <img src="{% static 'diary/images/my-questions.svg' %}"
                              width="40"
                              height="40"
-                             alt="Мої питання"
+                             alt="Мої звернення"
                              class="nav-icon">
-                        <span>Мої питання</span>
+                        <span>Мої звернення</span>
                     </a>
                 </li>
                 <li><a href="{% url "profile" %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
@@ -144,7 +144,7 @@
                 <li><a href="{% url 'all_questions' %}" class="nav-link{% if current_page == 'all_questions' %} is-active{% endif %}"
                    {% if current_page == 'all_questions' %}aria-current="page"{% endif %}>
                     <img src="{% static 'diary/images/andrsrxn_message.svg' %}" width="40" height="40" alt="" class="nav-icon">
-                    <span>Питання пацієнтів</span>
+                    <span>Звернення пацієнтів</span>
                 </a></li>
                 
                 <li><a href="{% url 'profile' %}" class="nav-link{% if current_page == 'profile' %} is-active{% endif %}"
@@ -165,7 +165,6 @@
                     <img src="{% static 'diary/images/akar-icons_mobile-device.svg' %}" width="40" height="40" alt="Профіль" class="nav-icon">
                     <span>Профіль</span>
                 </a></li>
-                <li><a href="{% url 'admin:index' %}" class="nav-link">Django Admin</a></li>
                 
             {% endif %}
 

@@ -381,6 +381,18 @@
 .health-theme .patient-records-create:hover,
 .health-theme .patient-record-edit:hover { background: #12532b; color: #fff; }
 .health-theme .patient-records-list { display: grid; gap: 16px; }
+.health-theme .records-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
 .health-theme .records-period-filter {
     display: flex;
     align-items: center;
@@ -686,7 +698,7 @@
 .health-theme .conclusion-section .conclusion-code { margin-top: 12px; color: #52657c; font-size: 14px; }
 .health-theme .conclusion-code strong { color: #166534; }
 .health-theme .conclusion-created { margin: 8px 0 0; padding-top: 16px; border-top: 1px solid #dfe9e2; color: #64748b; font-size: 13px; line-height: 1.6; text-align: right; }
-.health-theme .conclusion-actions { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.health-theme .conclusion-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
 .health-theme .conclusion-actions a {
     display: inline-flex; align-items: center; justify-content: center;
     box-sizing: border-box; min-height: 44px; max-width: 100%; padding: 10px 22px;
@@ -973,6 +985,34 @@ body.health-theme {
     line-height: 1.5;
     overflow-wrap: anywhere;
 }
+.health-theme .patient-appointment-doctor-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #e8f3e5;
+}
+.health-theme .patient-appointment-avatar {
+    display: block;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+}
+.health-theme .patient-appointment-doctor-info { min-width: 0; }
+.health-theme .patient-appointment-doctor-info h3 {
+    color: #176b3b;
+    font-size: 17px;
+    line-height: 1.35;
+}
+.health-theme .patient-appointment-doctor-info p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
 .health-theme .patient-appointment-actions {
     display: grid;
     gap: 19px;
@@ -996,7 +1036,18 @@ body.health-theme {
     text-decoration: none;
 }
 .health-theme .patient-appointment-action:hover { background: #e8f3e5; }
+.health-theme .patient-appointment-actions:has(> .appointment-actions-notice),
+.health-theme .patient-appointment-actions:has(> .appointment-action-conclusion) {
+    align-self: center;
+    padding-top: 0;
+}
 .health-theme .appointment-actions-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100px;
     margin: 0;
     padding: 12px;
     border: 1px solid #dbe5dd;
@@ -1060,18 +1111,18 @@ body.health-theme {
     line-height: 1.5;
 }
 .health-theme .patient-appointment-dates .patient-appointment-time { margin-top: 29px; }
-.health-theme .patient-appointment-conclusion {
+.health-theme .patient-appointment-icd10 {
     grid-column: 1 / -1;
     min-width: 0;
-    padding: 13px;
-    border-left: 3px solid #217568;
-    border-radius: 6px;
-    background: #e8f3e5;
+    margin: 0;
+    padding-top: 12px;
+    border-top: 1px solid #dbe5dd;
+    color: #52657c;
+    font-size: 13px;
+    line-height: 1.5;
     overflow-wrap: anywhere;
 }
-.health-theme .patient-appointment-conclusion h4 { margin: 0 0 6px; color: #217568; }
-.health-theme .patient-appointment-conclusion p { margin: 0 0 10px; }
-.health-theme .patient-appointment-conclusion a { color: #166534; }
+.health-theme .patient-appointment-icd10 strong { color: #1b303e; font-weight: 600; }
 .health-theme .patient-appointments-empty {
     margin: 0;
     padding: 26px;
@@ -1083,7 +1134,6 @@ body.health-theme {
 .health-theme .patient-appointments-footer a { color: #166534; }
 .health-theme .patient-appointment-filters a:focus-visible,
 .health-theme .patient-appointment-action:focus-visible,
-.health-theme .patient-appointment-conclusion a:focus-visible,
 .health-theme .patient-appointments-footer a:focus-visible {
     outline: 3px solid #217568;
     outline-offset: 4px;
@@ -1260,10 +1310,6 @@ body.health-theme {
 
 .health-theme .appointment-detail-page .appointment-detail-cancel:hover {
     background: #fff0f1;
-}
-
-.health-theme .appointment-detail-back {
-    margin-top: 24px;
 }
 
 @media (max-width: 700px) {
@@ -1646,10 +1692,8 @@ body.health-theme {
 
 .health-theme .content-wrapper:has(> .doctor-patients-page) { padding: 0; }
 .health-theme .doctor-patients-page { display: grid; gap: 20px; min-width: 0; color: #1b303e; }
-.health-theme .doctor-patients-heading,
 .health-theme .doctor-patients-panel { min-width: 0; padding: 24px; border-radius: 15px; background: #f7f9f8; }
 .health-theme .doctor-patients-page h2 { margin: 0; color: #1b303e; background: none; -webkit-text-fill-color: currentColor; font-size: 22px; font-weight: 600; line-height: 1.5; }
-.health-theme .doctor-patients-heading p { margin: 6px 0 0; color: #64748b; font-size: 14px; }
 .health-theme .doctor-patients-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 20px 16px; }
 .health-theme .doctor-patients-search { grid-column: 1 / -1; }
 .health-theme .doctor-patients-filters label { display: block; margin-bottom: 8px; color: #64748b; font-size: 13px; }
@@ -1680,7 +1724,6 @@ body.health-theme {
     .health-theme .doctor-patients-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
-    .health-theme .doctor-patients-heading,
     .health-theme .doctor-patients-panel { padding: 20px 16px; }
     .health-theme .doctor-patients-filters { grid-template-columns: 1fr; }
     .health-theme .doctor-patients-filter-actions > * { flex: 1; }
@@ -1985,7 +2028,7 @@ body.health-theme {
 .health-theme .content-wrapper:has(> .doctor-question-chat) {
     padding: 0;
 }
-.health-theme .content-wrapper:has(> .patient-question-inbox) { padding: 0; }
+.health-theme .content-wrapper:has(> .doctor-question-inbox) { padding: 0; }
 @media (min-width: 769px) {
     .health-theme .main-content:has(.patient-search) > .content-wrapper:has(> .patient-question-inbox),
     .health-theme .main-content:has(.patient-search) > .content-wrapper:has(> .doctor-question-chat) {
@@ -2071,7 +2114,7 @@ body.health-theme {
 .health-theme .doctor-inbox-filters button:hover,
 .health-theme .doctor-chat-actions button:hover,
 .health-theme .doctor-inbox-card-footer a:hover { background: #12532b; }
-.health-theme .doctor-inbox-count { margin: 16px 0 12px; color: #64748b; font-size: 13px; }
+.health-theme .doctor-question-inbox > [data-inbox-results] { margin-top: 20px; }
 .health-theme .doctor-inbox-list { display: grid; gap: 12px; }
 .health-theme .doctor-inbox-card { min-width: 0; padding: 18px 20px; border-radius: 12px; background: #f7f9f8; }
 .health-theme .doctor-inbox-card-heading,
@@ -2117,6 +2160,7 @@ body.health-theme {
 .health-theme .doctor-chat-form .doctor-chat-close { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .health-theme .doctor-chat-close input { width: auto; margin: 0; flex-shrink: 0; }
 .health-theme .doctor-chat-actions { display: flex; justify-content: flex-end; }
+.health-theme .doctor-chat-footer { display: flex; flex-wrap: wrap; margin-top: 20px; }
 .health-theme .doctor-question-inbox :is(a, input, select, button):focus-visible,
 .health-theme .doctor-question-chat :is(a, textarea, input, button):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
 @media (max-width: 700px) {
@@ -2333,7 +2377,7 @@ body.health-theme::before {
     align-self: start;
     background: #f7f9f8;
     border: 1px solid #e0e9df;
-    border-radius: 40px;
+    border-radius: 20px;
     box-shadow: 0 8px 28px rgba(35, 75, 45, 0.06);
 }
 
@@ -2414,7 +2458,7 @@ body.health-theme::before {
     gap: 10px;
     margin-bottom: 5px;
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: 10px;
 
     color: #243640;
     background: transparent;
@@ -2477,7 +2521,7 @@ body.health-theme::before {
     margin-bottom: 24px;
     background: #f8faf7;
     border: 1px solid #e0e9df;
-    border-radius: 14px;
+    border-radius: 20px;
     box-shadow: none;
     backdrop-filter: none;
 }
@@ -2494,7 +2538,9 @@ body.health-theme::before {
 .health-theme .top-header h1 {
     margin: 0;
     color: #243640;
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
     background: none;
     -webkit-text-fill-color: currentColor;
 }
@@ -2510,7 +2556,7 @@ body.health-theme::before {
     flex-wrap: wrap;
 }
 
-.health-theme .top-header:has(.patient-search) .header-account {
+.health-theme .top-header .header-account {
     padding-left: 24px;
     border-left: 0;
     background-image: repeating-linear-gradient(
@@ -2538,7 +2584,7 @@ body.health-theme::before {
         margin-left: 0;
     }
 
-    .health-theme .top-header:has(.patient-search) .header-account {
+    .health-theme .top-header .header-account {
         padding-left: 0;
         border-left: 0;
         background-image: none;
@@ -2955,6 +3001,43 @@ body.health-theme::before {
     cursor: pointer;
 }
 .health-theme .booking-calendar-button img { display: block; }
+.health-theme .booking-calendar {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 50;
+    box-sizing: border-box;
+    width: min(300px, calc(100vw - 48px));
+    padding: 14px;
+    border: 1px solid #b3d5b4;
+    border-radius: 12px;
+    background: #f7f9f8;
+    box-shadow: 0 8px 24px rgba(27, 48, 62, 0.15);
+    color: #1b303e;
+    font-size: 14px;
+}
+.health-theme .booking-calendar[hidden] { display: none; }
+.health-theme .booking-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.health-theme .booking-calendar-month { font-weight: 600; }
+.health-theme .booking-calendar-weekdays,
+.health-theme .booking-calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.health-theme .booking-calendar-weekdays { margin-bottom: 4px; text-align: center; color: #64748b; line-height: 30px; }
+.health-theme .booking-calendar button {
+    min-width: 0; min-height: 34px; margin: 0; padding: 4px;
+    border: 1px solid transparent; border-radius: 6px;
+    background: transparent; color: #1b303e; box-shadow: none;
+    font: inherit; line-height: 1.4; cursor: pointer;
+}
+.health-theme .booking-calendar-heading button { width: 34px; font-size: 24px; line-height: 1; }
+.health-theme .booking-calendar button:hover:not(:disabled) { background: #e8f3e5; }
+.health-theme .booking-calendar .is-other-month { color: #64748b; }
+.health-theme .booking-calendar button[aria-current="date"] { border-color: #36964b; }
+.health-theme .booking-calendar button[aria-pressed="true"],
+.health-theme .booking-calendar button[aria-pressed="true"]:hover:not(:disabled) { background: #166534; color: #fff; }
+.health-theme .booking-calendar button:disabled { color: #a1aaa5; background: transparent; cursor: default; }
+.health-theme .booking-calendar button:focus-visible { outline: 2px solid #217568; outline-offset: 1px; }
+.health-theme .booking-calendar-footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; border-top: 1px solid #dfe9e2; padding-top: 8px; }
+.health-theme .booking-calendar-footer button { color: #166534; }
 .health-theme .booking-native-date {
     position: absolute;
     right: 0;

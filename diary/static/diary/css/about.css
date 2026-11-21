@@ -40,7 +40,7 @@
     box-sizing: border-box;
     min-width: 0;
     padding: 4.27cqw;
-    border-radius: 3.56cqw;
+    border-radius: 20px;
     background: #f7f9f8;
 }
 
@@ -138,7 +138,7 @@
     .health-theme .about-card {
         min-height: auto;
         padding: 24px;
-        border-radius: 24px;
+        border-radius: 20px;
     }
     .health-theme .about-card h2 { font-size: 19px; }
     .health-theme .about-label,

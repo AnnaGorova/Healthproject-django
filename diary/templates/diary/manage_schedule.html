@@ -5,20 +5,19 @@
 {% block page_title %}Мій розклад{% endblock %}
 
 {% block content %}
-<section class="doctor-schedule" aria-labelledby="schedule-title">
-    <h2 id="schedule-title">Мій розклад</h2>
+<section class="doctor-schedule" aria-label="Мій розклад">
     <form method="get" class="schedule-filters">
         <div class="schedule-date-submit">
         <div class="schedule-date-field">
             <label for="schedule-date">Виберіть дату</label>
-            <div class="profile-date-control schedule-date-control">
+            <div class="profile-date-control schedule-date-control" data-uk-calendar>
                 <input type="text" id="schedule-date" name="date" value="{{ selected_date_text }}"
                        placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
                        {% if date_error and selected_period != 'custom' %}aria-invalid="true" aria-describedby="schedule-date-error"{% endif %}>
                 <button type="button" class="schedule-calendar-button" aria-label="Вибрати дату" hidden>
                     <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
                 </button>
-                <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар розкладу" hidden>
+                <input type="date" class="schedule-native-date" min="1900-01-01" max="9998-12-31" tabindex="-1" aria-label="Календар розкладу" hidden>
             </div>
         </div>
             <button type="submit" name="period" value="{% if selected_period == 'custom' %}day{% else %}{{ selected_period }}{% endif %}" class="schedule-save-button">Показати</button>
@@ -36,26 +35,26 @@
             <input type="hidden" name="period" value="custom">
             <div class="schedule-date-field">
                 <label for="schedule-date-from">З</label>
-                <div class="profile-date-control schedule-date-control">
+                <div class="profile-date-control schedule-date-control" data-uk-calendar>
                     <input type="text" id="schedule-date-from" name="date_from" value="{{ date_from_text }}"
                            placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
                            {% if date_error and selected_period == 'custom' %}aria-invalid="true" aria-describedby="schedule-range-error"{% endif %}>
                     <button type="button" class="schedule-calendar-button" aria-label="Вибрати початкову дату" hidden>
                         <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
                     </button>
-                    <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар початкової дати" hidden>
+                    <input type="date" class="schedule-native-date" min="1900-01-01" max="9998-12-31" tabindex="-1" aria-label="Календар початкової дати" hidden>
                 </div>
             </div>
             <div class="schedule-date-field">
                 <label for="schedule-date-to">По</label>
-                <div class="profile-date-control schedule-date-control">
+                <div class="profile-date-control schedule-date-control" data-uk-calendar>
                     <input type="text" id="schedule-date-to" name="date_to" value="{{ date_to_text }}"
                            placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
                            {% if date_error and selected_period == 'custom' %}aria-invalid="true" aria-describedby="schedule-range-error"{% endif %}>
                     <button type="button" class="schedule-calendar-button" aria-label="Вибрати кінцеву дату" hidden>
                         <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
                     </button>
-                    <input type="date" class="schedule-native-date" tabindex="-1" aria-label="Календар кінцевої дати" hidden>
+                    <input type="date" class="schedule-native-date" min="1900-01-01" max="9998-12-31" tabindex="-1" aria-label="Календар кінцевої дати" hidden>
                 </div>
             </div>
             <button type="submit" class="schedule-save-button">Показати</button>
@@ -80,7 +79,7 @@
                         <div class="schedule-slots">
                             {% for slot in day.slots %}
                                 {% if slot.appointment_id %}
-                                    <a href="{% url 'appointment_detail' slot.appointment_id %}" class="schedule-slot slot-booked"
+                                    <a href="{% url 'appointment_detail' slot.appointment_id %}?next={{ request.get_full_path|urlencode }}%23schedule-slot-{{ slot.appointment_id }}" id="schedule-slot-{{ slot.appointment_id }}" class="schedule-slot slot-booked"
                                        aria-label="{{ slot.time }} — деталі прийому">{{ slot.time }}</a>
                                 {% elif slot.is_past %}
                                     <span class="schedule-slot slot-past" title="Час минув">{{ slot.time }}</span>
@@ -107,7 +106,14 @@
                 {% csrf_token %}
                 <div class="schedule-settings-field">
                     <label for="workday-date">Дата</label>
-                    <input type="date" id="workday-date" name="date" min="{{ today|date:'Y-m-d' }}" required>
+                    <div class="profile-date-control schedule-date-control" data-uk-calendar>
+                        <input type="text" id="workday-date" name="date" placeholder="ДД.ММ.РРРР"
+                               maxlength="10" inputmode="numeric" autocomplete="off" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}" required>
+                        <button type="button" class="schedule-calendar-button" aria-label="Вибрати дату робочого дня" hidden>
+                            <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                        </button>
+                        <input type="date" class="schedule-native-date" min="{{ today|date:'Y-m-d' }}" max="9998-12-31" tabindex="-1" aria-hidden="true" hidden>
+                    </div>
                 </div>
                 <div class="schedule-time-fields">
                     <div class="schedule-settings-field">
@@ -135,7 +141,14 @@
                 <input type="hidden" name="is_day_off" value="on">
                 <div class="schedule-settings-field">
                     <label for="dayoff-date">Дата</label>
-                    <input type="date" id="dayoff-date" name="date" min="{{ today|date:'Y-m-d' }}" required>
+                    <div class="profile-date-control schedule-date-control" data-uk-calendar>
+                        <input type="text" id="dayoff-date" name="date" placeholder="ДД.ММ.РРРР"
+                               maxlength="10" inputmode="numeric" autocomplete="off" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}" required>
+                        <button type="button" class="schedule-calendar-button" aria-label="Вибрати дату вихідного" hidden>
+                            <img src="{% static 'diary/images/calendar.svg' %}" width="24" height="24" alt="">
+                        </button>
+                        <input type="date" class="schedule-native-date" min="{{ today|date:'Y-m-d' }}" max="9998-12-31" tabindex="-1" aria-hidden="true" hidden>
+                    </div>
                 </div>
                 <button type="submit" class="schedule-save-button">Зберегти вихідний</button>
             </form>
@@ -160,6 +173,17 @@
             {% empty %}
                 <p>Індивідуальний розклад ще не налаштовано.</p>
             {% endfor %}
+            {% if schedules_page.has_other_pages %}
+                <nav class="records-pagination" aria-label="Сторінки індивідуального розкладу">
+                    {% if schedules_page.has_previous %}
+                        <a href="?{% if schedule_pagination_query %}{{ schedule_pagination_query }}&amp;{% endif %}schedule_page={{ schedules_page.previous_page_number }}#current-schedule-title">← Попередні</a>
+                    {% endif %}
+                    <span>Сторінка {{ schedules_page.number }} з {{ schedules_page.paginator.num_pages }}</span>
+                    {% if schedules_page.has_next %}
+                        <a href="?{% if schedule_pagination_query %}{{ schedule_pagination_query }}&amp;{% endif %}schedule_page={{ schedules_page.next_page_number }}#current-schedule-title">Наступні →</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
             <p class="schedule-default-note">Для днів без індивідуальних налаштувань діє стандартний графік — Пн–Пт, 08:00–17:00, прийоми по 30 хвилин.</p>
         </section>
     </div>
@@ -167,5 +191,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'diary/js/profile-date.js' %}"></script>
+    <script src="{% static 'diary/js/booking-calendar.js' %}"></script>
 {% endblock %}

@@ -27,7 +27,7 @@
     {% endif %}
 
     <div class="patient-record-actions">
-        <a href="{% url 'record_detail' record.id %}" class="patient-record-details">Детальніше →</a>
+        <a href="{% url 'record_detail' record.id %}?next={{ request.get_full_path|urlencode }}%23record-{{ record.id }}" class="patient-record-details">Детальніше →</a>
         {% if show_patient %}
             <a href="{% url 'patient_card' record.user_id %}" class="patient-record-details">Картка пацієнта</a>
         {% endif %}

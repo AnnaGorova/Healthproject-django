@@ -1,14 +1,16 @@
 {% extends "diary/base.html" %}
 {% load static %}
-{% block title %}{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}{% endblock %}
-{% block page_title %}{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}{% endblock %}
+{% block title %}{% if patient_view %}Мої звернення{% else %}Звернення пацієнтів{% endif %}{% endblock %}
+{% block page_title %}{% if patient_view %}Мої звернення{% else %}Звернення пацієнтів{% endif %}{% endblock %}
 {% block content %}
-<section class="doctor-question-inbox{% if patient_view %} patient-question-inbox{% endif %}" data-question-inbox {% if patient_view %}data-patient-inbox{% endif %} aria-labelledby="inbox-title">
+<section class="doctor-question-inbox{% if patient_view %} patient-question-inbox{% endif %}" data-question-inbox {% if patient_view %}data-patient-inbox aria-labelledby="inbox-title"{% else %}aria-label="Звернення пацієнтів"{% endif %}>
     <div class="doctor-inbox-heading">
+        {% if patient_view %}
         <div class="doctor-chat-heading">
-            <h2 id="inbox-title">{% if patient_view %}Мої питання{% else %}Питання від пацієнтів{% endif %}</h2>
-            {% if patient_view %}<a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове запитання</a>{% endif %}
+            <h2 id="inbox-title">Мої звернення</h2>
+            <a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове звернення</a>
         </div>
+        {% endif %}
         <form method="get" class="doctor-inbox-filters" role="search">
             <div>
                 <label for="inbox-search">Пошук</label>
@@ -18,7 +20,7 @@
             <div>
                 <label for="inbox-status">Статус</label>
                 <select id="inbox-status" name="status">
-                    <option value="">{% if patient_view %}Усі питання{% else %}Усі звернення{% endif %}</option>
+                    <option value="">Усі звернення</option>
                     {% for value, label in status_options %}
                         <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
@@ -29,7 +31,6 @@
         <p class="question-sync-status" data-inbox-sync role="status"></p>
     </div>
     <div data-inbox-results>
-        <p class="doctor-inbox-count">Звернень: {{ page_obj.paginator.count }}</p>
         <div class="doctor-inbox-list">
             {% for q in questions %}
                 <article class="doctor-inbox-card" id="question-{{ q.id }}">

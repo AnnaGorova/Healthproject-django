@@ -56,6 +56,17 @@
                 <p class="patient-card-empty">Прийомів ще немає.</p>
             {% endfor %}
         </div>
+        {% if appointments_page.has_other_pages %}
+            <nav class="records-pagination" aria-label="Сторінки прийомів пацієнта">
+                {% if appointments_page.has_previous %}
+                    <a href="?{% if appointments_pagination_query %}{{ appointments_pagination_query }}&amp;{% endif %}appointments_page={{ appointments_page.previous_page_number }}#patient-appointments-title">← Попередні</a>
+                {% endif %}
+                <span>Сторінка {{ appointments_page.number }} з {{ appointments_page.paginator.num_pages }}</span>
+                {% if appointments_page.has_next %}
+                    <a href="?{% if appointments_pagination_query %}{{ appointments_pagination_query }}&amp;{% endif %}appointments_page={{ appointments_page.next_page_number }}#patient-appointments-title">Наступні →</a>
+                {% endif %}
+            </nav>
+        {% endif %}
     </section>
 
     <section class="patient-card-panel" aria-labelledby="patient-parameters-title">
@@ -80,7 +91,7 @@
             {% endfor %}
         </div>
         <div class="patient-card-links">
-            <a href="{% url 'patient_analytics' patient.id %}" class="profile-professional-button patient-card-primary">Детальна аналітика</a>
+            <a href="{% url 'patient_analytics' patient.id %}?period=month" class="profile-professional-button patient-card-primary">Детальна аналітика</a>
         </div>
     </section>
 
@@ -99,12 +110,23 @@
                         <div><dt>SpO₂</dt><dd>{{ record.spo2|default_if_none:"—" }} %</dd></div>
                         <div><dt>Артеріальний тиск</dt><dd>{{ record.pressure_systolic|default_if_none:"—" }}/{{ record.pressure_diastolic|default_if_none:"—" }} мм рт. ст.</dd></div>
                     </dl>
-                    <a href="{% url 'record_detail' record.pk %}" class="profile-professional-button">Деталі запису</a>
+                    <a href="{% url 'record_detail' record.pk %}?next={{ request.get_full_path|urlencode }}%23patient-recent-records-title" class="profile-professional-button">Деталі запису</a>
                 </details>
             {% empty %}
                 <p class="patient-card-empty">Записів ще немає.</p>
             {% endfor %}
         </div>
+        {% if records_page.has_other_pages %}
+            <nav class="records-pagination" aria-label="Сторінки останніх записів щоденника">
+                {% if records_page.has_previous %}
+                    <a href="?{% if records_pagination_query %}{{ records_pagination_query }}&amp;{% endif %}records_page={{ records_page.previous_page_number }}#patient-recent-records-title">← Попередні</a>
+                {% endif %}
+                <span>Сторінка {{ records_page.number }} з {{ records_page.paginator.num_pages }}</span>
+                {% if records_page.has_next %}
+                    <a href="?{% if records_pagination_query %}{{ records_pagination_query }}&amp;{% endif %}records_page={{ records_page.next_page_number }}#patient-recent-records-title">Наступні →</a>
+                {% endif %}
+            </nav>
+        {% endif %}
     </section>
 </div>
 {% endblock %}

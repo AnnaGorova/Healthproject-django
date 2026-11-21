@@ -23,7 +23,7 @@
 <form method="get" class="booking-date-filter" autocomplete="off">
     <div class="booking-date-field">
         <label for="booking-start-date">Показати 7 днів від дати</label>
-        <div class="profile-date-control booking-date-control">
+        <div class="profile-date-control booking-date-control" data-uk-calendar>
             <input type="text" id="booking-start-date" name="start_date" value="{{ selected_date_text }}"
                    placeholder="ДД.ММ.РРРР" maxlength="10" inputmode="numeric" required
                    {% if date_error %}aria-invalid="true" aria-describedby="booking-date-error"{% endif %}>
@@ -131,6 +131,6 @@
 {% endblock %}
 
 {% block extra_js %}  
-<script src="{% static 'diary/js/profile-date.js' %}"></script>
+<script src="{% static 'diary/js/booking-calendar.js' %}"></script>
 <script src="{% static 'diary/js/book_appointment.js' %}"></script>
 {% endblock %}
