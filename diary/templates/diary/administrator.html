@@ -1,6 +1,6 @@
 {% extends "diary/base.html" %}
-{% block title %}Адмін-панель{% endblock %}
-{% block page_title %}Адмін-панель{% endblock %}
+{% block title %}{% if admin_home %}Головна — Smart Health Bridge{% else %}Адмін-панель{% endif %}{% endblock %}
+{% block page_title %}{% if admin_home %}Головна{% else %}Адмін-панель{% endif %}{% endblock %}
 
 {% block content %}
 <div class="admin-users-page">
@@ -25,7 +25,7 @@
             </div>
             <div class="admin-filter-actions">
                 <button type="submit" class="admin-users-primary">Пошук</button>
-                <a href="{% url 'administrator' %}" class="admin-users-reset">Скинути фільтри</a>
+                <a href="{% url 'home' %}" class="admin-users-reset">Скинути фільтри</a>
             </div>
         </form>
     </section>

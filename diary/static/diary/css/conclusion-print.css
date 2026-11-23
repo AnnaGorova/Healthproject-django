@@ -1,0 +1,226 @@
+/* Цей файл підключається лише на сторінці перегляду висновку. */
+.health-theme .conclusion-print-masthead { display: none; }
+
+.health-theme .conclusion-heading-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+}
+
+.health-theme .conclusion-print-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid #166534;
+    border-radius: 999px;
+    background: #166534;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.health-theme .conclusion-print-button[hidden] { display: none; }
+.health-theme .conclusion-print-button:hover { background: #14532d; }
+.health-theme .conclusion-print-button:focus-visible {
+    outline: 2px solid #187c70;
+    outline-offset: 3px;
+}
+
+.health-theme .conclusion-signoff {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-top: 24px;
+    color: #1b303e;
+    break-inside: avoid;
+}
+.health-theme .conclusion-signoff p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+.health-theme .conclusion-signature { white-space: nowrap; }
+.health-theme .conclusion-signature-line {
+    display: inline-block;
+    width: 160px;
+    margin-left: 8px;
+    border-bottom: 1px solid currentColor;
+}
+
+@page {
+    size: A4;
+    margin: 15mm;
+}
+
+@media print {
+    html,
+    body.health-theme {
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .health-theme .health-background,
+    .health-theme .sidebar,
+    .health-theme .top-header,
+    .health-theme .message,
+    .health-theme .main-footer,
+    .health-theme .conclusion-actions,
+    .health-theme .conclusion-print-button,
+    .health-theme .conclusion-heading-actions,
+    .health-theme .conclusion-clinic {
+        display: none !important;
+    }
+
+    .health-theme .app-container,
+    .health-theme .main-content,
+    .health-theme .content-wrapper,
+    .health-theme .conclusion-page,
+    .health-theme .conclusion-card {
+        display: block !important;
+        position: static !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .health-theme .conclusion-card,
+    .health-theme .conclusion-card * {
+        text-shadow: none !important;
+        box-shadow: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .health-theme .conclusion-card::before,
+    .health-theme .conclusion-card::after,
+    .health-theme .conclusion-heading::before,
+    .health-theme .conclusion-heading::after {
+        display: none !important;
+    }
+
+    .health-theme .conclusion-print-masthead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8mm;
+        margin-bottom: 6mm;
+        padding-bottom: 4mm;
+        border-bottom: 2px solid #176b67;
+        break-inside: avoid;
+        break-after: avoid;
+    }
+
+    .health-theme .conclusion-print-masthead > p {
+        margin: 0;
+        color: #52657c;
+        font-size: 9pt;
+        white-space: nowrap;
+    }
+
+    .health-theme .conclusion-heading {
+        position: static;
+        display: block;
+        margin: 0;
+        padding: 0 0 3mm;
+        border: 0;
+        border-radius: 0;
+        break-inside: avoid;
+        break-after: avoid;
+    }
+
+    .health-theme .conclusion-heading h2 {
+        font-size: 20pt;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+    .health-theme .conclusion-appointment {
+        padding: 2mm 0 4mm;
+        margin-bottom: 1mm;
+        border-bottom: 1px solid #dfe9e2;
+    }
+    .health-theme .conclusion-card h3 {
+        margin: 0 0 3mm;
+        color: #176b67;
+        font-size: 11pt;
+        font-weight: 700;
+    }
+    .health-theme .conclusion-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2.5mm 8mm;
+    }
+    .health-theme .conclusion-info-grid > div { break-inside: avoid; }
+    .health-theme .conclusion-info-grid dt { margin-bottom: 0.5mm; font-size: 9pt; }
+    .health-theme .conclusion-info-grid dd { font-size: 10.5pt; line-height: 1.4; }
+    .health-theme .conclusion-patient-name { font-weight: 600; }
+    .health-theme .conclusion-brand { gap: 3mm; }
+    .health-theme .conclusion-brand img { width: 12mm; height: 12mm; }
+    .health-theme .conclusion-brand-name { font-size: 12pt; font-weight: 700; }
+    .health-theme .conclusion-brand-name small { margin-top: 0; font-size: 9pt; }
+    .health-theme .conclusion-section {
+        padding: 2.5mm 0;
+        border: 0;
+    }
+    .health-theme .conclusion-section h4 {
+        margin: 0 0 1mm;
+        color: #176b67;
+        font-size: 11pt;
+        font-weight: 700;
+        line-height: 1.35;
+        break-after: avoid;
+    }
+    .health-theme .conclusion-section p {
+        margin: 0 0 2mm;
+        font-size: 10.5pt;
+        line-height: 1.4;
+        orphans: 3;
+        widows: 3;
+    }
+    .health-theme .conclusion-section p:last-child { margin-bottom: 0; }
+    .health-theme .conclusion-diagnosis {
+        margin: 2mm 0;
+        padding: 1mm 0 1mm 4mm;
+        border-left: 2px solid #176b67;
+    }
+    .health-theme .conclusion-diagnosis .conclusion-text { font-weight: 600; }
+    .health-theme .conclusion-section .conclusion-code {
+        margin-top: 1.5mm;
+        font-size: 10pt;
+    }
+    /* Зберігаємо фірмові кольори в PDF та на кольоровому принтері. */
+    .health-theme .conclusion-print-masthead,
+    .health-theme .conclusion-card h3,
+    .health-theme .conclusion-section h4,
+    .health-theme .conclusion-diagnosis {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    .health-theme .conclusion-signoff { margin-top: 5mm; gap: 3mm 8mm; }
+    .health-theme .conclusion-signoff p { font-size: 10.5pt; }
+    .health-theme .conclusion-signature-line { width: 40mm; margin-left: 2mm; }
+    .health-theme .conclusion-created {
+        margin: 3mm 0 0;
+        padding-top: 2mm;
+        font-size: 8pt;
+        border-color: #dfe9e2;
+        break-inside: avoid;
+    }
+}

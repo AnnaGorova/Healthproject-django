@@ -5,19 +5,14 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from ..models import DoctorProfile
 import re
 from .profiles import profile
 
 
-@login_required
-def administrator(request):
-    """Кастомна сторінка адміністратора"""
-    user_profile = request.user.userprofile
-    
-    if user_profile.role != 'admin':
-        raise PermissionDenied("Тільки адміністратори мають доступ")
-    
+def get_admin_users_context(request):
+    """Список користувачів і фільтри для головної адміністратора."""
     users = User.objects.select_related('userprofile').order_by('-id')
     
     # Пошук
@@ -35,11 +30,23 @@ def administrator(request):
     if role:
         users = users.filter(userprofile__role=role)
     
-    return render(request, 'diary/administrator.html', {
+    return {
         'users': users,
         'search': search,
         'role': role,
-    })
+    }
+
+
+@login_required
+def administrator(request):
+    """Зберігає стару адресу адмінпанелі після перенесення на головну."""
+    if request.user.userprofile.role != 'admin':
+        raise PermissionDenied("Тільки адміністратори мають доступ")
+    url = reverse('home')
+    query = request.GET.urlencode()
+    if query:
+        url += '?' + query
+    return redirect(url)
 
 
 @login_required
@@ -108,7 +115,7 @@ def admin_user_create(request):
                 )
             
             messages.success(request, f"✅ Користувача {username} створено, лист надіслано")
-            return redirect('administrator')
+            return redirect('home')
     
     return render(request, 'diary/admin_user_form.html', {
         'action': 'create',
@@ -177,7 +184,7 @@ def admin_user_edit(request, user_id):
                 )
             
             messages.success(request, "✅ Користувача оновлено")
-            return redirect('administrator')
+            return redirect('home')
     
     return render(request, 'diary/admin_user_form.html', {
         'action': 'edit',
@@ -197,23 +204,23 @@ def admin_user_toggle(request, user_id):
     #  ТІЛЬКИ POST!
     if request.method != 'POST':
         messages.error(request, "❌ Некоректний метод запиту")
-        return redirect('administrator')
+        return redirect('home')
     
     user = get_object_or_404(User, id=user_id)
     
     # Не можна деактивувати себе
     if user.id == request.user.id:
         messages.error(request, "❌ Не можна деактивувати себе")
-        return redirect('administrator')
+        return redirect('home')
     
     # Не можна деактивувати superuser
     if user.is_superuser:
         messages.error(request, "❌ Не можна деактивувати суперкористувача")
-        return redirect('administrator')
+        return redirect('home')
     
     user.is_active = not user.is_active
     user.save()
     
     status = "активовано" if user.is_active else "деактивовано"
     messages.success(request, f"✅ Користувача {user.username} {status}")
-    return redirect('administrator')
+    return redirect('home')

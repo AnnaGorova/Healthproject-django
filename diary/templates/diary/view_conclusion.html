@@ -4,18 +4,38 @@
 {% block title %}Висновок лікаря{% endblock %}
 {% block page_title %}Висновок лікаря{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'diary/css/conclusion-print.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="conclusion-page">
     <article class="conclusion-card" aria-labelledby="conclusion-title">
+    <div class="conclusion-print-masthead">
+        <div class="conclusion-brand">
+            <img src="{% static 'diary/images/logo.svg' %}" width="48" height="48" alt="">
+            <span class="conclusion-brand-name">SMART HEALTH<small>BRIDGE</small></span>
+        </div>
+        <p>Форма № 028/о</p>
+    </div>
     <header class="conclusion-heading">
         <h2 id="conclusion-title">Висновок лікаря</h2>
-        <p>Форма № 028/о</p>
+        <div class="conclusion-heading-actions">
+            <p>Форма № 028/о</p>
+            <button type="button" class="conclusion-print-button" data-print-conclusion hidden>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <path d="M6 14h12v7H6zM18 12h.01"/>
+                </svg>
+                Друкувати
+            </button>
+        </div>
     </header>
 
     <section class="conclusion-appointment" aria-labelledby="conclusion-appointment-title">
         <h3 id="conclusion-appointment-title">Інформація про прийом</h3>
         <dl class="conclusion-info-grid">
-            <div class="conclusion-info-wide">
+            <div class="conclusion-info-wide conclusion-clinic">
                 <dt>Заклад охорони здоров’я</dt>
                 <dd class="conclusion-brand">
                     <img src="{% static 'diary/images/logo.svg' %}" width="40" height="40" alt="">
@@ -24,7 +44,7 @@
             </div>
             <div><dt>Лікар</dt><dd>{{ appointment.doctor.username }}</dd></div>
             <div><dt>Спеціалізація</dt><dd>{{ appointment.doctor.doctor_profile.specialty|default:"—" }}</dd></div>
-            <div><dt>Пацієнт</dt><dd>{{ appointment.patient.username }}</dd></div>
+            <div><dt>Пацієнт</dt><dd class="conclusion-patient-name">{{ appointment.patient.username }}</dd></div>
             <div>
                 <dt>Дата народження</dt>
                 <dd>
@@ -55,7 +75,7 @@
             <h4 id="conclusion-instrumental-title">Результати функціональних, рентгенологічних та інших досліджень</h4>
             <div class="conclusion-text">{{ conclusion.instrumental_results|default:"Не вказано"|linebreaks }}</div>
         </section>
-        <section class="conclusion-section" aria-labelledby="conclusion-diagnosis-title">
+        <section class="conclusion-section conclusion-diagnosis" aria-labelledby="conclusion-diagnosis-title">
             <h4 id="conclusion-diagnosis-title">Діагноз</h4>
             <div class="conclusion-text">{{ conclusion.diagnosis|default:"Не вказано"|linebreaks }}</div>
             {% if conclusion.icd10 %}
@@ -70,6 +90,10 @@
             <h4 id="conclusion-recommendations-title">Рекомендації</h4>
             <div class="conclusion-text">{{ conclusion.recommendations|default:"Не вказано"|linebreaks }}</div>
         </section>
+        <div class="conclusion-signoff">
+            <p>Лікар: <strong>{{ appointment.doctor.username }}</strong></p>
+            <p class="conclusion-signature">Підпис: <span class="conclusion-signature-line" aria-label="Місце для підпису"></span></p>
+        </div>
         <p class="conclusion-created">Висновок створено: {{ conclusion.created_at|date:"d.m.Y H:i" }}</p>
     </div>
     </article>
@@ -81,4 +105,8 @@
         {% endif %}
     </nav>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'diary/js/conclusion-print.js' %}"></script>
 {% endblock %}

@@ -26,6 +26,9 @@ class HomeView(TemplateView):
 
     def get_template_names(self):
         if self.request.user.is_authenticated:
+            profile = getattr(self.request.user, 'userprofile', None)
+            if profile and profile.role == 'admin':
+                return ['diary/administrator.html']
             return ['diary/home.html']
         return ['diary/landing.html']
 
@@ -37,6 +40,12 @@ class HomeView(TemplateView):
             getattr(user, 'userprofile', None)
             if user.is_authenticated else None
         )
+        if profile and profile.role == 'admin':
+            from .administration import get_admin_users_context
+
+            context.update(get_admin_users_context(self.request))
+            context['admin_home'] = True
+            return context
         if profile and profile.role == 'doctor' and not user.is_superuser:
             from .doctors import get_doctor_home_context
 
