@@ -6,14 +6,26 @@
 {% block content %}
 <div class="analytics-page">
 <h1 class="visually-hidden">{% if is_doctor_view %}Аналітика пацієнта{% else %}Моя аналітика{% endif %}</h1>
-<section class="health-parameters" aria-labelledby="parameters-title">
 {% if is_doctor_view %}
 <div class="analytics-patient-heading">
     <p class="analytics-patient-name"><span>Пацієнт</span><strong>{{ patient.username }}</strong></p>
     <a href="{% url 'patient_card' patient.id %}" class="profile-professional-button">Картка пацієнта</a>
 </div>
 {% endif %}
-<div class="parameters-heading"><h2 id="parameters-title">{% if is_doctor_view %}Параметри пацієнта{% else %}Мої параметри{% endif %}</h2><nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav></div>
+<section class="analytics-statistics" aria-labelledby="statistics-title">
+    <div class="parameters-heading">
+        <h2 id="statistics-title">Статистика за період</h2>
+        <nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+    </div>
+    <p id="analytics-period-status" class="analytics-period-status" role="status"></p>
+    <div class="analytics-table-scroll"><table><thead><tr><th scope="col">Показник</th><th scope="col">Середнє</th><th scope="col">Мінімум</th><th scope="col">Максимум</th></tr></thead><tbody>
+{% for row in stat_rows %}<tr><th scope="row">{{ row.label }}, {{ row.unit }}</th><td>{{ row.average|floatformat:1|default:"—" }}</td><td>{{ row.minimum|floatformat:1|default:"—" }}</td><td>{{ row.maximum|floatformat:1|default:"—" }}</td></tr>{% endfor %}
+</tbody></table></div>
+</section>
+<p class="analytics-empty" id="analytics-empty" {% if records %}hidden{% endif %}>За вибраний період записів немає.{% if not is_doctor_view %} <a href="{% url 'create_record' %}">Додати показники →</a>{% endif %}</p>
+<section class="health-parameters" aria-labelledby="parameters-title">
+
+<div class="parameters-heading"><h2 id="parameters-title">{% if is_doctor_view %}Параметри пацієнта{% else %}Мої параметри{% endif %}</h2></div>
 <div class="parameters-grid">
 {% for parameter in analytics_parameters %}
 <article class="parameter-card parameter-{{ parameter.theme }}" data-parameter="{{ parameter.key }}">
@@ -24,61 +36,33 @@
 {% endfor %}
 </div>
 </section>
-        <section class="health-dynamics" aria-labelledby="dynamics-title">
-            <div class="dynamics-heading">
-                <div>
-                    <h2 id="dynamics-title">Динаміка показників</h2>
-                    <p>Ваші вимірювання за вибраний період</p>
-                </div>
-<nav class="dynamics-periods" aria-label="Період аналітики">{% for key, label in period_options %}<a href="?period={{ key }}" {% if selected_period == key %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+<section class="analytics-charts" aria-labelledby="dynamics-title">
+    <h2 id="dynamics-title">Динаміка показників</h2>
+    <div class="analytics-chart-grid">
+        {% for metric in analytics_metrics %}
+        <article class="analytics-chart-card" data-overview-metric="{{ metric.key }}" aria-labelledby="analytics-chart-{{ metric.key }}">
+            <h3 id="analytics-chart-{{ metric.key }}">{{ metric.label }}</h3>
+            <p class="chart-summary-caption">Середнє за період</p>
+            <p class="chart-summary-value"><strong data-average>—</strong><span>{{ metric.unit }}</span></p>
+            <div class="chart-assessment" data-assessment hidden>
+                <span class="chart-risk-badge" data-risk></span>
+                <p>Оцінка останнього вимірювання.</p>
             </div>
-            <div class="chart-status-slot">
-                <p id="chart-period-status" role="status"></p>
+            {% if metric.key == 'pressure' %}
+            <div class="chart-pressure-details">
+                <div><span class="chart-dot chart-dot-systolic"></span><span>Систолічний</span><strong data-systolic>—</strong></div>
+                <div><span class="chart-dot chart-dot-diastolic"></span><span>Діастолічний</span><strong data-diastolic>—</strong></div>
             </div>
-            <div class="dynamics-layout">
-                <div class="dynamics-main">
-                    <div class="chart-summary">
-                        <div class="chart-summary-main">
-                            <img src="{% static 'diary/images/pressure-chart-icon.svg' %}"
-                                 id="pressure-chart-icon" class="chart-summary-icon"
-                                 width="56" height="56" alt="Артеріальний тиск" hidden>
-                            <div>
-                                <h3 id="chart-title">Температура</h3>
-                                <p class="chart-summary-caption">Середнє за період</p>
-                                <p class="chart-summary-value">
-                                    <strong id="chart-average" aria-live="polite">—</strong>
-                                    <span id="chart-unit">°C</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="chart-assessment" id="chart-assessment" hidden>
-                            <span class="chart-risk-badge" id="chart-risk-badge"></span>
-                            <p>Оцінка останнього вимірювання.</p>
-                        </div>
-                        <div class="chart-pressure-details" id="chart-pressure-details" hidden>
-                            <div><span class="chart-dot chart-dot-systolic"></span><span>Систолічний</span><strong id="chart-systolic">—</strong><small>мм рт. ст.</small></div>
-                            <div><span class="chart-dot chart-dot-diastolic"></span><span>Діастолічний</span><strong id="chart-diastolic">—</strong><small>мм рт. ст.</small></div>
-                        </div>
-                    </div>
-                    <p id="chart-empty" hidden>Немає вимірювань цього показника за вибраний період.</p>
-                    <div class="dynamics-chart" id="chart-container">
-                        <canvas id="home-health-chart" role="img" aria-label="Динаміка температури">Графік показників здоров’я.</canvas>
-                    </div>
-                    <noscript>Для відображення графіка увімкніть JavaScript. Дані доступні також у розділі «Мої записи».</noscript>
-                </div>
-<div class="dynamics-selector" role="group" aria-label="Вибір показника">
-{% for parameter in analytics_parameters %}<button type="button" data-metric="{{ parameter.key }}" aria-pressed="{% if parameter.key == 'temperature' %}true{% else %}false{% endif %}"><img src="{% static parameter.icon %}" class="chart-selector-icon" width="24" height="24" alt=""><span>{{ parameter.label }}</span></button>{% endfor %}
-<button type="button" data-metric="other" aria-expanded="false">＋ Інші</button>
-<div class="analytics-other" hidden><button type="button" data-metric="weight" aria-pressed="false">Вага</button><button type="button" data-metric="sleep_hours" aria-pressed="false">Сон</button><button type="button" data-metric="steps" aria-pressed="false">Кроки</button><button type="button" data-metric="water_intake" aria-pressed="false">Вода</button><button type="button" data-metric="calories" aria-pressed="false">Калорії</button></div>
-</div>
+            {% endif %}
+            <p class="analytics-chart-empty" hidden></p>
+            <div class="analytics-chart-canvas" hidden>
+                <canvas role="img" aria-label="Динаміка показника «{{ metric.label }}»"></canvas>
             </div>
-            {{ chart_data|json_script:"chart-data" }}
-        </section>
-<details class="analytics-statistics"><summary>Статистика за період</summary>
-<div class="analytics-table-scroll"><table><thead><tr><th scope="col">Показник</th><th scope="col">Середнє</th><th scope="col">Мінімум</th><th scope="col">Максимум</th></tr></thead><tbody>
-{% for row in stat_rows %}<tr><th scope="row">{{ row.label }}, {{ row.unit }}</th><td>{{ row.average|floatformat:1|default:"—" }}</td><td>{{ row.minimum|floatformat:1|default:"—" }}</td><td>{{ row.maximum|floatformat:1|default:"—" }}</td></tr>{% endfor %}
-</tbody></table></div></details>
-<p class="analytics-empty" id="analytics-empty" {% if records %}hidden{% endif %}>За вибраний період записів немає.{% if not is_doctor_view %} <a href="{% url 'create_record' %}">Додати показники →</a>{% endif %}</p>
+        </article>
+        {% endfor %}
+    </div>
+    {{ chart_data|json_script:"chart-data" }}
+</section>
 <noscript>Для перегляду графіків і карток увімкніть JavaScript.</noscript>
 </div>
 {% endblock %}

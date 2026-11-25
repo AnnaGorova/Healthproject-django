@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід — Smart Health Bridge</title>
     <link rel="stylesheet" href="{% static 'diary/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'diary/css/mobile-navigation.css' %}">
 </head>
 <body class="login-body">
+    <header class="login-mobile-brand">
+        {% include "diary/includes/mobile_brand.html" %}
+    </header>
     <main class="login-layout" aria-labelledby="login-title">
         <div class="login-illustration">
             <img src="{% static 'diary/images/login-illustration-unbranded.png' %}"
@@ -60,5 +64,7 @@
         <span class="login-spinner" aria-hidden="true"></span>
     </dialog>
     <script src="{% static 'diary/js/login.js' %}"></script>
+    {% include "diary/includes/mobile_navigation.html" %}
+    <script src="{% static 'diary/js/mobile-navigation.js' %}" defer></script>
 </body>
 </html>

@@ -94,39 +94,8 @@
             }).join('/') + ` ${metrics[key].unit}`;
         });
     }
-    let chart;
-    let currentMetric = 'temperature';
-    function showMetric(key) {
-        const metric = metrics[key];
-        if (!metric) return;
-        currentMetric = key;
-        if (chart) chart.destroy();
-        document.getElementById('chart-title').textContent = metric.title;
-        const averages = metric.fields.map(([field]) => {
-            const value = average(data[field]);
-            return (key === 'pressure' || key === 'heart_rate') && value !== null ? Math.round(value) : value;
-        });
-        document.getElementById('chart-average').textContent = valuesText(averages);
-        document.getElementById('chart-unit').textContent = metric.unit;
-        document.getElementById('pressure-chart-icon').hidden = key !== 'pressure';
-        document.getElementById('chart-pressure-details').hidden = key !== 'pressure';
-        document.getElementById('chart-systolic').textContent = valuesText([averages[0]]);
-        document.getElementById('chart-diastolic').textContent = key === 'pressure' ? valuesText([averages[1]]) : '—';
-        assessment(document.getElementById('chart-assessment'), document.getElementById('chart-risk-badge'), key);
-        document.querySelectorAll('[data-metric][aria-pressed]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.metric === key)));
-        const canvas = document.getElementById('home-health-chart');
-        canvas.setAttribute('aria-label', `Динаміка: ${metric.title}`);
-        chart = draw(canvas, document.getElementById('chart-empty'), key);
-    }
-    document.querySelectorAll('[data-metric]').forEach(button => button.addEventListener('click', () => {
-        if (button.dataset.metric === 'other') {
-            const other = document.querySelector('.analytics-other');
-            other.hidden = !other.hidden;
-            button.setAttribute('aria-expanded', String(!other.hidden));
-        } else showMetric(button.dataset.metric);
-    }));
     const periodLinks = document.querySelectorAll('.analytics-page .dynamics-periods a');
-    const periodStatus = document.getElementById('chart-period-status');
+    const periodStatus = document.getElementById('analytics-period-status');
     const page = document.querySelector('.analytics-page');
     let periodController;
     let periodRequestId = 0;
@@ -173,7 +142,6 @@
             updateParameters();
             updateStatistics(result.stat_rows);
             document.getElementById('analytics-empty').hidden = result.has_records;
-            showMetric(currentMetric);
             periodLinks.forEach(periodLink => {
                 const active = new URL(periodLink.href).searchParams.get('period') === result.period;
                 if (active) periodLink.setAttribute('aria-current', 'true');
@@ -194,5 +162,4 @@
     }));
     updateOverview();
     updateParameters();
-    showMetric(currentMetric);
 })();

@@ -137,6 +137,16 @@ def health_analytics(request, patient_id=None):
             for key, label, unit, theme, icon in parameters
         ],
         'selected_period': period,
+        'analytics_metrics': [
+            {'key': key, 'label': label, 'unit': unit}
+            for key, label, unit in [item[:3] for item in parameters] + [
+                ('weight', 'Вага', 'кг'),
+                ('sleep_hours', 'Сон', 'год'),
+                ('steps', 'Кроки', 'кроків'),
+                ('water_intake', 'Вода', 'мл'),
+                ('calories', 'Калорії', 'ккал'),
+            ]
+        ],
         'period_options': [('week', '7 днів'), ('month', '30 днів'), ('quarter', '3 місяці'), ('year', '1 рік')],
         'patient': patient,
         'period': period,

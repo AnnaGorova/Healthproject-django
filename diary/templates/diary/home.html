@@ -2,6 +2,16 @@
 {% load static %}
 {% block title %}Головна — Smart Health Bridge{% endblock %}
 {% block content %}
+    {% if user.userprofile.role == 'patient' %}
+        <section class="mobile-home-welcome" aria-labelledby="mobile-home-title">
+            <h1 id="mobile-home-title">Доброго дня!</h1>
+            <p>Огляд основних показників здоров’я</p>
+            <div class="mobile-home-actions">
+                <a href="{% url 'create_record' %}">+ Створити запис</a>
+                <a href="{% url 'doctors_list' %}">До лікаря</a>
+            </div>
+        </section>
+    {% endif %}
     {% if health_parameters %}
         <section class="health-parameters" aria-labelledby="parameters-title">
             <div class="parameters-heading">

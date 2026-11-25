@@ -14,6 +14,7 @@
     
     {% block extra_css %}
     {% endblock %}
+    <link rel="stylesheet" href="{% static 'diary/css/mobile-navigation.css' %}">
 
 </head>
 <body class="health-theme">
@@ -24,6 +25,10 @@
     </div>
 
     <div class="app-container">
+        <header class="mobile-site-header">
+            {% include "diary/includes/mobile_brand.html" %}
+            <button type="button" class="mobile-menu-toggle" aria-controls="site-sidebar" aria-expanded="false" hidden>Меню</button>
+        </header>
         {% include "diary/includes/navbar.html" %}
 
          <main class="main-content">
@@ -93,15 +98,14 @@
             </div>
         
 
-            {% if request.resolver_match.url_name != 'home' %}
-                {% include "diary/includes/footer.html" %}
-            {% endif %}
         </main>
 
     </div>
        
       
 
+    {% include "diary/includes/mobile_navigation.html" %}
+    <script src="{% static 'diary/js/mobile-navigation.js' %}" defer></script>
     <script src="{% static 'diary/js/main.js' %}"></script>
 
 

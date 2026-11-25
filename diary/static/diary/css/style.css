@@ -349,16 +349,6 @@ nav {
     margin-bottom: 20px;
 }
 
-/* 4. Футер - притиснутий до низу */
-.main-footer {
-    margin-top: auto;
-    text-align: center;
-    padding: 16px 0;
-    color: rgba(255, 255, 255, 0.2);
-    font-size: 13px;
-    border-top: 1px solid rgba(255,255,255,0.04);
-}
-
 /* ============================================
    ЛІВИЙ НАВБАР
    ============================================ */

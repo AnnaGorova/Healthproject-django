@@ -5,23 +5,23 @@
 {% block page_title %}Запис до лікаря{% endblock %}
 
 {% block content %}
-<section class="doctors-page" aria-label="Оберіть лікаря">
+<section class="doctors-page" aria-labelledby="doctors-title">
+    <h1 id="doctors-title">Запис до лікаря</h1>
     <div class="doctors-list">
         {% for doctor in doctors %}
             <article class="doctor-item">
                 <img src="{% static 'diary/images/doctor-avatar.svg' %}"
-                     class="doctor-item-avatar" width="169" height="168"
-                     alt="Аватар лікаря {{ doctor.username }}">
+                     class="doctor-item-avatar" width="90" height="90" alt="">
                 <h2 class="doctor-item-name">{{ doctor.username }}</h2>
+                <p class="doctor-item-specialty">
+                    {{ doctor.doctor_profile.specialty|default:"Спеціальність не вказана" }}
+                </p>
                 <p class="doctor-item-experience">
                     {% if doctor.doctor_profile %}
-                        Стаж: {{ doctor.doctor_profile.year_of_experience }} років
+                        Стаж: {{ doctor.doctor_profile.year_of_experience }} р.
                     {% else %}
                         Стаж не вказано
                     {% endif %}
-                </p>
-                <p class="doctor-item-specialty">
-                    {{ doctor.doctor_profile.specialty|default:"Спеціальність не вказана" }}
                 </p>
                 <a href="{% url 'book_appointment' doctor.id %}"
                    class="doctor-book-link"

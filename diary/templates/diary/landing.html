@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Health Bridge — турбота про здоров’я</title>
     <link rel="stylesheet" href="{% static 'diary/css/landing.css' %}">
+    <link rel="stylesheet" href="{% static 'diary/css/mobile-navigation.css' %}">
 </head>
 <body>
     <div class="landing-page">
@@ -75,5 +76,7 @@
             </section>
         </main>
     </div>
+    {% include "diary/includes/mobile_navigation.html" %}
+    <script src="{% static 'diary/js/mobile-navigation.js' %}" defer></script>
 </body>
 </html>

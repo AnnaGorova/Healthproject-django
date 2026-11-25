@@ -1,0 +1,24 @@
+{% with current_page=request.resolver_match.url_name role=user.userprofile.role %}
+<nav class="mobile-navigation" aria-label="Мобільна навігація">
+    {% include "diary/includes/mobile_nav_link.html" with route="home" icon="diary/images/solid_home.svg" label="Головна" %}
+    {% if role == 'patient' %}
+        {% include "diary/includes/mobile_nav_link.html" with route="doctors_list" icon="diary/images/akar-icons_calendar.svg" label="До лікаря" %}
+        {% include "diary/includes/mobile_nav_link.html" with route="my_records" icon="diary/images/my-records.svg" label="Записи" %}
+        {% include "diary/includes/mobile_nav_link.html" with route="health_analytics" icon="diary/images/analytics-nav.svg" label="Аналітика" %}
+    {% elif role == 'doctor' %}
+        {% include "diary/includes/mobile_nav_link.html" with route="doctor_dashboard" icon="diary/images/analytics-nav.svg" label="Дашборд" %}
+        {% include "diary/includes/mobile_nav_link.html" with route="doctor_patients" icon="diary/images/create-record.svg" label="Пацієнти" %}
+        {% include "diary/includes/mobile_nav_link.html" with route="manage_schedule" icon="diary/images/akar-icons_calendar.svg" label="Розклад" %}
+    {% else %}
+        {% include "diary/includes/mobile_nav_link.html" with route="about" icon="diary/images/akar-icons_info.svg" label="Про нас" %}
+        {% if role == 'admin' %}
+            {% include "diary/includes/mobile_nav_link.html" with route="administrator" icon="diary/images/create-record.svg" label="Користувачі" %}
+        {% endif %}
+    {% endif %}
+    {% if user.is_authenticated %}
+        {% include "diary/includes/mobile_nav_link.html" with route="profile" icon="diary/images/doctor-avatar.svg" label="Профіль" %}
+    {% else %}
+        {% include "diary/includes/mobile_nav_link.html" with route="login" icon="diary/images/akar-icons_mobile-device.svg" label="Увійти" %}
+    {% endif %}
+</nav>
+{% endwith %}
