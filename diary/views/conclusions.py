@@ -105,6 +105,10 @@ def view_conclusion(request, appointment_id):
         'appointment': appointment,
         'conclusion': appointment.conclusion,
         'back_url': back_url,
+        'back_to_conclusions': (
+            user_profile.role == 'patient'
+            and urlsplit(back_url).path == reverse('my_conclusions')
+        ),
     })
 
 

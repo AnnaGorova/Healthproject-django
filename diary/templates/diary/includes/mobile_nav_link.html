@@ -1,5 +1,5 @@
 {% load static %}
 <a href="{% url route %}" {% if current_page == route %}aria-current="page"{% endif %}>
-    <img src="{% static icon %}" width="22" height="22" alt="">
+    <img src="{% static icon %}" width="22" height="22" alt=""{% if route == 'profile' %} class="mobile-navigation-avatar"{% endif %}>
     <span>{{ label }}</span>
 </a>

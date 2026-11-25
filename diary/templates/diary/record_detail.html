@@ -6,14 +6,18 @@
 
 {% block content %}
 <div class="record-create">
-    <h2 class="record-create-title">Запис №{{ record.id }}</h2>
-    <div class="record-edit-meta">
+    <div class="record-detail-heading">
+        <h2>Запис №{{ record.id }}</h2>
+        {% with created=record.date|date:"d.m.Y H:i" updated=record.updated_at|date:"d.m.Y H:i" %}
+            <div class="record-detail-dates">
+                <time datetime="{{ record.date|date:'c' }}">{{ created }}</time>
+                {% if updated and updated != created %}
+                    <span>Оновлено <time datetime="{{ record.updated_at|date:'c' }}">{{ updated }}</time></span>
+                {% endif %}
+            </div>
+        {% endwith %}
         {% if request.user.userprofile.role == 'doctor' %}
             <p class="record-detail-patient">Пацієнт: <strong>{{ record.user.username }}</strong></p>
-        {% endif %}
-        <p>{{ record.date|date:"d.m.Y H:i" }}</p>
-        {% if record.updated_at %}
-            <p>Оновлено: {{ record.updated_at|date:"d.m.Y H:i" }}</p>
         {% endif %}
     </div>
     <div class="record-create-form record-detail-panel">
@@ -34,7 +38,7 @@
             </h3>
             <div class="record-fields-grid">
                 <div class="record-detail-pressure">
-                    <h4>Артеріальний тиск, мм рт. ст.</h4>
+                    <h4>Артеріальний тиск</h4>
                     <dl class="record-pressure-grid record-detail-grid">
                         {% include "diary/includes/record_detail_item.html" with label="Систолічний" value=record.pressure_systolic unit="мм рт. ст." only %}
                         {% include "diary/includes/record_detail_item.html" with label="Діастолічний" value=record.pressure_diastolic unit="мм рт. ст." only %}

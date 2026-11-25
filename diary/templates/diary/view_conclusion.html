@@ -99,8 +99,8 @@
     </article>
 
     <nav class="conclusion-actions" aria-label="Повернення з висновку">
-        <a href="{{ back_url }}">← Назад</a>
-        {% if request.user.userprofile.role == 'patient' %}
+        <a href="{{ back_url }}">{% if back_to_conclusions %}← Усі висновки{% else %}← Назад{% endif %}</a>
+        {% if request.user.userprofile.role == 'patient' and not back_to_conclusions %}
             <a href="{% url 'my_conclusions' %}">Усі висновки</a>
         {% endif %}
     </nav>

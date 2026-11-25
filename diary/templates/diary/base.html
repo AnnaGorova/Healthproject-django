@@ -27,7 +27,9 @@
     <div class="app-container">
         <header class="mobile-site-header">
             {% include "diary/includes/mobile_brand.html" %}
-            <button type="button" class="mobile-menu-toggle" aria-controls="site-sidebar" aria-expanded="false" hidden>Меню</button>
+            <button type="button" class="mobile-menu-toggle" aria-label="Меню" aria-controls="site-sidebar" aria-expanded="false" hidden>
+                <span aria-hidden="true"></span>
+            </button>
         </header>
         {% include "diary/includes/navbar.html" %}
 
@@ -43,7 +45,7 @@
                                  width="24" height="24" alt="Пошук">
                             <input type="search" id="patient-search-input"
                                    data-url="{% url 'patient_search' %}"
-                                   placeholder="Пошук лікарів, записів, показників…"
+                                   placeholder="Пошук у кабінеті"
                                    autocomplete="off" aria-controls="patient-search-results">
                         </div>
                         <div id="patient-search-results" class="patient-search-results" hidden></div>

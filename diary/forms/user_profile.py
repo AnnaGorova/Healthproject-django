@@ -5,6 +5,8 @@ import re
 class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        gender = self.fields['gender']
+        gender.choices = [('', 'Не вказано'), *[(value, label) for value, label in gender.choices if value]]
         if self.instance.role in ('patient', 'admin', 'doctor'):
             self.fields['date_of_birth'].widget = forms.DateInput(
                 format='%d.%m.%Y',
@@ -57,7 +59,7 @@ class UserProfileForm(forms.ModelForm):
                 'maxlength': '13',
                 'title': 'Введіть +380 та 9 цифр, без пробілів'
             }),
-            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-control profile-gender-select'}),
             'date_of_birth': forms.DateInput(format='%Y-%m-%d', attrs={
                 'class': 'form-control', 
                 'type': 'date'

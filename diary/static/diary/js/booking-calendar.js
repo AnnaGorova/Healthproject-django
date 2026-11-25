@@ -28,9 +28,10 @@
         const native = control.querySelector('input[type="date"]');
         const trigger = control.querySelector('button');
         if (!text || !native || !trigger) return;
-        const minimum = parseDate(native.min, true) || makeDate(1900, 0, 1);
-        const maximum = parseDate(native.max, true) || makeDate(9998, 11, 31);
+        const canChooseYear = control.hasAttribute('data-calendar-year');
         const today = makeDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        const minimum = parseDate(native.min, true) || makeDate(1900, 0, 1);
+        const maximum = parseDate(native.max, true) || (canChooseYear ? today : makeDate(9998, 11, 31));
         const clamp = value => value < minimum ? minimum : value > maximum ? maximum : value;
         let focusedDate = clamp(today);
         let month = makeDate(focusedDate.getFullYear(), focusedDate.getMonth(), 1);
@@ -46,6 +47,7 @@
             <div class="booking-calendar-heading">
                 <button type="button" data-month="-1" aria-label="Попередній місяць">‹</button>
                 <span class="booking-calendar-month" aria-live="polite"></span>
+                ${canChooseYear ? '<input type="number" class="booking-calendar-year" aria-label="Рік" inputmode="numeric" step="1">' : ''}
                 <button type="button" data-month="1" aria-label="Наступний місяць">›</button>
             </div>
             <div class="booking-calendar-weekdays" aria-hidden="true">
@@ -60,6 +62,7 @@
         const days = popup.querySelector('.booking-calendar-days');
         const previous = popup.querySelector('[data-month="-1"]');
         const next = popup.querySelector('[data-month="1"]');
+        const yearInput = popup.querySelector('.booking-calendar-year');
         trigger.hidden = false;
         trigger.setAttribute('aria-haspopup', 'dialog');
         trigger.setAttribute('aria-controls', popup.id);
@@ -74,7 +77,11 @@
             days.querySelector(`[data-date="${isoDate(focusedDate)}"]`)?.focus();
         }
         function render() {
-            popup.querySelector('.booking-calendar-month').textContent = `${months[month.getMonth()]} ${month.getFullYear()} р.`;
+            const year = month.getFullYear();
+            popup.querySelector('.booking-calendar-month').textContent = canChooseYear
+                ? months[month.getMonth()]
+                : `${months[month.getMonth()]} ${year} р.`;
+            if (yearInput) yearInput.value = year;
             previous.disabled = makeDate(month.getFullYear(), month.getMonth(), 0) < minimum;
             next.disabled = makeDate(month.getFullYear(), month.getMonth() + 1, 1) > maximum;
             const selected = parseDate(text.value);
@@ -120,6 +127,25 @@
         });
         previous.addEventListener('click', () => moveMonth(-1));
         next.addEventListener('click', () => moveMonth(1));
+        if (yearInput) {
+            yearInput.min = minimum.getFullYear();
+            yearInput.max = maximum.getFullYear();
+            yearInput.addEventListener('change', () => {
+                const year = yearInput.valueAsNumber;
+                if (Number.isInteger(year) && yearInput.validity.valid) {
+                    moveMonth((year - month.getFullYear()) * 12);
+                } else {
+                    yearInput.value = month.getFullYear();
+                }
+            });
+            yearInput.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    yearInput.blur();
+                    focusDay();
+                }
+            });
+        }
         days.addEventListener('click', event => {
             const button = event.target.closest('[data-date]');
             if (button && !button.disabled) choose(parseDate(button.dataset.date, true));

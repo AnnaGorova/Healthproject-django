@@ -32,6 +32,12 @@
     outline-offset: 3px;
 }
 
+@media screen and (max-width: 600px) {
+    .health-theme .conclusion-heading-actions { justify-content: space-between; gap: 4px 8px; }
+    .health-theme .conclusion-print-button { gap: 5px; min-height: 36px; padding: 4px 10px; font-size: 12px; }
+    .health-theme .conclusion-print-button svg { width: 16px; height: 16px; }
+}
+
 .health-theme .conclusion-signoff {
     display: flex;
     align-items: baseline;

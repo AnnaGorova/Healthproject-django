@@ -20,14 +20,13 @@
                     {% if field.name == 'phone' %}Особистий телефон{% else %}{{ field.label }}{% endif %}
                 </label>
                 {% if field.name == 'date_of_birth' %}
-                    <div class="profile-date-control">
+                    <div class="profile-date-control profile-birth-date" data-uk-calendar data-calendar-year>
                         {{ field }}
                         <button type="button" class="profile-calendar-button"
                                 aria-label="Вибрати дату народження" hidden>
                             <img src="{% static 'diary/images/calendar.svg' %}" width="40" height="40" alt="">
                         </button>
-                        <input type="date" class="profile-native-date" tabindex="-1"
-                               aria-label="Календар дати народження" hidden>
+                        <input type="date" tabindex="-1" aria-hidden="true" hidden>
                     </div>
                 {% else %}
                     {{ field }}
@@ -122,6 +121,6 @@
 
 {% block extra_js %}
 {% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
-<script src="{% static 'diary/js/profile-date.js' %}"></script>
+<script src="{% static 'diary/js/booking-calendar.js' %}"></script>
 {% endif %}
 {% endblock %}

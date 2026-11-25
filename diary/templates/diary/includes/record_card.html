@@ -7,7 +7,7 @@
             {% endif %}
             <time datetime="{{ record.date|date:'c' }}">{{ record.date|date:"d.m.Y H:i" }}</time>
         </div>
-        {% if record.mood %}<span class="patient-record-mood">{{ record.get_mood_display }}</span>{% endif %}
+        {% if record.mood %}<span class="patient-record-mood">Настрій: {{ record.get_mood_display }}</span>{% endif %}
     </header>
 
     <p class="patient-record-wellbeing"><strong>Самопочуття:</strong> {{ record.well_being|default:"Не вказано" }}</p>

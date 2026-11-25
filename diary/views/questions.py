@@ -1,3 +1,5 @@
+import re
+
 from django.shortcuts import render, redirect
 from ..models import Question
 from django.shortcuts import get_object_or_404
@@ -141,23 +143,32 @@ def _question_list_context(request, questions, counterpart):
         ),
     )
     if search:
-        questions = questions.filter(
+        matching_message = latest_message.filter(text__icontains=search)
+        questions = questions.annotate(
+            matching_text=Subquery(matching_message.values('text')[:1]),
+        )
+        matches = (
             Q(**{f'{counterpart}__username__icontains': search})
-            | Q(**{f'{counterpart}__user__email__icontains': search})
-            | Q(phone__icontains=search)
             | Q(question__icontains=search)
             | Q(answer__icontains=search)
-            | Q(messages__text__icontains=search)
-        ).distinct()
+            | Q(matching_text__isnull=False)
+        )
+        if counterpart == 'patient':
+            matches |= Q(patient__user__email__icontains=search) | Q(phone__icontains=search)
+        questions = questions.filter(matches)
     if status:
         questions = questions.filter(status=status)
     page = Paginator(questions.order_by('-last_activity', '-pk'), 10).get_page(request.GET.get('page'))
+    search_pattern = re.compile(re.escape(search), re.IGNORECASE) if search else None
     for question in page:
-        question.preview = question.question
-        if question.answer:
-            question.preview = question.answer
-        if question.latest_date:
-            question.preview = question.latest_text
+        question.preview = question.latest_text or question.answer or question.question
+        if search_pattern:
+            for text in (question.matching_text, question.answer, question.question):
+                match = search_pattern.search(text or '')
+                if match:
+                    start = max(0, match.start() - 40)
+                    question.preview = ('…' if start else '') + text[start:]
+                    break
     query = request.GET.copy()
     query.pop('page', None)
     return {

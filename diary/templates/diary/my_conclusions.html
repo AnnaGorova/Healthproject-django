@@ -41,6 +41,21 @@
                     </tbody>
                 </table>
             </div>
+            <ul class="patient-conclusions-list">
+                {% for c in conclusions %}
+                    <li class="patient-conclusions-list-item">
+                        <div class="patient-conclusions-list-doctor">
+                            <h3>{{ c.doctor.username }}</h3>
+                            <span>{{ c.doctor.doctor_profile.specialty|default:"—" }}</span>
+                        </div>
+                        <time datetime="{{ c.appointment.date|date:'c' }}">{{ c.appointment.date|date:"d.m.Y H:i" }}</time>
+                        <p>{% if c.icd10 %}<strong>МКХ-10: {{ c.icd10.code }}</strong> · {% endif %}{{ c.diagnosis|truncatechars:60 }}</p>
+                        <a href="{% url 'view_conclusion' c.appointment.id %}?next={{ request.get_full_path|urlencode }}"
+                           class="patient-conclusions-view"
+                           aria-label="Переглянути висновок: {{ c.doctor.username }}, {{ c.appointment.date|date:'d.m.Y H:i' }}">Переглянути</a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
             <div class="patient-conclusions-empty">
                 <h3>Висновків ще немає</h3>

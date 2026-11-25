@@ -87,6 +87,7 @@ class HomeView(TemplateView):
                 'icon': 'diary/images/pulse.svg',
             },
             {
+                'key': 'pressure',
                 'label': 'Артеріальний тиск',
                 'value': (
                     f'{pressure.pressure_systolic}/'

@@ -11,7 +11,7 @@ from django.http import Http404
 from datetime import timedelta
 from django import forms
 from django.utils import timezone
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from urllib.parse import urlsplit
 from .access import doctor_can_access_patient, get_accessible_patients, is_admin_or_superuser
@@ -164,12 +164,24 @@ def record_detail(request, pk):
     else:
         raise Http404("Сторінку не знайдено")
 
-    back_url = reverse('records' if user_profile.role == 'doctor' else 'my_records')
-    # Повертаємо до джерела переходу зі збереженням фільтрів і сторінки.
+    if user_profile.role == 'doctor':
+        back_url = reverse('records')
+        back_routes = {'records', 'user_records', 'patient_card', 'doctor_dashboard'}
+    else:
+        back_url = reverse('my_records')
+        back_routes = {'my_records'}
+
+    # Зберігаємо фільтри й позицію при поверненні до списку записів.
     for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
-        if candidate and url_has_allowed_host_and_scheme(
+        if not candidate or not url_has_allowed_host_and_scheme(
             candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-        ) and urlsplit(candidate).path != request.path:
+        ):
+            continue
+        try:
+            route = resolve(urlsplit(candidate).path)
+        except Resolver404:
+            continue
+        if route.url_name in back_routes:
             back_url = candidate
             break
 

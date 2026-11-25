@@ -11,12 +11,24 @@
             <a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове звернення</a>
         </div>
         {% endif %}
-        <form method="get" class="doctor-inbox-filters" role="search">
+        <form method="get" class="doctor-inbox-filters" role="search"{% if patient_view %} autocomplete="off"{% endif %}>
             <div>
                 <label for="inbox-search">Пошук</label>
                 <input id="inbox-search" type="search" name="q" value="{{ search }}"
+                       {% if patient_view %}autocomplete="off"{% endif %}
                        placeholder="{% if patient_view %}Лікар або текст повідомлення{% else %}Пацієнт, телефон або текст повідомлення{% endif %}">
             </div>
+            {% if patient_view %}
+                <fieldset class="inbox-status-filter">
+                    <legend>Статус</legend>
+                    <div class="inbox-status-options">
+                        <label><input type="radio" name="status" value="" {% if not selected_status %}checked{% endif %}><span>Усі звернення</span></label>
+                        {% for value, label in status_options %}
+                            <label><input type="radio" name="status" value="{{ value }}" {% if selected_status == value %}checked{% endif %}><span>{{ label }}</span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            {% else %}
             <div>
                 <label for="inbox-status">Статус</label>
                 <select id="inbox-status" name="status">
@@ -26,6 +38,7 @@
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
             <button type="submit">Знайти</button>
         </form>
         <p class="question-sync-status" data-inbox-sync role="status"></p>

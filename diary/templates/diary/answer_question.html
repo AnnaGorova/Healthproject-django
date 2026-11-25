@@ -8,7 +8,11 @@
 <section class="doctor-question-chat" data-question-url="{% url 'question_messages' question.id %}" aria-labelledby="chat-title">
     <div class="doctor-chat-heading">
         <div><h2 id="chat-title">{% if patient_view %}Діалог із лікарем{% else %}Діалог із пацієнтом{% endif %}</h2><p>Звернення №{{ question.id }}</p></div>
-        <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}" class="profile-professional-button">← {% if patient_view %}Назад до моїх звернень{% else %}Назад до звернень{% endif %}</a>
+        <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}"
+           class="profile-professional-button doctor-chat-back"
+           aria-label="{% if patient_view %}Назад до моїх звернень{% else %}Назад до звернень{% endif %}">
+            ← Назад<span class="doctor-chat-back-destination"> {% if patient_view %}до моїх звернень{% else %}до звернень{% endif %}</span>
+        </a>
     </div>
     <div class="doctor-chat-details">
         <div class="detail-item">
@@ -77,9 +81,6 @@
             <button type="submit">{% if patient_view %}Надіслати повідомлення{% else %}Надіслати відповідь{% endif %}</button>
         </div>
     </form>
-    <div class="doctor-chat-footer">
-        <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}" class="profile-professional-button">← {% if patient_view %}Назад до моїх звернень{% else %}Назад до звернень{% endif %}</a>
-    </div>
 </section>
 {% endblock %}
 
