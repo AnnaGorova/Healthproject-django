@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlsplit
 
 from django.shortcuts import render, redirect
 from ..models import Question
@@ -13,6 +14,8 @@ from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
 from django.db.models import Q, OuterRef, Subquery
 from django.db.models.functions import Coalesce, Greatest
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from ..models import QuestionMessage
 from .access import is_admin_or_superuser
 
@@ -181,6 +184,17 @@ def _question_list_context(request, questions, counterpart):
     }
 
 
+def _question_back_url(request, *, patient_view=False):
+    inbox_url = reverse('my_questions' if patient_view else 'all_questions')
+    sources = {inbox_url} if patient_view else {inbox_url, reverse('doctor_dashboard')}
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ) and urlsplit(candidate).path in sources:
+            return candidate
+    return inbox_url
+
+
 @login_required
 def answer_question(request, question_id):
     """Відповідь лікаря"""
@@ -198,11 +212,12 @@ def answer_question(request, question_id):
     if question.doctor != user_profile:
         raise PermissionDenied("Це звернення адресовано іншому лікарю")
 
+    back_url = _question_back_url(request)
     if question.status == 'closed' and request.method == 'POST':
         if wants_json:
             return JsonResponse({'error': 'Це звернення закрито'}, status=409)
         messages.error(request, "Це звернення закрито")
-        return redirect('all_questions')
+        return redirect(back_url)
     
     if request.method == 'POST':
         answer = request.POST.get('answer', '').strip()
@@ -229,11 +244,13 @@ def answer_question(request, question_id):
 
             messages.success(request, "✅ Відповідь надіслано")
             if close:
-                return redirect('all_questions')
-            return redirect('answer_question', question_id=question.pk)
+                return redirect(back_url)
+            return redirect(reverse('answer_question', args=[question.pk], query={'next': back_url}))
     
     return render(request, 'diary/answer_question.html', {
         'question': question,
+        'back_url': back_url,
+        'back_to_dashboard': urlsplit(back_url).path == reverse('doctor_dashboard'),
         'answer_draft': request.POST.get('answer', ''),
         'close_checked': request.POST.get('close') == 'on',
     })
@@ -255,6 +272,7 @@ def reply_question(request, question_id):
         id=question_id, 
         patient=request.user.userprofile
     )
+    back_url = _question_back_url(request, patient_view=True)
     
     if request.method == 'POST' and not question.doctor.user.is_active:
         if wants_json:
@@ -263,13 +281,13 @@ def reply_question(request, question_id):
             request,
             "Лікар більше не приймає звернення. Оберіть іншого лікаря."
         )
-        return redirect('my_questions')
+        return redirect(back_url)
 
     if request.method == 'POST' and question.status == 'closed':
         if wants_json:
             return JsonResponse({'error': 'Це звернення закрито'}, status=409)
         messages.error(request, "❌ Це звернення закрито")
-        return redirect('my_questions')
+        return redirect(back_url)
     
     if request.method == 'POST':
         text = request.POST.get('text', '').strip()
@@ -290,10 +308,11 @@ def reply_question(request, question_id):
                 return _question_response(question, patient_view=True)
 
             messages.success(request, "✅ Повідомлення надіслано")
-            return redirect('reply_question', question_id=question.pk)
+            return redirect(reverse('reply_question', args=[question.pk], query={'next': back_url}))
     
     return render(request, 'diary/answer_question.html', {
         'question': question,
         'patient_view': True,
+        'back_url': back_url,
         'answer_draft': request.POST.get('text', ''),
     })

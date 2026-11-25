@@ -37,12 +37,12 @@
                         {% if apt.is_overdue %}<p class="doctor-appointment-overdue">Минув, очікує висновку</p>{% endif %}
                     </div>
                     <div class="patient-appointment-actions">
-                        <a href="{% url 'appointment_detail' apt.id %}" class="patient-appointment-action">Про прийом</a>
+                        <a href="{% url 'appointment_detail' apt.id %}?next={{ request.get_full_path|urlencode }}%23patient-appointments-title" class="patient-appointment-action">Про прийом</a>
                         {% if apt.status != 'cancelled' %}
                             {% if apt.conclusion %}
-                                <a href="{% url 'view_conclusion' apt.id %}" class="patient-appointment-action">Переглянути висновок</a>
+                                <a href="{% url 'view_conclusion' apt.id %}?next={{ request.get_full_path|urlencode }}%23patient-appointments-title" class="patient-appointment-action">Переглянути висновок</a>
                             {% else %}
-                                <a href="{% url 'create_conclusion' apt.id %}" class="patient-appointment-action">Створити висновок</a>
+                                <a href="{% url 'create_conclusion' apt.id %}?next={{ request.get_full_path|urlencode }}%23patient-appointments-title" class="patient-appointment-action">Створити висновок</a>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -69,7 +69,7 @@
         {% endif %}
     </section>
 
-    <section class="patient-card-panel" aria-labelledby="patient-parameters-title">
+    <section class="patient-card-panel patient-card-parameters" aria-labelledby="patient-parameters-title">
         <header class="patient-card-heading">
             <div>
                 <h2 id="patient-parameters-title">Показники здоров’я</h2>
@@ -78,7 +78,7 @@
         </header>
         <div class="parameters-grid">
             {% for parameter in patient_parameters %}
-                <article class="parameter-card parameter-{{ parameter.theme }}">
+                <article class="parameter-card parameter-{{ parameter.theme }}" data-parameter="{{ parameter.key }}">
                     <img src="{% static parameter.icon %}" class="parameter-icon" width="64" height="64" alt="">
                     <h3>{{ parameter.label }}</h3>
                     {% if parameter.value != None %}
@@ -95,10 +95,10 @@
         </div>
     </section>
 
-    <section class="patient-card-panel" aria-labelledby="patient-recent-records-title">
+    <section class="patient-card-panel patient-card-journal" aria-labelledby="patient-recent-records-title">
         <header class="patient-card-heading">
             <h2 id="patient-recent-records-title">Останні записи щоденника</h2>
-            <a href="{% url 'user_records' patient.id %}" class="profile-professional-button">Усі записи щоденника</a>
+            <a href="{% url 'user_records' patient.id %}" class="profile-professional-button" aria-label="Усі записи щоденника">Усі записи<span class="patient-card-journal-link-tail">&nbsp;щоденника</span></a>
         </header>
         <div class="patient-card-recent-records">
             {% for record in records %}

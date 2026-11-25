@@ -11,9 +11,6 @@
         {% include "diary/includes/mobile_nav_link.html" with route="manage_schedule" icon="diary/images/akar-icons_calendar.svg" label="Розклад" %}
     {% else %}
         {% include "diary/includes/mobile_nav_link.html" with route="about" icon="diary/images/akar-icons_info.svg" label="Про нас" %}
-        {% if role == 'admin' %}
-            {% include "diary/includes/mobile_nav_link.html" with route="administrator" icon="diary/images/create-record.svg" label="Користувачі" %}
-        {% endif %}
     {% endif %}
     {% if user.is_authenticated %}
         {% include "diary/includes/mobile_nav_link.html" with route="profile" icon="diary/images/doctor-avatar.svg" label="Профіль" %}

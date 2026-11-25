@@ -282,4 +282,13 @@ def delete_record(request, pk):
         messages.success(request, "Запис успішно видалено!")
         return redirect('my_records')
     
-    return render(request, 'diary/delete_record.html', {'record': record})
+    cancel_url = reverse('record_detail', args=[record.id])
+    return_paths = {cancel_url, reverse('my_records')}
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ) and urlsplit(candidate).path in return_paths:
+            cancel_url = candidate
+            break
+
+    return render(request, 'diary/delete_record.html', {'record': record, 'cancel_url': cancel_url})

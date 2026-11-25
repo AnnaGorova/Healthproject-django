@@ -26,9 +26,9 @@
                     <a href="{% url 'appointment_detail' appointment.id %}?next={{ request.get_full_path|urlencode }}%23appointment-{{ appointment.id }}" class="patient-appointment-action">Про прийом</a>
                     {% if appointment.status != 'cancelled' %}
                         {% if appointment.conclusion %}
-                            <a href="{% url 'view_conclusion' appointment.id %}" class="patient-appointment-action">Переглянути висновок</a>
+                            <a href="{% url 'view_conclusion' appointment.id %}?next={{ request.get_full_path|urlencode }}%23appointment-{{ appointment.id }}" class="patient-appointment-action">Переглянути висновок</a>
                         {% else %}
-                            <a href="{% url 'create_conclusion' appointment.id %}" class="patient-appointment-action">Створити висновок</a>
+                            <a href="{% url 'create_conclusion' appointment.id %}?next={{ request.get_full_path|urlencode }}%23appointment-{{ appointment.id }}" class="patient-appointment-action">Створити висновок</a>
                         {% endif %}
                     {% endif %}
                 </div>

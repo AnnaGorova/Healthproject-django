@@ -11,11 +11,11 @@
             <a href="{% url 'ask_question' %}" class="patient-records-create">+ Нове звернення</a>
         </div>
         {% endif %}
-        <form method="get" class="doctor-inbox-filters" role="search"{% if patient_view %} autocomplete="off"{% endif %}>
+        <form method="get" class="doctor-inbox-filters" role="search" autocomplete="off">
             <div>
                 <label for="inbox-search">Пошук</label>
                 <input id="inbox-search" type="search" name="q" value="{{ search }}"
-                       {% if patient_view %}autocomplete="off"{% endif %}
+                       autocomplete="off"
                        placeholder="{% if patient_view %}Лікар або текст повідомлення{% else %}Пацієнт, телефон або текст повідомлення{% endif %}">
             </div>
             {% if patient_view %}
@@ -31,7 +31,7 @@
             {% else %}
             <div>
                 <label for="inbox-status">Статус</label>
-                <select id="inbox-status" name="status">
+                <select id="inbox-status" name="status" class="health-styled-select">
                     <option value="">Усі звернення</option>
                     {% for value, label in status_options %}
                         <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
@@ -39,7 +39,13 @@
                 </select>
             </div>
             {% endif %}
-            <button type="submit">Знайти</button>
+            <div class="inbox-filter-actions">
+                <button type="submit">Знайти</button>
+                {% if search or selected_status %}
+                    <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}"
+                       class="inbox-filter-reset">Очистити</a>
+                {% endif %}
+            </div>
         </form>
         <p class="question-sync-status" data-inbox-sync role="status"></p>
     </div>
@@ -54,7 +60,7 @@
                     <p class="doctor-inbox-preview">{{ q.preview|truncatechars:160 }}</p>
                     <div class="doctor-inbox-card-footer">
                         <span>№{{ q.id }} · <time datetime="{{ q.last_activity|date:'c' }}">{{ q.last_activity|date:"d.m.Y H:i" }}</time></span>
-                        <a href="{% if patient_view %}{% url 'reply_question' q.id %}{% else %}{% url 'answer_question' q.id %}{% endif %}">Відкрити чат →</a>
+                        <a href="{% if patient_view %}{% url 'reply_question' q.id %}{% else %}{% url 'answer_question' q.id %}{% endif %}?next={{ request.get_full_path|urlencode }}">Відкрити чат →</a>
                     </div>
                 </article>
             {% empty %}

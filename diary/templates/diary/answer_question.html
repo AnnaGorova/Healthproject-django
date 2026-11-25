@@ -8,10 +8,10 @@
 <section class="doctor-question-chat" data-question-url="{% url 'question_messages' question.id %}" aria-labelledby="chat-title">
     <div class="doctor-chat-heading">
         <div><h2 id="chat-title">{% if patient_view %}Діалог із лікарем{% else %}Діалог із пацієнтом{% endif %}</h2><p>Звернення №{{ question.id }}</p></div>
-        <a href="{% if patient_view %}{% url 'my_questions' %}{% else %}{% url 'all_questions' %}{% endif %}"
+        <a href="{{ back_url }}"
            class="profile-professional-button doctor-chat-back"
-           aria-label="{% if patient_view %}Назад до моїх звернень{% else %}Назад до звернень{% endif %}">
-            ← Назад<span class="doctor-chat-back-destination"> {% if patient_view %}до моїх звернень{% else %}до звернень{% endif %}</span>
+           aria-label="{% if back_to_dashboard %}Назад до нових звернень на дашборді{% elif patient_view %}Назад до моїх звернень{% else %}Назад до звернень{% endif %}">
+            ← Назад<span class="doctor-chat-back-destination"> {% if back_to_dashboard %}до дашборда{% elif patient_view %}до моїх звернень{% else %}до звернень{% endif %}</span>
         </a>
     </div>
     <div class="doctor-chat-details">

@@ -5,17 +5,17 @@
 {% block content %}
 <div class="admin-users-page">
     <section class="admin-users-filters" aria-label="Керування та пошук користувачів">
-        <form method="get" role="search">
+        <form method="get" role="search" autocomplete="off">
             <a href="{% url 'admin_user_create' %}" class="admin-users-primary admin-users-create">Створити користувача</a>
             <div class="admin-filter-fields">
                 <div>
                     <label for="admin-user-search">Пошук</label>
                     <input type="search" id="admin-user-search" name="search" value="{{ search }}"
-                           placeholder="ПІБ, Email, особистий телефон…">
+                           placeholder="ПІБ, Email або телефон" autocomplete="off">
                 </div>
                 <div>
                     <label for="admin-user-role">Роль</label>
-                    <select id="admin-user-role" name="role">
+                    <select id="admin-user-role" name="role" class="health-styled-select">
                         <option value="">Усі ролі</option>
                         <option value="patient" {% if role == 'patient' %}selected{% endif %}>Пацієнт</option>
                         <option value="doctor" {% if role == 'doctor' %}selected{% endif %}>Лікар</option>
@@ -25,7 +25,7 @@
             </div>
             <div class="admin-filter-actions">
                 <button type="submit" class="admin-users-primary">Пошук</button>
-                <a href="{% url 'home' %}" class="admin-users-reset">Скинути фільтри</a>
+                <a href="{% if admin_home %}{% url 'home' %}{% else %}{% url 'administrator' %}{% endif %}" class="admin-users-reset">Скинути фільтри</a>
             </div>
         </form>
     </section>
@@ -64,26 +64,7 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="admin-user-actions">
-                                    <a href="{% url 'admin_user_edit' u.id %}" class="admin-user-edit"
-                                       aria-label="Редагувати користувача {{ u.username }}" title="Редагувати">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="m16 3 5 5-12 12-6 1 1-6L16 3Z"/><path d="m14 5 5 5"/>
-                                        </svg>
-                                    </a>
-                                    {% if u.id != request.user.id and not u.is_superuser %}
-                                        <form method="post" action="{% url 'admin_user_toggle' u.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="admin-user-toggle{% if not u.is_active %} is-inactive{% endif %}"
-                                                    aria-label="{% if u.is_active %}Деактивувати{% else %}Активувати{% endif %} користувача {{ u.username }}"
-                                                    title="{% if u.is_active %}Деактивувати{% else %}Активувати{% endif %}">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                                                    <path d="M12 2v10"/><path d="M6 5a9 9 0 1 0 12 0"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    {% endif %}
-                                </div>
+                                {% include "diary/includes/admin_user_actions.html" %}
                             </td>
                         </tr>
                     {% empty %}
@@ -92,6 +73,28 @@
                 </tbody>
             </table>
         </div>
+        <ul class="admin-users-list">
+            {% for u in users %}
+                <li>
+                    <div class="admin-users-list-heading">
+                        <h3>{{ u.userprofile.username|default:u.username }}</h3>
+                        {% include "diary/includes/admin_user_actions.html" %}
+                    </div>
+                    <p>{{ u.email|default:"—" }}</p>
+                    <div class="admin-users-list-meta">
+                        <span>ID {{ u.id }}</span>
+                        {% if u.userprofile %}
+                            <span class="admin-role-badge admin-role-{{ u.userprofile.role }}">{{ u.userprofile.get_role_display }}</span>
+                        {% endif %}
+                        <span class="admin-user-status{% if not u.is_active %} is-inactive{% endif %}">
+                            <span aria-hidden="true"></span>{% if u.is_active %}Активний{% else %}Неактивний{% endif %}
+                        </span>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="admin-users-empty">{% if search or role %}Нічого не знайдено за фільтрами.{% else %}Немає користувачів.{% endif %}</li>
+            {% endfor %}
+        </ul>
     </section>
 </div>
 {% endblock %}

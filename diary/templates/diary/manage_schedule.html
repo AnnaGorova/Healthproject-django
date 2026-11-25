@@ -6,7 +6,8 @@
 
 {% block content %}
 <section class="doctor-schedule" aria-label="Мій розклад">
-    <form method="get" class="schedule-filters">
+    <div class="schedule-controls">
+    <form method="get" class="schedule-filters" id="schedule-date-filter">
         <div class="schedule-date-submit">
         <div class="schedule-date-field">
             <label for="schedule-date">Виберіть дату</label>
@@ -22,16 +23,17 @@
         </div>
             <button type="submit" name="period" value="{% if selected_period == 'custom' %}day{% else %}{{ selected_period }}{% endif %}" class="schedule-save-button">Показати</button>
         </div>
-        <div class="schedule-periods" role="group" aria-label="Період">
-            <button type="submit" name="period" value="day" aria-pressed="{% if selected_period == 'day' %}true{% else %}false{% endif %}">1 день</button>
-            <button type="submit" name="period" value="week" aria-pressed="{% if selected_period == 'week' %}true{% else %}false{% endif %}">7 днів</button>
-            <button type="submit" name="period" value="month" aria-pressed="{% if selected_period == 'month' %}true{% else %}false{% endif %}">30 днів</button>
-        </div>
         {% if date_error and selected_period != 'custom' %}<p id="schedule-date-error" class="schedule-error" role="alert">{{ date_error }}</p>{% endif %}
     </form>
-    <details class="schedule-custom-period" {% if selected_period == 'custom' %}open{% endif %}>
-        <summary>Власний період</summary>
-        <form method="get" class="schedule-custom-form">
+    <div class="schedule-periods" role="group" aria-label="Період">
+        <button type="submit" form="schedule-date-filter" name="period" value="day" aria-pressed="{% if selected_period == 'day' %}true{% else %}false{% endif %}">1 день</button>
+        <button type="submit" form="schedule-date-filter" name="period" value="week" aria-pressed="{% if selected_period == 'week' %}true{% else %}false{% endif %}">7 днів</button>
+        <button type="submit" form="schedule-date-filter" name="period" value="month" aria-pressed="{% if selected_period == 'month' %}true{% else %}false{% endif %}">30 днів</button>
+    </div>
+    <details class="schedule-custom-period" {% if selected_period == 'custom' %}open data-selected{% endif %}>
+        <summary aria-controls="schedule-custom-form">Власний період</summary>
+    </details>
+        <form method="get" class="schedule-custom-form" id="schedule-custom-form" data-calendar-group>
             <input type="hidden" name="period" value="custom">
             <div class="schedule-date-field">
                 <label for="schedule-date-from">З</label>
@@ -60,8 +62,9 @@
             <button type="submit" class="schedule-save-button">Показати</button>
             <p class="schedule-custom-hint">Обидві дати включно, до 366 днів.</p>
             {% if date_error and selected_period == 'custom' %}<p id="schedule-range-error" class="schedule-error" role="alert">{{ date_error }}</p>{% endif %}
+            <div class="schedule-calendar-area" data-calendar-popup-area></div>
         </form>
-    </details>
+    </div>
     {% if not date_error %}
         <p class="schedule-range">{{ selected_date|date:"d.m.Y" }}{% if selected_period != 'day' %} — {{ period_end|date:"d.m.Y" }}{% endif %}</p>
         <div class="schedule-legend">
@@ -118,13 +121,13 @@
                 <div class="schedule-time-fields">
                     <div class="schedule-settings-field">
                         <label for="workday-start">Час початку</label>
-                        <select id="workday-start" name="start_time" required>
+                        <select id="workday-start" name="start_time" class="health-styled-select" required>
                             {% for hour in hours %}<option value="{{ hour }}" {% if hour == '09:00' %}selected{% endif %}>{{ hour }}</option>{% endfor %}
                         </select>
                     </div>
                     <div class="schedule-settings-field">
                         <label for="workday-end">Час кінця</label>
-                        <select id="workday-end" name="end_time" required>
+                        <select id="workday-end" name="end_time" class="health-styled-select" required>
                             {% for hour in hours %}<option value="{{ hour }}" {% if hour == '17:00' %}selected{% endif %}>{{ hour }}</option>{% endfor %}
                         </select>
                     </div>
@@ -136,7 +139,7 @@
         </section>
         <section class="schedule-settings-card" aria-labelledby="dayoff-title">
             <h3 id="dayoff-title">Додати вихідний</h3>
-            <form method="post">
+            <form method="post" class="schedule-dayoff-form" data-calendar-group>
                 {% csrf_token %}
                 <input type="hidden" name="is_day_off" value="on">
                 <div class="schedule-settings-field">
@@ -151,6 +154,7 @@
                     </div>
                 </div>
                 <button type="submit" class="schedule-save-button">Зберегти вихідний</button>
+                <div class="schedule-calendar-area" data-calendar-popup-area></div>
             </form>
         </section>
         <section class="schedule-settings-card schedule-current" aria-labelledby="current-schedule-title">

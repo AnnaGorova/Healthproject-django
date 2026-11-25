@@ -9,7 +9,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from urllib.parse import urlsplit
 from ..models import Appointment
@@ -227,6 +227,23 @@ def doctor_appointments(request):
     })
 
 
+def _doctor_appointment_back_url(request):
+    sources = {'doctor_appointments', 'doctor_dashboard', 'patient_card', 'manage_schedule'}
+    params = request.POST if request.method == 'POST' else request.GET
+    for candidate in (params.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if not candidate or not url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ):
+            continue
+        try:
+            route = resolve(urlsplit(candidate).path)
+        except Resolver404:
+            continue
+        if route.url_name in sources:
+            return candidate
+    return reverse('doctor_appointments')
+
+
 @login_required
 def appointment_detail(request, appointment_id):
     """Деталі прийому для лікаря"""
@@ -241,18 +258,9 @@ def appointment_detail(request, appointment_id):
         doctor=user_profile
     )
 
-    back_url = reverse('doctor_appointments')
-    # Зберігаємо джерело переходу, зокрема дату, період і слот розкладу.
-    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
-        if candidate and url_has_allowed_host_and_scheme(
-            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-        ) and urlsplit(candidate).path != request.path:
-            back_url = candidate
-            break
-
     return render(request, 'diary/appointment_detail.html', {
         'appointment': appointment,
-        'back_url': back_url,
+        'back_url': _doctor_appointment_back_url(request),
     })
 
 
@@ -270,17 +278,22 @@ def doctor_cancel_appointment(request, appointment_id):
         doctor=user_profile
     )
 
+    back_url = _doctor_appointment_back_url(request)
+    detail_url = reverse('appointment_detail', args=[appointment.id], query={'next': back_url})
+
     if appointment.status != 'scheduled':
         messages.error(request, "❌ Цей прийом вже не активний")
-        return redirect('appointment_detail', appointment_id=appointment.id)
+        return redirect(detail_url)
 
     if request.method == 'POST':
         appointment.status = 'cancelled'
         appointment.cancelled_by = user_profile
         appointment.save()
         messages.success(request, "✅ Прийом скасовано")
-        return redirect('doctor_appointments')
+        return redirect(back_url)
 
     return render(request, 'diary/doctor_cancel_confirm.html', {
         'appointment': appointment,
+        'back_url': back_url,
+        'detail_url': detail_url,
     })

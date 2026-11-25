@@ -28,6 +28,13 @@ class HealthRecordForm(forms.ModelForm):
             ]
         
 
+        widgets = {
+            'well_being': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'mood': forms.Select(attrs={'class': 'health-styled-select'}),
+            'energy_level': forms.Select(attrs={'class': 'health-styled-select'}),
+            'pain_level': forms.Select(attrs={'class': 'health-styled-select'}),
+        }
+
         labels = {
             'well_being': 'Самопочуття',
             'temperature': 'Температура (°C)',

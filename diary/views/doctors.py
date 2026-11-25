@@ -281,7 +281,7 @@ def patient_card(request, patient_id):
         if measurement is not None:
             value = '/'.join(f'{getattr(measurement, field):g}' for field in fields)
         parameters.append({
-            'label': label, 'value': value, 'unit': unit, 'theme': theme,
+            'key': key, 'label': label, 'value': value, 'unit': unit, 'theme': theme,
             'icon': 'diary/images/' + icon,
             'date': measurement.date if measurement else None,
         })

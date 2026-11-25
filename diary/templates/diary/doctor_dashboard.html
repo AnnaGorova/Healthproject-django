@@ -10,10 +10,11 @@
         <h2 id="patient-picker-title">Аналітика пацієнтів</h2>
         <p class="doctor-patient-search-count">{% if search %}Знайдено{% else %}Доступно пацієнтів{% endif %} — {{ patients_page.paginator.count }}</p>
     </div>
-    <form method="get" class="doctor-patient-selection" role="search" aria-label="Пошук пацієнта для аналітики">
-        <input type="search" name="search" value="{{ search }}" aria-label="ПІБ або номер телефону пацієнта" placeholder="Пошук за ПІБ або телефоном…">
+    <form method="get" class="doctor-patient-selection" role="search" aria-label="Пошук пацієнта для аналітики" autocomplete="off">
+        <input type="search" name="search" value="{{ search }}" aria-label="ПІБ або номер телефону пацієнта"
+               placeholder="ПІБ або телефон" autocomplete="off">
         <button type="submit" class="doctor-work-button">Пошук</button>
-        {% if search %}<a href="{% url 'doctor_dashboard' %}" class="doctor-patient-clear">Очистити</a>{% endif %}
+        <a href="{% url 'doctor_dashboard' %}#doctor-analytics-picker" class="search-reset-button" aria-label="Очистити пошук пацієнтів">Очистити</a>
     </form>
     {% if selection_error %}
         <p id="patient-selection-error" class="doctor-selection-error" role="alert">{{ selection_error }}</p>
@@ -112,14 +113,14 @@
 
 <section class="doctor-dashboard-block" id="doctor-new-appointments" aria-labelledby="doctor-new-appointments-title">
     <h3 id="doctor-new-appointments-title">Нові прийоми</h3>
-    <p>Записи на прийом, створені за останні 7 днів — {{ new_appointments_count }}</p>
+    <p>Створено за останні 7 днів: {{ new_appointments_count }}</p>
     {% for apt in new_appointments %}
         <article class="doctor-home-row">
             <div>
                 <h4>{{ apt.patient.username }}</h4>
                 <p>Прийом {{ apt.date|date:"d.m.Y H:i" }} · {{ apt.get_status_display }}</p>
             </div>
-            <a href="{% url 'appointment_detail' apt.pk %}" class="doctor-work-button doctor-work-secondary">Деталі прийому</a>
+            <a href="{% url 'appointment_detail' apt.pk %}?next={{ request.get_full_path|urlencode }}%23doctor-new-appointments" class="doctor-work-button doctor-work-secondary">Деталі прийому</a>
         </article>
     {% empty %}
         <p>За цей період нових прийомів немає.</p>
@@ -149,11 +150,11 @@
                     {% if apt.complaints %}<p>{{ apt.complaints|truncatechars:60 }}</p>{% endif %}
                 </div>
                 <div class="doctor-home-actions">
-                    <a href="{% url 'appointment_detail' apt.id %}" class="doctor-work-button doctor-work-secondary">Деталі</a>
+                    <a href="{% url 'appointment_detail' apt.id %}?next={{ request.get_full_path|urlencode }}%23doctor-today" class="doctor-work-button doctor-work-secondary">Деталі</a>
                     {% if apt.conclusion %}
-                        <a href="{% url 'view_conclusion' apt.id %}" class="doctor-work-button">Переглянути висновок</a>
+                        <a href="{% url 'view_conclusion' apt.id %}?next={{ request.get_full_path|urlencode }}%23doctor-today" class="doctor-work-button">Переглянути висновок</a>
                     {% elif apt.date <= now %}
-                        <a href="{% url 'create_conclusion' apt.id %}" class="doctor-work-button">Висновок</a>
+                        <a href="{% url 'create_conclusion' apt.id %}?next={{ request.get_full_path|urlencode }}%23doctor-today" class="doctor-work-button">Висновок</a>
                     {% endif %}
                 </div>
             </article>
@@ -182,8 +183,8 @@
                     <p>{{ apt.date|date:"d.m.Y H:i" }}</p>
                 </div>
                 <div class="doctor-home-actions">
-                    <a href="{% url 'appointment_detail' apt.id %}" class="doctor-work-button doctor-work-secondary">Деталі</a>
-                    <a href="{% url 'create_conclusion' apt.id %}" class="doctor-work-button">Висновок</a>
+                    <a href="{% url 'appointment_detail' apt.id %}?next={{ request.get_full_path|urlencode }}%23doctor-pending" class="doctor-work-button doctor-work-secondary">Деталі</a>
+                    <a href="{% url 'create_conclusion' apt.id %}?next={{ request.get_full_path|urlencode }}%23doctor-pending" class="doctor-work-button">Висновок</a>
                 </div>
             </article>
         {% empty %}
@@ -212,11 +213,11 @@
                 <div>
                     <h4>{{ conclusion.patient.username }}</h4>
                     <p>{{ conclusion.created_at|date:"d.m.Y H:i" }}</p>
-                    <p>{% if conclusion.icd10 %}{{ conclusion.icd10.code }} — {% endif %}{{ conclusion.diagnosis|truncatechars:60 }}</p>
+                    <p class="doctor-dashboard-preview">{% if conclusion.icd10 %}{{ conclusion.icd10.code }} — {% endif %}{{ conclusion.diagnosis|truncatechars:60 }}</p>
                 </div>
                 <div class="doctor-home-actions">
-                    <a href="{% url 'view_conclusion' conclusion.appointment_id %}" class="doctor-work-button doctor-work-secondary">Переглянути</a>
-                    <a href="{% url 'edit_conclusion' conclusion.id %}" class="doctor-work-button doctor-work-secondary">Редагувати</a>
+                    <a href="{% url 'view_conclusion' conclusion.appointment_id %}?next={{ request.get_full_path|urlencode }}%23doctor-conclusions" class="doctor-work-button doctor-work-secondary">Переглянути</a>
+                    <a href="{% url 'edit_conclusion' conclusion.id %}?next={{ request.get_full_path|urlencode }}%23doctor-conclusions" class="doctor-work-button doctor-work-secondary">Редагувати</a>
                 </div>
             </article>
         {% empty %}
@@ -242,9 +243,9 @@
                 <div>
                     <h4>{{ question.patient.username }}</h4>
                     <p>{{ question.created_at|date:"d.m.Y H:i" }}</p>
-                    <p>{{ question.question|truncatechars:80 }}</p>
+                    <p class="doctor-dashboard-preview">{{ question.question|truncatechars:80 }}</p>
                 </div>
-                <a href="{% url 'answer_question' question.id %}" class="doctor-work-button">Відповісти</a>
+                <a href="{% url 'answer_question' question.id %}?next={{ request.get_full_path|urlencode }}%23doctor-questions" class="doctor-work-button">Відповісти</a>
             </article>
         {% empty %}
             <p>Немає нових звернень.</p>

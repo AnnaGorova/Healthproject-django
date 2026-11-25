@@ -1,6 +1,5 @@
 .mobile-site-header,
 .mobile-navigation,
-.mobile-about-heading,
 .login-mobile-brand { display: none; }
 
 @media screen and (max-width: 768px) {
@@ -36,6 +35,25 @@
     .health-theme .mobile-site-header:has(.mobile-menu-toggle:not([hidden])[aria-expanded="false"]) + .sidebar {
         display: none;
     }
+    .health-theme .mobile-site-header + .sidebar .sidebar-nav ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        padding: 8px;
+    }
+    .health-theme .mobile-site-header + .sidebar .sidebar-nav li { min-width: 0; margin: 0; }
+    .health-theme .mobile-site-header + .sidebar .nav-link {
+        box-sizing: border-box;
+        height: 100%;
+        min-height: 44px;
+        gap: 6px;
+        margin: 0;
+        padding: 6px;
+        font-size: 13px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+    .health-theme .mobile-site-header + .sidebar .nav-icon { width: 22px; height: 22px; }
     .mobile-menu-toggle:not([hidden]) {
         display: grid;
         place-items: center;
@@ -57,7 +75,7 @@
         background: currentColor;
         box-shadow: 0 -6px currentColor, 0 6px currentColor;
     }
-    .health-theme .top-header:has(.patient-search) {
+    .health-theme .top-header {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         gap: 8px;
@@ -66,29 +84,30 @@
         border-radius: 14px;
         text-align: start;
     }
+    .health-theme .top-header h1 { font-size: 18px; line-height: 1.25; }
     .health-theme .top-header .patient-search { max-width: none; }
     .health-theme .top-header .patient-search-control { gap: 8px; padding: 0 10px; }
     .health-theme .top-header .patient-search-icon { width: 18px; height: 18px; }
     .health-theme .top-header #patient-search-input { min-height: 38px; line-height: 1.3; }
-    .health-theme .top-header:has(.patient-search) .header-account {
+    .health-theme .top-header .header-account {
         flex-wrap: nowrap;
         justify-content: space-between;
         min-width: 0;
         gap: 8px;
     }
-    .health-theme .top-header:has(.patient-search) .account-profile { min-width: 0; gap: 7px; }
-    .health-theme .top-header:has(.patient-search) .account-avatar { flex: 0 0 28px; width: 28px; height: 28px; }
-    .health-theme .top-header:has(.patient-search) .account-details { min-width: 0; }
-    .health-theme .top-header:has(.patient-search) .account-details strong {
+    .health-theme .top-header .account-profile { min-width: 0; gap: 7px; }
+    .health-theme .top-header .account-avatar { flex: 0 0 28px; width: 28px; height: 28px; }
+    .health-theme .top-header .account-details { min-width: 0; }
+    .health-theme .top-header .account-details strong {
         overflow: hidden;
         font-size: 14px;
         line-height: 1.25;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .health-theme .top-header:has(.patient-search) .account-details small { line-height: 1.25; }
-    .health-theme .top-header:has(.patient-search) .header-account form { flex: none; margin: 0; }
-    .health-theme .top-header:has(.patient-search) .account-logout { min-height: 36px; padding: 4px 10px; }
+    .health-theme .top-header .account-details small { line-height: 1.25; }
+    .health-theme .top-header .header-account form { flex: none; margin: 0; }
+    .health-theme .top-header .account-logout { min-height: 36px; padding: 4px 10px; }
     .health-theme .record-detail-pressure .record-pressure-grid { gap: 8px; }
     .health-theme .record-detail-pressure .record-detail-item {
         flex-wrap: wrap;
@@ -156,41 +175,30 @@
     body:has(.mobile-navigation.is-visible) {
         padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
     }
-    .mobile-about-heading { display: block; margin-bottom: 16px; }
-    .mobile-about-heading h1 { margin: 0 0 4px; color: #223e2e; font-size: 24px; }
-    .mobile-about-heading p { margin: 0; color: #52657c; font-size: 12px; }
-    .health-theme .about-page,
-    .health-theme .about-row { gap: 12px; }
-    .health-theme .about-card {
-        padding: 16px;
-        border-radius: 12px;
-        background: #fff;
-    }
-    .health-theme .about-description { margin-top: 12px; }
     .health-theme .content-wrapper:has(> .home-health-parameters) { padding-inline: 0; }
-    .health-theme .home-health-parameters .parameters-grid {
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .health-theme .home-health-parameters .parameter-card { padding: 12px; }
-    .health-theme .home-health-parameters .parameter-icon { display: none; }
-    .health-theme .home-health-parameters .parameter-card h3 {
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameter-card { padding: 12px; }
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameter-icon { display: none; }
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameter-card h3 {
         min-height: 0;
         margin-bottom: 6px;
     }
-    .health-theme .home-health-parameters .parameter-card[data-parameter="pressure"] {
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameter-card[data-parameter="pressure"] {
         display: grid;
         grid-column: 1 / -1;
         grid-template-columns: auto minmax(0, 1fr);
         gap: 4px 10px;
     }
-    .health-theme .home-health-parameters [data-parameter="pressure"] .parameter-icon {
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) [data-parameter="pressure"] .parameter-icon {
         display: block;
         grid-row: 1 / span 2;
         width: 40px;
         height: 40px;
         margin: 0;
     }
-    .health-theme .home-health-parameters [data-parameter="pressure"] :is(h3, .parameter-value, .parameter-date, .parameter-empty) {
+    .health-theme :is(.home-health-parameters, .patient-card-parameters) [data-parameter="pressure"] :is(h3, .parameter-value, .parameter-date, .parameter-empty) {
         grid-column: 2;
         margin: 0;
     }

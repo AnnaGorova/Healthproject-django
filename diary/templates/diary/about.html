@@ -9,10 +9,9 @@
 
 {% block content %}
 <div class="about-container">
-    <div class="mobile-about-heading">
-        <h1>Про нас</h1>
-        <p>SMART HEALTH BRIDGE</p>
-    </div>
+    {% if user.userprofile.role == 'patient' %}
+        <h1 class="about-title">Про нас</h1>
+    {% endif %}
 <section class="about-page" aria-label="Про Smart Health Bridge">
     <div class="about-row about-row-top">
         <article class="about-card">

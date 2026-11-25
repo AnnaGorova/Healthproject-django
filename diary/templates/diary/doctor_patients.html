@@ -6,7 +6,7 @@
 {% block content %}
 <div class="doctor-patients-page">
     <section class="doctor-patients-panel" aria-label="Пошук і фільтри пацієнтів">
-        <form method="get" class="doctor-patients-filters">
+        <form method="get" class="doctor-patients-filters" autocomplete="off">
             <div class="doctor-patients-search">
                 <label for="patients-search">Пошук пацієнта</label>
                 <input type="search" id="patients-search" name="search" value="{{ search }}"
@@ -14,7 +14,7 @@
             </div>
             <div class="doctor-patients-filter">
                 <label for="patients-gender">Стать</label>
-                <select id="patients-gender" name="gender">
+                <select id="patients-gender" name="gender" class="health-styled-select">
                     <option value="">Усі</option>
                     <option value="M" {% if gender == 'M' %}selected{% endif %}>Чоловіча</option>
                     <option value="F" {% if gender == 'F' %}selected{% endif %}>Жіноча</option>
@@ -69,6 +69,23 @@
                     </tbody>
                 </table>
             </div>
+            <ul class="doctor-patients-list">
+                {% for patient in patients %}
+                    <li>
+                        <div class="doctor-patients-list-heading">
+                            <h3>{{ patient.username }}</h3>
+                            <a href="{% url 'patient_card' patient.id %}" class="doctor-patients-button"
+                               aria-label="Відкрити картку пацієнта {{ patient.username }}">Картка</a>
+                        </div>
+                        <dl>
+                            <div><dt>Дата народження</dt><dd>{{ patient.date_of_birth|date:"d.m.Y"|default:"—" }}</dd></div>
+                            <div><dt>Вік</dt><dd>{% if patient.age != None %}{{ patient.age }} р.{% else %}—{% endif %}</dd></div>
+                            <div><dt>Телефон</dt><dd>{{ patient.phone|default:"—" }}</dd></div>
+                            <div><dt>Email</dt><dd>{{ patient.user.email|default:"—" }}</dd></div>
+                        </dl>
+                    </li>
+                {% endfor %}
+            </ul>
             {% if patients_page.has_other_pages %}
                 <nav class="records-pagination" aria-label="Сторінки пацієнтів">
                     {% if patients_page.has_previous %}

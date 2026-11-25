@@ -88,11 +88,11 @@
             </dl>
         </section>
         <div class="record-detail-actions">
+            <a href="{{ back_url }}" class="profile-professional-button">← Назад</a>
             {% if request.user.is_authenticated and request.user.userprofile == record.user %}
                 <a href="{% url 'edit_record' record.id %}" class="record-detail-edit">Редагувати</a>
-                <a href="{% url 'delete_record' record.id %}" class="record-detail-delete">Видалити</a>
+                <a href="{% url 'delete_record' record.id %}?next={{ request.get_full_path|urlencode }}" class="record-detail-delete">Видалити</a>
             {% endif %}
-            <a href="{{ back_url }}" class="profile-professional-button">← Назад</a>
             {% if request.user.userprofile.role == 'doctor' %}
                 <a href="{% url 'patient_card' record.user_id %}" class="profile-professional-button">Картка пацієнта</a>
             {% endif %}

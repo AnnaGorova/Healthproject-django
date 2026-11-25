@@ -14,6 +14,13 @@
     container-type: inline-size;
 }
 
+.health-theme .about-title {
+    margin: 0 0 12px;
+    color: #1b303e;
+    font-size: clamp(20px, 3vw, 26px);
+    line-height: 1.25;
+}
+
 .health-theme .about-page {
     display: grid;
     gap: 3.13cqw;
@@ -155,4 +162,20 @@
     .health-theme .about-link,
     .health-theme .about-guide summary { padding: 10px 16px; }
     .health-theme .about-guide p { margin-top: 16px; }
+}
+
+@media (max-width: 768px) {
+    .health-theme .content-wrapper:has(> .about-container) { padding-top: 0; }
+    .health-theme .about-page,
+    .health-theme .about-row { gap: 8px; }
+    .health-theme .about-card {
+        padding: 12px;
+        border-radius: 12px;
+        background: #fff;
+    }
+    .health-theme .about-card h2 { font-size: 17px; line-height: 1.35; }
+    .health-theme .about-card h2 span { display: inline; }
+    .health-theme .about-label { margin-bottom: 5px; color: #52657c; font-size: 11px; }
+    .health-theme .about-description { margin-top: 7px; line-height: 1.45; }
+    .health-theme .about-resources { gap: 10px; }
 }

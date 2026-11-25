@@ -58,7 +58,8 @@
                 <button type="button" data-clear>Очистити</button>
                 <button type="button" data-today>Сьогодні</button>
             </div>`;
-        control.append(popup);
+        const popupArea = control.closest('[data-calendar-group]')?.querySelector('[data-calendar-popup-area]');
+        (popupArea || control).append(popup);
         const days = popup.querySelector('.booking-calendar-days');
         const previous = popup.querySelector('[data-month="-1"]');
         const next = popup.querySelector('[data-month="1"]');
@@ -170,7 +171,10 @@
             event.preventDefault();
             focusDay();
         });
-        document.addEventListener('pointerdown', event => { if (!control.contains(event.target)) close(); });
-        document.addEventListener('focusin', event => { if (!control.contains(event.target)) close(); });
+        function closeOutside(event) {
+            if (!control.contains(event.target) && !popup.contains(event.target)) close();
+        }
+        document.addEventListener('pointerdown', closeOutside);
+        document.addEventListener('focusin', closeOutside);
     });
 })();

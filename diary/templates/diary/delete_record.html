@@ -13,7 +13,7 @@
     </div>
 
     <div class="record-delete-confirm-actions">
-        <a href="{% url 'record_detail' record.id %}" class="record-delete-cancel">Скасувати</a>
+        <a href="{{ cancel_url }}" class="record-delete-cancel">Скасувати</a>
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="record-delete-submit">Видалити запис</button>

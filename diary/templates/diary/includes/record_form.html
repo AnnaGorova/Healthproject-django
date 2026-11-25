@@ -1,6 +1,6 @@
 {% load static %}
 
-<form method="post" class="record-create-form">
+<form method="post" class="record-create-form" autocomplete="off">
     {% csrf_token %}
     {% if form.errors %}
         <div class="record-form-errors" role="alert">

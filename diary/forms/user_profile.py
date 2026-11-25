@@ -59,7 +59,7 @@ class UserProfileForm(forms.ModelForm):
                 'maxlength': '13',
                 'title': 'Введіть +380 та 9 цифр, без пробілів'
             }),
-            'gender': forms.Select(attrs={'class': 'form-control profile-gender-select'}),
+            'gender': forms.Select(attrs={'class': 'form-control health-styled-select'}),
             'date_of_birth': forms.DateInput(format='%Y-%m-%d', attrs={
                 'class': 'form-control', 
                 'type': 'date'

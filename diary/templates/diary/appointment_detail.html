@@ -40,21 +40,21 @@
 
     {% if appointment.status != 'cancelled' %}
         {% if appointment.conclusion %}
-            <a href="{% url 'view_conclusion' appointment.id %}" class="profile-professional-button appointment-detail-primary">
+            <a href="{% url 'view_conclusion' appointment.id %}?next={{ request.get_full_path|urlencode }}" class="profile-professional-button appointment-detail-primary">
                 Переглянути висновок
             </a>
-            <a href="{% url 'edit_conclusion' appointment.conclusion.id %}" class="profile-professional-button">
+            <a href="{% url 'edit_conclusion' appointment.conclusion.id %}?next={{ request.get_full_path|urlencode }}" class="profile-professional-button">
                 Редагувати висновок
             </a>
         {% else %}
-            <a href="{% url 'create_conclusion' appointment.id %}" class="profile-professional-button appointment-detail-primary">
+            <a href="{% url 'create_conclusion' appointment.id %}?next={{ request.get_full_path|urlencode }}" class="profile-professional-button appointment-detail-primary">
                 Створити висновок
             </a>
         {% endif %}
     {% endif %}
 
     {% if appointment.status == 'scheduled' %}
-        <a href="{% url 'doctor_cancel_appointment' appointment.id %}"
+        <a href="{% url 'doctor_cancel_appointment' appointment.id %}?next={{ back_url|urlencode }}"
            class="profile-professional-button appointment-detail-cancel">
             Скасувати прийом
         </a>

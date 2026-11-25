@@ -5,7 +5,7 @@
 
 {% block content %}
 {% if user_profile.role == 'patient' or user_profile.role == 'admin' or user_profile.role == 'doctor' %}
-<section class="patient-profile" {% if user_profile.role == 'patient' %}aria-labelledby="profile-title"{% else %}aria-label="Мій профіль"{% endif %}>
+<section class="patient-profile profile-compact-overview" {% if user_profile.role == 'patient' %}aria-labelledby="profile-title"{% else %}aria-label="Мій профіль"{% endif %}>
     {% if user_profile.role == 'patient' %}<h2 id="profile-title">Мій профіль</h2>{% endif %}
 
     <dl class="patient-profile-grid">

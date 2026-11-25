@@ -73,7 +73,7 @@
 
         <div class="appointment-detail-actions">
             <button type="submit" class="profile-professional-button appointment-detail-primary">Зберегти зміни</button>
-            <a href="{% url 'view_conclusion' conclusion.appointment.id %}" class="profile-professional-button">Скасувати</a>
+            <a href="{{ back_url }}" class="profile-professional-button">Скасувати</a>
         </div>
     </form>
 </section>

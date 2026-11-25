@@ -9,7 +9,7 @@ from ..models import MedicalConclusion
 from ..models import ICD10Code
 from django.http import JsonResponse
 from django.db.models import Q
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from urllib.parse import urlsplit
 from ..forms.conclusion import MedicalConclusionForm
@@ -64,7 +64,30 @@ def create_conclusion(request, appointment_id):
     return render(request, 'diary/create_conclusion.html', {
         'appointment': appointment,
         'form': form,
+        'back_url': _conclusion_back_url(request, appointment, user_profile.role),
     })
+
+
+def _conclusion_back_url(request, appointment, role):
+    if role == 'patient':
+        sources = {'my_appointments', 'my_conclusions'}
+        fallback = reverse('my_appointments')
+    else:
+        sources = {'appointment_detail', 'doctor_appointments', 'doctor_dashboard', 'patient_card'}
+        fallback = reverse('appointment_detail', args=[appointment.id])
+
+    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if not candidate or not url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ):
+            continue
+        try:
+            route = resolve(urlsplit(candidate).path)
+        except Resolver404:
+            continue
+        if route.url_name in sources:
+            return candidate
+    return fallback
 
 
 @login_required
@@ -84,22 +107,11 @@ def view_conclusion(request, appointment_id):
     else:
         raise PermissionDenied("Доступ заборонено")
     
+    back_url = _conclusion_back_url(request, appointment, user_profile.role)
     # Перевірка: чи є висновок
     if not hasattr(appointment, 'conclusion'):
         messages.error(request, "❌ Висновок ще не створено")
-        return redirect('my_appointments')
-    
-    back_url = (
-        reverse('my_appointments') if user_profile.role == 'patient'
-        else reverse('appointment_detail', args=[appointment.id])
-    )
-    # Зберігаємо джерело переходу, дозволяючи повернення лише в межах сайту.
-    for candidate in (request.GET.get('next', ''), request.META.get('HTTP_REFERER', '')):
-        if candidate and url_has_allowed_host_and_scheme(
-            candidate, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-        ) and urlsplit(candidate).path != request.path:
-            back_url = candidate
-            break
+        return redirect(back_url)
 
     return render(request, 'diary/view_conclusion.html', {
         'appointment': appointment,
@@ -169,17 +181,19 @@ def edit_conclusion(request, conclusion_id):
         id=conclusion_id,
         doctor=user_profile
     )
+    back_url = _conclusion_back_url(request, conclusion.appointment, user_profile.role)
 
     if request.method == 'POST':
         form = MedicalConclusionForm(request.POST, instance=conclusion)
         if form.is_valid():
             form.save()
             messages.success(request, "✅ Висновок оновлено")
-            return redirect('view_conclusion', appointment_id=conclusion.appointment.id)
+            return redirect(reverse('view_conclusion', args=[conclusion.appointment.id], query={'next': back_url}))
     else:
         form = MedicalConclusionForm(instance=conclusion)
 
     return render(request, 'diary/edit_conclusion.html', {
         'form': form,
         'conclusion': conclusion,
+        'back_url': back_url,
     })

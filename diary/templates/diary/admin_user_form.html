@@ -19,14 +19,14 @@
         <div class="admin-user-form-grid">
         
         {% if action == 'create' %}
-            <div class="form-group">
+            <div class="form-group admin-user-form-wide">
                 <label for="admin-form-username">Логін (латиниця, без пробілів)</label>
                 <input type="text" id="admin-form-username" name="username" class="form-control"
                        placeholder="ivanov_ivan" required>
             </div>
         {% endif %}
         
-        <div class="form-group">
+        <div class="form-group admin-user-form-wide">
             <label for="admin-form-email">Email</label>
             <input type="email" id="admin-form-email" name="email" class="form-control"
                    placeholder="ivanov@example.com" required
@@ -66,7 +66,7 @@
         
         <div class="form-group">
             <label for="admin-form-gender">Стать</label>
-            <select id="admin-form-gender" name="gender" class="form-control">
+            <select id="admin-form-gender" name="gender" class="form-control health-styled-select">
                 <option value="">— Не вказано —</option>
                 <option value="M" {% if profile.gender == 'M' %}selected{% endif %}>Чоловіча</option>
                 <option value="F" {% if profile.gender == 'F' %}selected{% endif %}>Жіноча</option>
@@ -79,9 +79,9 @@
                 value="{{ profile.date_of_birth|date:'Y-m-d'|default:'' }}">
         </div>
 
-        <div class="form-group">
+        <div class="form-group admin-user-form-wide">
             <label for="admin-form-role">Роль</label>
-            <select id="admin-form-role" name="role" class="form-control">
+            <select id="admin-form-role" name="role" class="form-control health-styled-select">
                 <option value="patient" {% if profile.role == 'patient' %}selected{% endif %}>Пацієнт</option>
                 <option value="doctor" {% if profile.role == 'doctor' %}selected{% endif %}>Лікар</option>
                 <option value="admin" {% if profile.role == 'admin' %}selected{% endif %}>Адміністратор</option>

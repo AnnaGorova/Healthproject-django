@@ -4,6 +4,7 @@
             <h3 id="record-title-{{ record.id }}">Запис №{{ record.id }}</h3>
             {% if show_patient %}
                 <p class="patient-record-patient">Пацієнт: <a href="{% url 'patient_card' record.user_id %}">{{ record.user.username }}</a></p>
+                {% if record.user.phone %}<p class="patient-record-patient">Телефон: {{ record.user.phone }}</p>{% endif %}
             {% endif %}
             <time datetime="{{ record.date|date:'c' }}">{{ record.date|date:"d.m.Y H:i" }}</time>
         </div>
@@ -33,7 +34,7 @@
         {% endif %}
         {% if request.user.is_authenticated and request.user.userprofile == record.user %}
             <a href="{% url 'edit_record' record.id %}" class="patient-record-edit">Редагувати</a>
-            <a href="{% url 'delete_record' record.id %}" class="patient-record-delete">Видалити</a>
+            <a href="{% url 'delete_record' record.id %}?next={{ request.get_full_path|urlencode }}%23record-{{ record.id }}" class="patient-record-delete">Видалити</a>
         {% endif %}
     </div>
 </article>

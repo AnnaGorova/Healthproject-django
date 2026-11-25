@@ -4,7 +4,7 @@
 {% block page_title %}Редагування професійної інформації{% endblock %}
 
 {% block content %}
-    <form method="post" class="patient-profile patient-profile-edit" aria-labelledby="professional-title">
+    <form method="post" class="patient-profile patient-profile-edit profile-compact-edit" aria-labelledby="professional-title">
         {% csrf_token %}
         <h2 id="professional-title">Редагування професійної інформації</h2>
         {% if form.non_field_errors %}
