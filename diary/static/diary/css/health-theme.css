@@ -746,17 +746,28 @@
 .health-theme .patient-records .patient-record-wellbeing { margin: 0 0 18px; color: #243640; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
 .health-theme .patient-record-measurements { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; }
 .health-theme .patient-record-measurements > div { min-width: 0; padding: 14px; border-radius: 10px; background: #edf3ee; }
-.health-theme .patient-records .patient-record-card-with-patient .patient-record-card-heading {
+.health-theme .patient-records :is(.patient-record-card-with-patient, .patient-record-card-own) .patient-record-card-heading {
     padding: 8px 10px;
     border-inline-start: 3px solid #71a985;
     border-radius: 8px;
     background: #edf5ef;
     box-shadow: none;
 }
-.health-theme .patient-record-card-with-patient .record-metric-temperature { background: #e2f3eb; }
-.health-theme .patient-record-card-with-patient .record-metric-pressure { background: #f3f3df; }
-.health-theme .patient-record-card-with-patient .record-metric-pulse { background: #f8e9e8; }
-.health-theme .patient-record-card-with-patient .record-metric-saturation { background: #e7f0f8; }
+.health-theme :is(.patient-record-card-with-patient, .patient-record-card-own) .record-metric-temperature { background: #e2f3eb; }
+.health-theme :is(.patient-record-card-with-patient, .patient-record-card-own) .record-metric-pressure { background: #f3f3df; }
+.health-theme :is(.patient-record-card-with-patient, .patient-record-card-own) .record-metric-pulse { background: #f8e9e8; }
+.health-theme :is(.patient-record-card-with-patient, .patient-record-card-own) .record-metric-saturation { background: #e7f0f8; }
+.health-theme .patient-record-card-own {
+    outline: 1px solid #d8e6da;
+    outline-offset: -1px;
+    box-shadow: 0 4px 12px #1b503012;
+}
+.health-theme .patient-record-card-own .patient-record-details { box-shadow: inset 0 0 0 1px #a5c7ae; }
+.health-theme .patient-record-card-own .patient-record-edit:hover { background: #12532b; }
+.health-theme .patient-record-card-own .patient-record-actions a:focus-visible {
+    outline: 2px solid #217568;
+    outline-offset: 2px;
+}
 .health-theme .patient-record-measurements dt { margin-bottom: 8px; color: #52657c; font-size: 13px; }
 .health-theme .patient-record-measurements dd { margin: 0; color: #1b303e; font-size: 20px; font-weight: 500; overflow-wrap: anywhere; }
 .health-theme .patient-record-measurements small { color: #52657c; font-size: 12px; font-weight: 400; }
@@ -764,7 +775,7 @@
 .health-theme .patient-record-note h4 { margin: 0 0 6px; color: #52657c; font-size: 13px; font-weight: 500; }
 .health-theme .patient-records .patient-record-note p { margin: 0; color: #243640; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .health-theme .patient-record-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #dfe9e2; }
-.health-theme .patient-record-card-with-patient .patient-record-actions { border-top: 2px solid #a5c7ae; }
+.health-theme :is(.patient-record-card-with-patient, .patient-record-card-own) .patient-record-actions { border-top: 2px solid #a5c7ae; }
 .health-theme .patient-record-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 8px 18px; border-radius: 999px; font-size: 14px; line-height: 1.5; text-decoration: none; }
 .health-theme .patient-record-details { margin-right: auto; color: #166534; }
 .health-theme .patient-record-details:hover { background: #e8f3e5; }

@@ -1,4 +1,4 @@
-<article class="record-card patient-record-card{% if show_patient %} patient-record-card-with-patient{% endif %}" id="record-{{ record.id }}" aria-labelledby="record-title-{{ record.id }}">
+<article class="record-card patient-record-card{% if show_patient %} patient-record-card-with-patient{% elif request.user.is_authenticated and request.user.userprofile == record.user %} patient-record-card-own{% endif %}" id="record-{{ record.id }}" aria-labelledby="record-title-{{ record.id }}">
     <header class="patient-record-card-heading">
         <div>
             <h3 id="record-title-{{ record.id }}">Запис №{{ record.id }}</h3>
