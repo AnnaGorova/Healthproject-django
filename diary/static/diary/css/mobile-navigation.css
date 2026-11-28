@@ -32,7 +32,7 @@
         border-radius: 14px;
         text-align: start;
     }
-    .mobile-site-header .mobile-brand { justify-self: start; margin-inline-start: 8px; }
+    .mobile-site-header .mobile-brand { justify-self: start; margin-inline-start: 4px; }
     .health-theme .mobile-site-header + .sidebar .sidebar-header { display: none; }
     .health-theme .mobile-site-header:has(.mobile-menu-toggle:not([hidden])[aria-expanded="false"]) + .sidebar {
         display: none;
