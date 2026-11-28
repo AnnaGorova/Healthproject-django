@@ -22,13 +22,21 @@
         <h2 id="conclusion-title">Висновок лікаря</h2>
         <div class="conclusion-heading-actions">
             <p>Форма № 028/о</p>
-            <button type="button" class="conclusion-print-button" data-print-conclusion hidden>
+            <div class="conclusion-heading-controls">
+                <nav class="conclusion-actions" aria-label="Повернення з висновку">
+                    <a href="{{ back_url }}">{% if back_to_conclusions %}← Усі висновки{% else %}← Назад{% endif %}</a>
+                    {% if request.user.userprofile.role == 'patient' and not back_to_conclusions %}
+                        <a href="{% url 'my_conclusions' %}">Усі висновки</a>
+                    {% endif %}
+                </nav>
+                <button type="button" class="conclusion-print-button" data-print-conclusion hidden>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
                     <path d="M6 14h12v7H6zM18 12h.01"/>
                 </svg>
                 Друкувати
-            </button>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -98,12 +106,6 @@
     </div>
     </article>
 
-    <nav class="conclusion-actions" aria-label="Повернення з висновку">
-        <a href="{{ back_url }}">{% if back_to_conclusions %}← Усі висновки{% else %}← Назад{% endif %}</a>
-        {% if request.user.userprofile.role == 'patient' and not back_to_conclusions %}
-            <a href="{% url 'my_conclusions' %}">Усі висновки</a>
-        {% endif %}
-    </nav>
 </div>
 {% endblock %}
 

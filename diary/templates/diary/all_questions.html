@@ -18,17 +18,6 @@
                        autocomplete="off"
                        placeholder="{% if patient_view %}Лікар або текст повідомлення{% else %}Пацієнт, телефон або текст повідомлення{% endif %}">
             </div>
-            {% if patient_view %}
-                <fieldset class="inbox-status-filter">
-                    <legend>Статус</legend>
-                    <div class="inbox-status-options">
-                        <label><input type="radio" name="status" value="" {% if not selected_status %}checked{% endif %}><span>Усі звернення</span></label>
-                        {% for value, label in status_options %}
-                            <label><input type="radio" name="status" value="{{ value }}" {% if selected_status == value %}checked{% endif %}><span>{{ label }}</span></label>
-                        {% endfor %}
-                    </div>
-                </fieldset>
-            {% else %}
             <div>
                 <label for="inbox-status">Статус</label>
                 <select id="inbox-status" name="status" class="health-styled-select">
@@ -38,7 +27,6 @@
                     {% endfor %}
                 </select>
             </div>
-            {% endif %}
             <div class="inbox-filter-actions">
                 <button type="submit">Знайти</button>
                 {% if search or selected_status %}

@@ -16,6 +16,10 @@ if (chartDataElement && chartCanvas) {
     const diastolicText = document.getElementById('chart-diastolic');
     const emptyMessage = document.getElementById('chart-empty');
     const chartContainer = document.getElementById('chart-container');
+    const periodSummary = document.getElementById('chart-period-summary');
+    const measurementCount = document.getElementById('chart-measurement-count');
+    const lastValue = document.getElementById('chart-last-value');
+    const periodChange = document.getElementById('chart-period-change');
     const buttons = document.querySelectorAll('.dynamics-selector [data-metric]');
 
     // Назви, одиниці та лінії кожного показника. Для тиску — дві лінії.
@@ -53,6 +57,29 @@ if (chartDataElement && chartCanvas) {
             systolicText.textContent = averages[0] === null ? '—' : formatNumber(averages[0]);
             diastolicText.textContent = averages[1] === null ? '—' : formatNumber(averages[1]);
         }
+    }
+
+    function updatePeriodSummary(key, metric) {
+        const measurements = data.labels
+            .map((_, index) => metric.fields.map(([field]) => data[field][index]))
+            .filter(values => values.every(Number.isFinite));
+        periodSummary.hidden = measurements.length === 0;
+        if (periodSummary.hidden) return;
+
+        const first = measurements[0];
+        const last = measurements.at(-1);
+        measurementCount.textContent = formatNumber(measurements.length);
+        lastValue.textContent = `${last.map(formatNumber).join('/')} ${metric.unit}`;
+        if (measurements.length < 2) {
+            periodChange.textContent = '—';
+            return;
+        }
+        const changes = last.map((value, index) => {
+            const difference = value - first[index];
+            return `${difference > 0 ? '+' : ''}${formatNumber(difference)}`;
+        });
+        const change = key === 'pressure' ? `Сист. ${changes[0]} · Діаст. ${changes[1]}` : changes[0];
+        periodChange.textContent = `${change} ${metric.unit}`;
     }
 
     // Оцінює останнє вимірювання у вибраному періоді за готовою оцінкою Django.
@@ -99,6 +126,7 @@ if (chartDataElement && chartCanvas) {
         }
         const hasData = metric.fields.some(([field]) => hasValues(data[field]));
         updateSummary(key, metric);
+        updatePeriodSummary(key, metric);
         updateAssessment(key, metric);
         emptyMessage.textContent = 'Немає вимірювань цього показника за вибраний період.';
         emptyMessage.hidden = hasData;
@@ -118,6 +146,13 @@ if (chartDataElement && chartCanvas) {
         // Створюємо адаптивний графік. Пропуски не замінюємо нулями.
         const riskField = key === 'pressure' ? 'pressure_risk' : `${key}_risk`;
         const options = createOptions({ legend: false, unit: metric.unit });
+        const axisFont = {
+            size: () => parseFloat(getComputedStyle(chartCanvas).getPropertyValue('--home-chart-axis-size'))
+                || Chart.defaults.font.size,
+        };
+        options.scales.x.ticks.font = axisFont;
+        options.scales.y.ticks.font = axisFont;
+        options.scales.y.title.font = axisFont;
         // Орієнтир шкали тиску з макета без обрізання більших значень.
         if (key === 'pressure') {
             options.scales.y.suggestedMin = 0;

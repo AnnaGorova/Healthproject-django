@@ -671,6 +671,19 @@
 }
 .health-theme .records-period-error { flex-basis: 100%; margin: 0; color: #a52e35; font-size: 14px; }
 .health-theme .records-period-filter :is(a, summary, input, button):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
+@media (min-width: 601px) and (max-width: 768px), (min-width: 960px) and (max-width: 1100px) {
+    .health-theme .records-period-links { flex: 4 1 0; flex-wrap: nowrap; }
+    .health-theme .records-period-links a { flex: 1; }
+    .health-theme .records-custom-period { flex: 1.5 1 0; }
+    .health-theme .records-date-form {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+    .health-theme .records-date-form > div { min-width: 0; }
+    .health-theme .records-date-form input[type="text"] { width: 100%; }
+    .health-theme .records-calendar-area { grid-column: 1 / -1; }
+}
 @media (max-width: 600px) {
     .health-theme .records-period-filter { gap: 8px 4px; padding: 10px 8px; }
     .health-theme .records-period-links { flex: 1 0 auto; flex-wrap: nowrap; gap: 4px; }
@@ -716,7 +729,7 @@
 .health-theme .patient-record-card-heading h3 { margin: 0 0 4px; color: #1b303e; font-size: 18px; font-weight: 600; }
 .health-theme .patient-record-card-heading time { color: #64748b; font-size: 13px; }
 .health-theme .patient-record-mood { padding: 6px 12px; border-radius: 8px; background: #e8f3e5; color: #315e45; font-size: 13px; }
-@media (max-width: 768px) {
+@media (max-width: 768px), (min-width: 960px) and (max-width: 1100px) {
     .health-theme .patient-record-card-heading {
         flex-direction: row;
         gap: 6px 10px;
@@ -752,7 +765,7 @@
 @media (max-width: 1200px) {
     .health-theme .patient-record-measurements { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 600px) {
+@media (max-width: 768px), (min-width: 960px) and (max-width: 1100px) {
     .health-theme .patient-records-heading { padding: 16px; }
     .health-theme .patient-records-heading h2 { font-size: 22px; }
     .health-theme .patient-records-create { max-width: 100%; }
@@ -811,6 +824,26 @@
         line-height: 1.25;
         text-align: center;
         overflow-wrap: anywhere;
+    }
+}
+@media (min-width: 601px) and (max-width: 768px), (min-width: 960px) and (max-width: 1100px) {
+    .health-theme .patient-record-measurements { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) and (max-width: 1100px) {
+    .health-theme .patient-records .patient-record-card-heading h3 { font-size: 17px; }
+    .health-theme .patient-records .patient-record-wellbeing,
+    .health-theme .patient-records .patient-record-note p { font-size: 15px; }
+    .health-theme .patient-records .patient-record-measurements dd { font-size: 19px; }
+    .health-theme .patient-records .patient-record-actions { gap: 8px; }
+    .health-theme .patient-records .patient-record-actions a {
+        flex: 0 0 auto;
+        min-height: 40px;
+        padding: 6px 14px;
+        font-size: 13px;
+    }
+    .health-theme .patient-records .patient-record-actions .patient-record-details {
+        margin-right: auto;
+        padding-inline: 6px;
     }
 }
 
@@ -1083,8 +1116,9 @@ body.health-theme {
     position: absolute;
     display: block;
     background: #75B581;
-    border-radius: 50%;
-    filter: blur(4.5vw);
+    border-radius: 34% 66% 63% 37% / 49% 31% 69% 51%;
+    filter: blur(8vw);
+    opacity: .8;
 }
 
 /* X: 42, Y: -15, W: 789, H: 551. */
@@ -1101,7 +1135,8 @@ body.health-theme {
     top: 25vh;
     width: 36vw;
     height: 34vh;
-    filter: blur(3vw);
+    border-radius: 68% 32% 55% 45% / 43% 57% 43% 57%;
+    transform: rotate(-18deg);
 }
 
 .health-theme .health-blob-right-bottom {
@@ -1109,7 +1144,8 @@ body.health-theme {
     top: 65vh;
     width: 40vw;
     height: 36vh;
-    filter: blur(3vw);
+    border-radius: 39% 61% 31% 69% / 65% 38% 62% 35%;
+    transform: rotate(21deg);
 }
 
 @media (max-width: 768px) {
@@ -1190,6 +1226,20 @@ body.health-theme {
     padding: 13px 19px;
     border-radius: 12px;
     background: #f7f9f8;
+}
+.health-theme .patient-appointments-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 13px;
+}
+.health-theme .patient-appointments-heading .patient-appointments-title { margin: 0; text-align: start; }
+.health-theme .patient-appointments-heading .patient-records-create { justify-self: end; }
+@media (max-width: 700px) {
+    .health-theme .patient-appointments-heading { padding: 10px 12px; gap: 8px; }
+    .health-theme .patient-appointments-heading .patient-appointments-title { overflow-wrap: anywhere; }
+    .health-theme .patient-appointments-heading .patient-records-create { padding-inline: 10px; font-size: 12px; }
 }
 .health-theme .patient-appointment-filters a {
     display: flex;
@@ -1433,11 +1483,9 @@ body.health-theme {
     background: #f7f9f8;
     text-align: center;
 }
-.health-theme .patient-appointments-footer { margin-top: 19px; text-align: center; }
-.health-theme .patient-appointments-footer a { color: #166534; }
 .health-theme .patient-appointment-filters a:focus-visible,
 .health-theme .patient-appointment-action:focus-visible,
-.health-theme .patient-appointments-footer a:focus-visible {
+.health-theme .patient-appointments-heading a:focus-visible {
     outline: 3px solid #217568;
     outline-offset: 4px;
 }
@@ -1445,6 +1493,39 @@ body.health-theme {
     .health-theme .patient-appointment-card { grid-template-columns: minmax(0, 1fr) 163px; }
     .health-theme .patient-appointment-dates { grid-column: 1 / -1; }
     .health-theme .patient-appointment-dates .patient-appointment-time { margin-top: 0; }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-list { gap: 14px; }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-card {
+        align-items: center;
+        gap: 8px 14px;
+        min-height: 0;
+        padding: 10px 14px;
+    }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-status {
+        min-width: 0;
+        min-height: 30px;
+        font-size: 13px;
+    }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-doctor-summary {
+        gap: 8px;
+        margin-top: 5px;
+        padding: 6px 8px;
+    }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-avatar { width: 36px; height: 36px; }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-actions { gap: 6px; padding-top: 0; }
+    .health-theme .patient-appointments:not(.doctor-appointments) .appointment-actions-notice { min-height: 0; padding: 8px; }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-dates {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        max-width: none;
+        padding-top: 6px;
+        border-top: 1px solid #dfe9e2;
+    }
+    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-dates > div {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1px;
+    }
 }
 @media (max-width: 700px) {
     .health-theme .patient-appointments-title { font-size: 18px; }
@@ -2622,35 +2703,6 @@ body.health-theme {
 }
 .health-theme .doctor-inbox-filters input,
 .health-theme .doctor-inbox-filters select { min-height: 42px; }
-.health-theme .inbox-status-filter { min-width: 0; margin: 0; padding: 0; border: 0; }
-.health-theme .inbox-status-filter legend { margin-bottom: 6px; padding: 0; color: #52657c; font-size: 13px; }
-.health-theme .inbox-status-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
-.health-theme .doctor-inbox-filters .inbox-status-options label { position: relative; display: flex; margin: 0; }
-.health-theme .inbox-status-options input[type="radio"] {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    min-height: 0;
-    padding: 0;
-    clip-path: inset(50%);
-}
-.health-theme .inbox-status-options span {
-    display: grid;
-    place-items: center;
-    width: 100%;
-    min-height: 36px;
-    padding: 3px 5px;
-    border: 1px solid #b3d5b4;
-    border-radius: 8px;
-    background: #f7f9f8;
-    color: #315e45;
-    font-size: 12px;
-    line-height: 1.25;
-    text-align: center;
-    cursor: pointer;
-}
-.health-theme .inbox-status-options input:checked + span { border-color: #166534; background: #166534; color: #fff; }
-.health-theme .inbox-status-options input:focus-visible + span { outline: 2px solid #217568; outline-offset: 2px; }
 .health-theme .inbox-filter-actions { display: flex; gap: 6px; }
 .health-theme .inbox-filter-reset {
     display: inline-flex;
@@ -3218,7 +3270,7 @@ body.health-theme::before {
 }
 
 @media (min-width: 769px) {
-    .health-theme .main-content:has(> .top-header .patient-search) > .message {
+    .health-theme .main-content:has(> .top-header .patient-search) > :is(.message, .home-messages) {
         margin-left: 24px;
     }
 }
@@ -3622,6 +3674,15 @@ body.health-theme::before {
     .health-theme .doctors-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+@media (min-width: 701px) and (max-width: 768px) {
+    .health-theme .content-wrapper:has(> .doctors-page) { padding-inline: 0; }
+    .health-theme .doctors-page h1 { font-size: 24px; }
+    .health-theme .doctor-item-name { font-size: 18px; }
+    .health-theme .doctors-page :is(.doctor-item-specialty, .doctor-item-experience, .doctor-book-link) {
+        font-size: 14px;
+    }
+}
+
 @media (max-width: 700px) {
     .health-theme .doctors-page { padding: 13px; }
     .health-theme .doctors-list { grid-template-columns: 1fr; }
@@ -3963,6 +4024,29 @@ body.health-theme::before {
     text-align: center;
 }
 
+.health-theme .record-create-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.health-theme .record-create-heading .record-create-title { margin: 0; padding-inline-start: 8px; text-align: start; }
+.health-theme .record-create-heading .record-create-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 38px;
+    padding: 5px 12px;
+    border: 1px solid #217568;
+    border-radius: 999px;
+    background: #f7f9f8;
+    font-size: 13px;
+    text-align: center;
+    text-decoration: none;
+}
+.health-theme .record-create-heading .record-create-back:hover { background: #e8f3e5; }
 .health-theme .record-create-title {
     margin: 0 0 24px;
     color: #1b303e;
@@ -4282,6 +4366,7 @@ body.health-theme::before {
         gap: 6px;
         padding: 0 12px;
     }
+    .health-theme .record-create-actions > .record-create-submit:only-child { grid-column: 1 / -1; }
     .health-theme .record-create-actions :is(.record-create-submit, .record-create-back) {
         display: flex;
         align-items: center;
@@ -4753,6 +4838,20 @@ body.health-theme::before {
     padding-top: 52px;
 }
 
+.health-theme .patient-profile.profile-compact-overview { min-height: 0; }
+.health-theme .profile-compact-overview .patient-profile-actions {
+    margin-top: 16px;
+    padding-top: 0;
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+    .health-theme .patient-profile.profile-compact-edit { min-height: 0; }
+    .health-theme .profile-compact-edit .patient-profile-actions {
+        margin-top: 16px;
+        padding-top: 0;
+    }
+}
+
 .health-theme .profile-edit-button {
     display: flex;
     align-items: center;
@@ -4821,7 +4920,6 @@ body.health-theme::before {
         padding: 4px 10px;
         font-size: 12px;
     }
-    .health-theme .profile-compact-overview .patient-profile-actions { padding-top: 10px; }
     .health-theme .profile-compact-overview .profile-edit-button { min-height: 44px; font-size: 14px; }
     .health-theme .profile-compact-edit h2 { margin-bottom: 10px; font-size: 18px; line-height: 1.3; }
     .health-theme .profile-compact-edit .patient-profile-field:last-child { grid-column: 1 / -1; }

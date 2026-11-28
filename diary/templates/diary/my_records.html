@@ -8,7 +8,7 @@
     <div class="patient-records-heading">
         <div>
             <h2 id="records-title">Мої записи</h2>
-            <p>{% if selected_period == 'all' %}Всього записів{% else %}Знайдено записів{% endif %}: {{ records|length }}</p>
+            <p>{% if selected_period == 'all' %}Всього записів{% else %}Знайдено записів{% endif %}: {{ records_count }}</p>
         </div>
         <a href="{% url 'create_record' %}" class="patient-records-create">+ Новий запис</a>
     </div>
@@ -68,6 +68,7 @@
             </div>
         {% endfor %}
     </div>
+    {% include "diary/includes/records_pagination.html" %}
 </section>
 {% endblock %}
 {% block extra_js %}

@@ -1,7 +1,9 @@
 .health-theme .content-wrapper:has(> .about-container) {
-    padding-left: 0;
-    padding-right: 0;
+    padding-inline: 0;
+    padding-block-start: 0;
 }
+
+.health-theme .main-content:has(.about-container) > .top-header { margin-bottom: 12px; }
 
 @media (min-width: 769px) {
     .health-theme .main-content:has(.top-header .patient-search)
@@ -16,6 +18,7 @@
 
 .health-theme .about-title {
     margin: 0 0 12px;
+    padding-inline-start: 8px;
     color: #1b303e;
     font-size: clamp(20px, 3vw, 26px);
     line-height: 1.25;
@@ -165,7 +168,6 @@
 }
 
 @media (max-width: 768px) {
-    .health-theme .content-wrapper:has(> .about-container) { padding-top: 0; }
     .health-theme .about-page,
     .health-theme .about-row { gap: 8px; }
     .health-theme .about-card {

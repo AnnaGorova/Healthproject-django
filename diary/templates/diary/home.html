@@ -69,6 +69,11 @@
                             <div><span class="chart-dot chart-dot-diastolic"></span><span>Діастолічний</span><strong id="chart-diastolic">—</strong><small>мм рт. ст.</small></div>
                         </div>
                     </div>
+                    <dl class="chart-period-summary" id="chart-period-summary" hidden>
+                        <div><dt>Вимірювань</dt><dd id="chart-measurement-count"></dd></div>
+                        <div><dt>Останнє значення</dt><dd id="chart-last-value"></dd></div>
+                        <div><dt>Зміна від першого до останнього</dt><dd id="chart-period-change"></dd></div>
+                    </dl>
                     <p id="chart-empty" hidden>Немає вимірювань цього показника за вибраний період.</p>
                     <div class="dynamics-chart" id="chart-container">
                         <canvas id="home-health-chart" role="img" aria-label="Динаміка артеріального тиску">Графік показників здоров’я.</canvas>

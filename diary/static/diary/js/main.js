@@ -1,7 +1,7 @@
 console.log("main.js завантажено!");
 
 // Вирівнюємо меню з нижнім краєм вмісту вибраних сторінок на широких екранах.
-const profileCard = document.querySelector('.patient-profile, .admin-user-editor, .about-page, .admin-home-errors');
+const profileCard = document.querySelector('.admin-user-editor, .admin-home-errors');
 const profileSidebar = document.querySelector('.health-theme .sidebar');
 
 if (profileCard && profileSidebar) {

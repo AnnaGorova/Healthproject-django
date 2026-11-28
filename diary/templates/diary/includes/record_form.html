@@ -80,6 +80,8 @@
     </section>
     <div class="record-create-actions">
         <button type="submit" class="record-create-submit">{{ submit_label }}</button>
-        <a href="{{ back_url }}" class="record-create-back">{{ back_label }}</a>
+        {% if back_url %}
+            <a href="{{ back_url }}" class="record-create-back">{{ back_label }}</a>
+        {% endif %}
     </div>
 </form>

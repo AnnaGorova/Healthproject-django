@@ -85,9 +85,11 @@
             </header>
         
             {% if messages %}
+                {% if health_parameters %}<div class="home-messages">{% endif %}
                 {% for message in messages %}
                     <div class="message message-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
+                {% if health_parameters %}</div>{% endif %}
             {% endif %}
         
     

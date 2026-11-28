@@ -1,0 +1,11 @@
+{% if records_page.has_other_pages %}
+    <nav class="records-pagination" aria-label="Сторінки записів">
+        {% if records_page.has_previous %}
+            <a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ records_page.previous_page_number }}">← Попередні</a>
+        {% endif %}
+        <span>Сторінка {{ records_page.number }} з {{ records_page.paginator.num_pages }}</span>
+        {% if records_page.has_next %}
+            <a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ records_page.next_page_number }}">Наступні →</a>
+        {% endif %}
+    </nav>
+{% endif %}

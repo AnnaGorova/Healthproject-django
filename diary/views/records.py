@@ -238,7 +238,15 @@ def my_records(request):
     
     records = HealthRecord.objects.filter(user=user_profile, is_active=True)
     records, context = filter_record_period(request, records)
-    context['records'] = records.order_by('-date', '-pk')
+    records_page = Paginator(records.order_by('-date', '-pk'), 5).get_page(request.GET.get('page'))
+    pagination_query = request.GET.copy()
+    pagination_query.pop('page', None)
+    context.update({
+        'records': records_page.object_list,
+        'records_page': records_page,
+        'records_count': records_page.paginator.count,
+        'pagination_query': pagination_query.urlencode(),
+    })
     return render(request, 'diary/my_records.html', context)
 
 

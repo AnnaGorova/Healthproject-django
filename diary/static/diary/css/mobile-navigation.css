@@ -1,5 +1,6 @@
 .mobile-site-header,
 .mobile-navigation,
+.chart-period-summary,
 .login-mobile-brand { display: none; }
 
 @media screen and (max-width: 768px) {
@@ -175,6 +176,16 @@
     body:has(.mobile-navigation.is-visible) {
         padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
     }
+    .landing-brand { gap: 10px; font-size: 15px; }
+    .landing-brand img { width: 48px; height: 46px; }
+}
+
+@media screen and (min-width: 601px) and (max-width: 768px) {
+    .mobile-navigation a { max-width: none; }
+    .mobile-navigation img { width: 25px; height: 25px; }
+}
+
+@media screen and (max-width: 1100px) {
     .health-theme .content-wrapper:has(> .home-health-parameters) { padding-inline: 0; }
     .health-theme :is(.home-health-parameters, .patient-card-parameters) .parameters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -202,8 +213,193 @@
         grid-column: 2;
         margin: 0;
     }
-    .landing-brand { gap: 10px; font-size: 15px; }
-    .landing-brand img { width: 48px; height: 46px; }
+}
+
+@media screen and (min-width: 701px) and (max-width: 1100px) {
+    .health-theme .main-content,
+    .landing-page,
+    .login-body .login-layout { zoom: 1.15; }
+}
+
+@media screen and (min-width: 701px) and (max-width: 768px) {
+    .health-theme .main-content,
+    .landing-page,
+    .login-body .login-layout { zoom: 1.22; }
+
+    .health-theme .mobile-site-header { padding-block-start: 10px; }
+    .health-theme .mobile-site-header + .sidebar .nav-link { font-size: 16px; }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1100px) {
+    .health-theme .app-container {
+        grid-template-columns: 224px minmax(0, 1fr);
+        gap: 16px;
+        padding: 16px;
+    }
+    .health-theme .sidebar-header { padding: 24px 12px 12px 22px; }
+    .health-theme .sidebar .brand { gap: 8px; }
+    .health-theme .sidebar .brand-logo { width: 48px; height: 46px; }
+    .health-theme .sidebar .brand-name { font-size: 13px; }
+    .health-theme .sidebar .brand-name small { margin-top: 2px; font-size: 11px; }
+    .health-theme .sidebar .sidebar-nav ul { padding: 0 8px 10px; }
+    .health-theme .sidebar .sidebar-nav li { margin-inline: 0; }
+    .health-theme .sidebar .nav-link { min-height: 44px; gap: 8px; margin-bottom: 2px; padding: 6px 8px; font-size: 15px; }
+    .health-theme .sidebar .nav-icon { width: 27px; height: 27px; }
+    .health-theme .main-content:has(.home-health-parameters) > .top-header { margin-left: 0; margin-bottom: 14px; }
+    .health-theme .content-wrapper:has(> .home-health-parameters) { padding-top: 0; }
+    .health-theme .home-health-parameters,
+    .health-theme .home-health-parameters + .health-dynamics { padding: 14px; }
+    .health-theme .home-health-parameters .parameters-heading { margin-bottom: 10px; }
+    .health-theme .home-health-parameters + .health-dynamics { margin-top: 10px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-heading { margin-bottom: 8px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-periods { margin: 0; padding: 2px; box-shadow: none; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 16px;
+        margin-bottom: 8px;
+    }
+    .health-theme .home-health-parameters + .health-dynamics .chart-summary-main { flex: 1 1 180px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-summary-icon { width: 36px; height: 36px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-assessment p { margin-top: 3px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-pressure-details { padding: 6px 8px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-pressure-details > div + div { margin-top: 4px; }
+    .health-theme .chart-period-summary:not([hidden]) {
+        display: grid;
+        grid-template-columns: minmax(0, .7fr) minmax(0, 1fr) minmax(0, 1.5fr);
+        gap: 6px;
+        margin: 0 0 8px;
+    }
+    .health-theme .chart-period-summary > div {
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: #edf4f1;
+    }
+    .health-theme .chart-period-summary dt { color: #52657c; font-size: 11px; line-height: 1.3; }
+    .health-theme .chart-period-summary dd { margin: 3px 0 0; color: #1b303e; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-layout { gap: 10px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-details { margin-top: 8px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-selector {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+        gap: 5px;
+        padding: 6px;
+    }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-selector button {
+        justify-content: center;
+        gap: 6px;
+        min-width: 0;
+        min-height: 48px;
+        padding: 8px 4px;
+        font-size: 14px;
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-selector .chart-selector-icon { width: 22px; height: 22px; }
+}
+
+@media screen and (min-width: 960px) and (max-width: 1100px) and (max-height: 999px),
+       screen and (min-width: 960px) and (max-width: 1100px) and (orientation: landscape) {
+    .health-theme .home-health-parameters .parameters-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .health-theme .home-health-parameters .parameter-card { padding: 8px; }
+    .health-theme .home-health-parameters .parameter-card[data-parameter="pressure"] { display: block; grid-column: auto; }
+    .health-theme .home-health-parameters [data-parameter="pressure"] .parameter-icon { display: none; }
+    .health-theme .home-health-parameters .parameter-card h3 { min-height: 2.5em; margin: 0 0 3px; line-height: 1.25; }
+    .health-theme .home-health-parameters .parameter-card :is(.parameter-value, .parameter-empty) { margin: 0 0 4px; }
+}
+
+@media screen and (min-width: 960px) and (max-width: 1100px) and (min-height: 1000px) and (orientation: portrait) {
+    .health-theme .app-container:has(.home-health-parameters),
+    .health-theme .main-content:has(.home-health-parameters) { min-height: 0; }
+    .health-theme .content-wrapper:has(> .home-health-parameters) {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .health-theme .app-container:has(.home-health-parameters) .sidebar .brand-name { font-size: 15px; }
+    .health-theme .app-container:has(.home-health-parameters) .sidebar .brand-name small { font-size: 12px; }
+    .health-theme .main-content:has(.home-health-parameters) #patient-search-input { font-size: 17px; }
+    .health-theme .main-content:has(.home-health-parameters) .account-details strong { font-size: 17px; }
+    .health-theme .main-content:has(.home-health-parameters) .account-details small { font-size: 13px; }
+    .health-theme .main-content:has(.home-health-parameters) .account-logout { font-size: 14px; }
+    .health-theme .home-health-parameters .parameters-heading h2 { font-size: 21px; }
+    .health-theme .home-health-parameters .parameter-card h3 { font-size: 15px; }
+    .health-theme .home-health-parameters .parameter-value { font-size: 20px; }
+    .health-theme .home-health-parameters .parameter-value span { font-size: 13px; }
+    .health-theme .home-health-parameters :is(.parameter-date, .parameter-empty) { font-size: 12px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-chart { height: 260px; }
+    .health-theme .home-health-parameters + .health-dynamics {
+        --home-chart-axis-size: 14px;
+    }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-heading h2 { font-size: 21px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-summary-main h3 { font-size: 16px; }
+    .health-theme .home-health-parameters + .health-dynamics .chart-summary-caption { font-size: 13px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-heading p,
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-details { font-size: 14px; }
+    .health-theme .home-health-parameters + .health-dynamics .dynamics-periods a,
+    .health-theme .home-health-parameters + .health-dynamics .chart-risk-badge,
+    .health-theme .home-health-parameters + .health-dynamics .chart-pressure-details > div { font-size: 13px; }
+    .health-theme .chart-period-summary dt { font-size: 12px; }
+    .health-theme .chart-period-summary dd { font-size: 14px; }
+
+    @supports (grid-template-rows: subgrid) {
+        .health-theme .app-container:has(.home-health-parameters) {
+            box-sizing: border-box;
+            min-height: 100svh;
+            grid-template-rows: max-content max-content minmax(auto, 1fr) auto;
+            row-gap: 0;
+        }
+        .health-theme .app-container:has(.home-health-parameters) > .sidebar {
+            z-index: 1;
+            grid-area: 1 / 1 / span 3;
+            align-self: stretch;
+        }
+        .health-theme .app-container:has(.home-health-parameters) .sidebar-nav { display: flex; }
+        .health-theme .app-container:has(.home-health-parameters) .sidebar-nav ul {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .health-theme .main-content:has(.home-health-parameters) {
+            display: grid;
+            grid-area: 1 / 1 / span 4 / span 2;
+            grid-template: subgrid / subgrid;
+            min-height: 0;
+        }
+        .health-theme .main-content:has(.home-health-parameters) > .top-header { grid-area: 1 / 2; }
+        .health-theme .main-content:has(> .top-header .patient-search) > .home-messages {
+            grid-area: 2 / 2;
+            margin-left: 0;
+        }
+        .health-theme .content-wrapper:has(> .home-health-parameters) { display: contents; }
+        .health-theme .home-health-parameters {
+            display: flex;
+            grid-area: 3 / 2;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .health-theme .home-health-parameters .parameters-grid { flex: 1; grid-auto-rows: 1fr; }
+        .health-theme .home-health-parameters + .health-dynamics { grid-area: 4 / 1 / 5 / -1; min-width: 0; }
+    }
+}
+
+@media screen and (min-width: 1101px) {
+    .health-theme .app-container:has(.home-health-parameters),
+    .health-theme .main-content:has(.home-health-parameters) { min-height: 0; }
+    .health-theme .app-container:has(.home-health-parameters) > .sidebar { align-self: stretch; }
+    .health-theme .app-container:has(.home-health-parameters) .sidebar-nav { display: flex; }
+    .health-theme .app-container:has(.home-health-parameters) .sidebar-nav ul {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .health-theme .main-content:has(.home-health-parameters) > .content-wrapper {
+        margin: 0 0 0 24px;
+        padding: 0;
+    }
 }
 
 @media screen and (max-width: 640px) {

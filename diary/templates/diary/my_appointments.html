@@ -6,7 +6,10 @@
 
 {% block content %}
 <section class="patient-appointments">
-    <h2 class="patient-appointments-title">Мої записи до лікаря</h2>
+    <header class="patient-appointments-heading">
+        <h2 class="patient-appointments-title">Мої записи до лікаря</h2>
+        <a class="patient-records-create" href="{% url 'doctors_list' %}">Новий запис до лікаря</a>
+    </header>
     <nav class="patient-appointment-filters" aria-label="Фільтр прийомів">
         <a href="?status=active" data-status="active" {% if current_status == 'active' %}aria-current="page"{% endif %}>Активні {{ counts.scheduled }}</a>
         <a href="?status=completed" data-status="completed" {% if current_status == 'completed' %}aria-current="page"{% endif %}>Завершені {{ counts.completed }}</a>
@@ -71,8 +74,5 @@
             {% endif %}
         </nav>
     {% endif %}
-    <div class="patient-appointments-footer">
-        <a href="{% url 'doctors_list' %}">Новий запис до лікаря</a>
-    </div>
 </section>
 {% endblock %}
