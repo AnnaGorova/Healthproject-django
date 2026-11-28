@@ -1674,6 +1674,14 @@ body.health-theme {
     flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 28px;
+    border-color: #c7ddce;
+    background: linear-gradient(105deg, #e4f1e8, #f7f9f8);
+    box-shadow: none;
+}
+
+.health-theme .appointment-detail-heading .patient-appointment-status {
+    min-width: 0;
+    border-radius: 999px;
 }
 
 .health-theme .appointment-detail-heading h2 {
@@ -1708,6 +1716,7 @@ body.health-theme {
 .health-theme .appointment-detail-grid dd {
     margin: 0;
     font-size: 16px;
+    font-weight: 600;
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
@@ -1715,9 +1724,11 @@ body.health-theme {
 .health-theme .appointment-detail-complaints {
     grid-column: 1 / -1;
     padding: 20px;
+    border-inline-start: 3px solid #86af95;
     border-radius: 10px;
     background: #edf3ee;
 }
+.health-theme .appointment-detail-complaints dd { font-weight: 400; }
 
 .health-theme .appointment-detail-notice {
     padding: 12px 16px;
@@ -1733,7 +1744,7 @@ body.health-theme {
     gap: 12px;
     margin-top: 28px;
     padding-top: 24px;
-    border-top: 1px solid #dfe9e2;
+    border-top: 2px solid #b5cfc0;
 }
 
 .health-theme .appointment-detail-page .appointment-detail-primary {
@@ -1802,6 +1813,30 @@ body.health-theme {
 
 @media (min-width: 701px) and (max-width: 768px) {
     .health-theme .main-content:has(.appointment-detail-page) > .top-header h1 { display: none; }
+}
+
+@media (min-width: 701px) and (max-width: 1100px) {
+    .health-theme .appointment-detail-page > .appointment-detail-actions {
+        display: grid;
+        grid-template: auto / none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(0, 1fr);
+        gap: 6px;
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+    .health-theme .appointment-detail-page > .appointment-detail-actions > a {
+        width: 100%;
+        min-width: 0;
+        min-height: 40px;
+        padding: 4px 6px;
+        font-size: 13px;
+        line-height: 1.25;
+        text-align: center;
+    }
+    .health-theme .appointment-detail-page > .appointment-detail-actions > a:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
 }
 
 @media (max-width: 700px) {
@@ -2057,8 +2092,21 @@ body.health-theme {
 .health-theme .legend-free { background: #349747; }
 .health-theme .legend-booked { background: #a52e35; }
 .health-theme .legend-past { background: #94a3b8; }
-.health-theme .schedule-days { display: grid; gap: 28px; }
-.health-theme .schedule-day h3 { margin: 0 0 12px; font-size: 16px; font-weight: 500; }
+.health-theme .schedule-days { display: grid; gap: 12px; }
+.health-theme .schedule-day {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #d4e4d8;
+    border-inline-start: 3px solid #83b192;
+    border-radius: 10px;
+    background: #fbfdfa;
+}
+.health-theme .schedule-day h3 { margin: 0 0 10px; color: #245c43; font-size: 16px; font-weight: 600; }
+.health-theme .schedule-day:has(> .schedule-day-off) {
+    border-inline-start-color: #c68f92;
+    background: #faf5f5;
+}
+.health-theme .schedule-day > .schedule-day-off { margin: 0; }
 .health-theme .schedule-slots {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
@@ -2078,9 +2126,13 @@ body.health-theme {
     transform: none;
     box-shadow: none;
 }
-.health-theme .doctor-schedule .slot-free { border-color: #b3d5b4; background: #f7f9f8; color: #1b303e; }
+.health-theme .doctor-schedule .slot-free { border-color: #a7ccb0; background: #eaf6ed; color: #245c43; }
 .health-theme .doctor-schedule .slot-booked { border-color: #e3b5b7; background: #fbe5e5; color: #8d2830; cursor: pointer; }
-.health-theme .doctor-schedule .slot-booked:hover { background: #f5d1d3; }
+.health-theme .doctor-schedule .slot-booked:hover {
+    border-color: #bc777c;
+    background: #f5d1d3;
+    box-shadow: 0 2px 6px #8d283026;
+}
 .health-theme .doctor-schedule .slot-past { border-color: #d8dfdb; background: #edf0ee; color: #64748b; }
 .health-theme .schedule-day-off { margin: 8px 0; color: #a52e35; font-size: 14px; }
 .health-theme .schedule-error { flex-basis: 100%; margin: 0; color: #a52e35; font-size: 14px; }
