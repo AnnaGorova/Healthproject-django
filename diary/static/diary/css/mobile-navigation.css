@@ -29,9 +29,10 @@
         gap: 12px;
         min-height: 52px;
         padding: 4px 0;
+        border-radius: 14px;
         text-align: start;
     }
-    .mobile-site-header .mobile-brand { justify-self: start; }
+    .mobile-site-header .mobile-brand { justify-self: start; margin-inline-start: 8px; }
     .health-theme .mobile-site-header + .sidebar .sidebar-header { display: none; }
     .health-theme .mobile-site-header:has(.mobile-menu-toggle:not([hidden])[aria-expanded="false"]) + .sidebar {
         display: none;
@@ -226,7 +227,7 @@
     .landing-page,
     .login-body .login-layout { zoom: 1.22; }
 
-    .health-theme .mobile-site-header { padding-block-start: 10px; }
+    .health-theme .mobile-site-header { padding-block-start: 10px; border-radius: 17.08px; }
     .health-theme .mobile-site-header + .sidebar .nav-link { font-size: 16px; }
     .health-theme .mobile-site-header + .sidebar-admin .sidebar-nav ul {
         grid-template-columns: repeat(3, minmax(0, 1fr));
