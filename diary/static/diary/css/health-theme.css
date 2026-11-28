@@ -3838,8 +3838,10 @@ body.health-theme::before {
     .health-theme .doctors-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (min-width: 701px) and (max-width: 768px) {
+@media (max-width: 768px) {
     .health-theme .content-wrapper:has(> .doctors-page) { padding-inline: 0; }
+}
+@media (min-width: 701px) and (max-width: 768px) {
     .health-theme .doctors-page h1 { font-size: 24px; }
     .health-theme .doctor-item-name { font-size: 18px; }
     .health-theme .doctors-page :is(.doctor-item-specialty, .doctor-item-experience, .doctor-book-link) {
