@@ -27,33 +27,37 @@
                 <div class="hero-content">
                     <h1 id="hero-title">SMART <span>HEALTH</span> BRIDGE</h1>
                     <p>Поєднуємо самопочуття пацієнта, спілкування з лікарем і медичну історію — все в одному місці.</p>
-                    <a href="{% url 'login' %}" class="landing-button">Увійти до системи →</a>
+                    <a href="{% url 'login' %}" class="landing-button" aria-label="Увійти до системи">
+                        <span class="hero-login-label">Увійти до системи</span>
+                        <span class="hero-login-label-short">Увійти</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
                 </div>
                 <div class="hero-highlights" aria-label="Можливості платформи">
                     <span class="hero-tablet-logo" aria-hidden="true">
                         <img src="{% static 'diary/images/logo.svg' %}" alt="">
                     </span>
-                    <div class="hero-highlight hero-highlight-records">
+                    <a class="hero-highlight hero-highlight-records" href="#patients">
                         <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/my-records.svg' %}" alt=""></span>
                         <span>Медичні записи<br>в одному місці</span>
-                    </div>
-                    <div class="hero-highlight hero-highlight-booking">
+                    </a>
+                    <a class="hero-highlight hero-highlight-booking" href="#patients">
                         <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/akar-icons_calendar.svg' %}" alt=""></span>
                         <span>Зручний запис<br>на прийом</span>
-                    </div>
+                    </a>
                     <div class="hero-audiences">
                         <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/doctor-avatar.svg' %}" alt=""></span><span>Для<br>пацієнтів</span></div>
                         <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/akar-icons_heart.svg' %}" alt=""></span><span>Для<br>лікарів</span></div>
                         <div><span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/my-records.svg' %}" alt=""></span><span>Для всієї<br>родини</span></div>
                     </div>
-                    <div class="hero-highlight hero-highlight-chat">
+                    <a class="hero-highlight hero-highlight-chat" href="#about">
                         <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/andrsrxn_message.svg' %}" alt=""></span>
                         <span>Спілкування<br>з лікарем</span>
-                    </div>
-                    <div class="hero-highlight hero-highlight-dynamics">
+                    </a>
+                    <a class="hero-highlight hero-highlight-dynamics" href="#patients">
                         <span class="hero-highlight-icon" aria-hidden="true"><img src="{% static 'diary/images/andrsrxn_target.svg' %}" alt=""></span>
                         <span>Динаміка<br>показників здоров’я</span>
-                    </div>
+                    </a>
                 </div>
             </section>
             <section class="landing-cards" aria-label="Про платформу">
