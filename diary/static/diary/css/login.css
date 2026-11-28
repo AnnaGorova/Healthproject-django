@@ -347,10 +347,18 @@ button {
     .login-body .forgot-password { margin-top: 30px; }
 }
 @media (max-width: 640px) {
-    .login-body { padding: 24px 16px; }
+    .login-body {
+        justify-content: flex-start;
+        padding: clamp(24px, 7svh, 64px) 16px calc(84px + env(safe-area-inset-bottom));
+    }
     .login-body .login-layout { grid-template-columns: 1fr; max-width: 440px; }
     .login-body .login-illustration { display: none; }
-    .login-body .login-form-panel { padding: 40px 24px; }
+    .login-body .login-form-panel { padding: 26px 20px; }
+    .login-body .login-form-panel h1 { margin-bottom: 24px; }
+    .login-body .form-group { margin-bottom: 16px; }
+    .login-body .form-group input { font-size: 16px; }
+    .login-body .login-submit { max-width: none; margin-top: 24px; }
+    .login-body .forgot-password { margin-top: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .login-body *, .login-body *::before, .login-body *::after { transition: none; }
