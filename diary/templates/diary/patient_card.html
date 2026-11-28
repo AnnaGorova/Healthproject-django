@@ -7,12 +7,12 @@
 {% block content %}
 <div class="patient-card-page doctor-appointments">
     <section class="patient-card-panel" aria-labelledby="patient-card-title">
-        <header class="patient-card-heading">
+        <header class="patient-card-heading patient-card-identity-heading">
+            <a href="{% url 'doctor_patients' %}" class="profile-professional-button">← До моїх пацієнтів</a>
             <div>
                 <h2 id="patient-card-title">{{ patient.username }}</h2>
                 <p>Картка пацієнта</p>
             </div>
-            <a href="{% url 'doctor_patients' %}" class="profile-professional-button">← До моїх пацієнтів</a>
         </header>
         <dl class="patient-card-personal">
             <div><dt>Email</dt><dd>{{ patient.user.email|default:"—" }}</dd></div>

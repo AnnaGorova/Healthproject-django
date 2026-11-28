@@ -1,4 +1,4 @@
-<article class="record-card patient-record-card" id="record-{{ record.id }}" aria-labelledby="record-title-{{ record.id }}">
+<article class="record-card patient-record-card{% if show_patient %} patient-record-card-with-patient{% endif %}" id="record-{{ record.id }}" aria-labelledby="record-title-{{ record.id }}">
     <header class="patient-record-card-heading">
         <div>
             <h3 id="record-title-{{ record.id }}">Запис №{{ record.id }}</h3>
@@ -14,10 +14,10 @@
     <p class="patient-record-wellbeing"><strong>Самопочуття:</strong> {{ record.well_being|default:"Не вказано" }}</p>
 
     <dl class="patient-record-measurements">
-        <div><dt>Температура</dt><dd>{{ record.temperature|default_if_none:"—" }} <small>°C</small></dd></div>
-        <div><dt>Артеріальний тиск</dt><dd>{{ record.pressure_systolic|default_if_none:"—" }}/{{ record.pressure_diastolic|default_if_none:"—" }} <small>мм рт. ст.</small></dd></div>
-        <div><dt>Пульс</dt><dd>{{ record.heart_rate|default_if_none:"—" }} <small>уд/хв</small></dd></div>
-        <div><dt>Сатурація</dt><dd>{{ record.spo2|default_if_none:"—" }} <small>%</small></dd></div>
+        <div class="record-metric-temperature"><dt>Температура</dt><dd>{{ record.temperature|default_if_none:"—" }} <small>°C</small></dd></div>
+        <div class="record-metric-pressure"><dt>Артеріальний тиск</dt><dd>{{ record.pressure_systolic|default_if_none:"—" }}/{{ record.pressure_diastolic|default_if_none:"—" }} <small>мм рт. ст.</small></dd></div>
+        <div class="record-metric-pulse"><dt>Пульс</dt><dd>{{ record.heart_rate|default_if_none:"—" }} <small>уд/хв</small></dd></div>
+        <div class="record-metric-saturation"><dt>Сатурація</dt><dd>{{ record.spo2|default_if_none:"—" }} <small>%</small></dd></div>
     </dl>
 
     {% if record.complaints %}
@@ -30,7 +30,7 @@
     <div class="patient-record-actions">
         <a href="{% url 'record_detail' record.id %}?next={{ request.get_full_path|urlencode }}%23record-{{ record.id }}" class="patient-record-details">Детальніше →</a>
         {% if show_patient %}
-            <a href="{% url 'patient_card' record.user_id %}" class="patient-record-details">Картка пацієнта</a>
+            <a href="{% url 'patient_card' record.user_id %}" class="patient-record-details patient-record-patient-card">Картка пацієнта</a>
         {% endif %}
         {% if request.user.is_authenticated and request.user.userprofile == record.user %}
             <a href="{% url 'edit_record' record.id %}" class="patient-record-edit">Редагувати</a>

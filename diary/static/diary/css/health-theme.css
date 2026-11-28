@@ -285,7 +285,7 @@
     font-size: 14px;
 }
 .health-theme .admin-filter-fields input::placeholder { color: #64748b; }
-.health-theme .admin-filter-actions { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
+.health-theme .admin-filter-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 .health-theme .admin-filter-actions :is(.admin-users-primary, .admin-users-reset) { min-height: 44px; min-width: 0; padding: 10px 20px; white-space: nowrap; }
 @container (min-width: 760px) {
     .health-theme .admin-users-filters > form { grid-template-columns: minmax(0, 1fr) auto; }
@@ -746,6 +746,17 @@
 .health-theme .patient-records .patient-record-wellbeing { margin: 0 0 18px; color: #243640; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
 .health-theme .patient-record-measurements { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; }
 .health-theme .patient-record-measurements > div { min-width: 0; padding: 14px; border-radius: 10px; background: #edf3ee; }
+.health-theme .patient-records .patient-record-card-with-patient .patient-record-card-heading {
+    padding: 8px 10px;
+    border-inline-start: 3px solid #71a985;
+    border-radius: 8px;
+    background: #edf5ef;
+    box-shadow: none;
+}
+.health-theme .patient-record-card-with-patient .record-metric-temperature { background: #e2f3eb; }
+.health-theme .patient-record-card-with-patient .record-metric-pressure { background: #f3f3df; }
+.health-theme .patient-record-card-with-patient .record-metric-pulse { background: #f8e9e8; }
+.health-theme .patient-record-card-with-patient .record-metric-saturation { background: #e7f0f8; }
 .health-theme .patient-record-measurements dt { margin-bottom: 8px; color: #52657c; font-size: 13px; }
 .health-theme .patient-record-measurements dd { margin: 0; color: #1b303e; font-size: 20px; font-weight: 500; overflow-wrap: anywhere; }
 .health-theme .patient-record-measurements small { color: #52657c; font-size: 12px; font-weight: 400; }
@@ -753,9 +764,20 @@
 .health-theme .patient-record-note h4 { margin: 0 0 6px; color: #52657c; font-size: 13px; font-weight: 500; }
 .health-theme .patient-records .patient-record-note p { margin: 0; color: #243640; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .health-theme .patient-record-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #dfe9e2; }
+.health-theme .patient-record-card-with-patient .patient-record-actions { border-top: 2px solid #a5c7ae; }
 .health-theme .patient-record-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 8px 18px; border-radius: 999px; font-size: 14px; line-height: 1.5; text-decoration: none; }
 .health-theme .patient-record-details { margin-right: auto; color: #166534; }
 .health-theme .patient-record-details:hover { background: #e8f3e5; }
+.health-theme .patient-record-actions:has(> .patient-record-patient-card) > .patient-record-details:not(.patient-record-patient-card) {
+    background: #166534;
+    color: #fff;
+}
+.health-theme .patient-record-actions:has(> .patient-record-patient-card) > .patient-record-details:not(.patient-record-patient-card):hover {
+    background: #12532b;
+}
+.health-theme .patient-record-actions > .patient-record-patient-card {
+    border: 1px solid #217568;
+}
 .health-theme .patient-record-edit { background: #166534; color: #fff; }
 .health-theme .patient-record-delete { border: 1px solid #e3b5b7; color: #a52e35; background: #fff0f1; }
 .health-theme .patient-record-delete:hover { background: #fbe0e2; }
@@ -1495,37 +1517,40 @@ body.health-theme {
     .health-theme .patient-appointment-dates .patient-appointment-time { margin-top: 0; }
 }
 @media (min-width: 701px) and (max-width: 1100px) {
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-list { gap: 14px; }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-card {
+    .health-theme .patient-appointments .patient-appointment-list { gap: 14px; }
+    .health-theme .patient-appointments .patient-appointment-card {
         align-items: center;
         gap: 8px 14px;
         min-height: 0;
         padding: 10px 14px;
     }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-status {
+    .health-theme .patient-appointments .patient-appointment-status {
         min-width: 0;
         min-height: 30px;
         font-size: 13px;
     }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-doctor-summary {
+    .health-theme .patient-appointments .patient-appointment-doctor-summary {
         gap: 8px;
         margin-top: 5px;
         padding: 6px 8px;
     }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-avatar { width: 36px; height: 36px; }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-actions { gap: 6px; padding-top: 0; }
-    .health-theme .patient-appointments:not(.doctor-appointments) .appointment-actions-notice { min-height: 0; padding: 8px; }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-dates {
+    .health-theme .patient-appointments .patient-appointment-avatar { width: 36px; height: 36px; }
+    .health-theme .patient-appointments .patient-appointment-actions { gap: 6px; padding-top: 0; }
+    .health-theme .patient-appointments .appointment-actions-notice { min-height: 0; padding: 8px; }
+    .health-theme .patient-appointments .patient-appointment-dates {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
         max-width: none;
         padding-top: 6px;
         border-top: 1px solid #dfe9e2;
     }
-    .health-theme .patient-appointments:not(.doctor-appointments) .patient-appointment-dates > div {
+    .health-theme .patient-appointments .patient-appointment-dates > div {
         grid-template-columns: minmax(0, 1fr);
         gap: 1px;
     }
+    .health-theme .doctor-appointments .patient-appointment-label { margin: 4px 0 1px; }
+    .health-theme .doctor-appointments .doctor-appointment-overdue { margin-top: 3px; }
+    .health-theme .doctor-appointments .patient-appointment-action { min-height: 36px; }
 }
 @media (max-width: 700px) {
     .health-theme .patient-appointments-title { font-size: 18px; }
@@ -1729,7 +1754,7 @@ body.health-theme {
     background: #fff0f1;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
     .health-theme .appointment-detail-page { padding: 12px; }
     .health-theme .appointment-detail-heading {
         display: grid;
@@ -1755,17 +1780,15 @@ body.health-theme {
     .health-theme .appointment-detail-grid dd { font-size: 14px; line-height: 1.35; }
     .health-theme .appointment-detail-complaints { padding: 8px; }
     .health-theme .appointment-detail-notice { margin: 0 0 8px; padding: 6px 8px; font-size: 12px; }
-    .health-theme .appointment-detail-actions > a { width: 100%; }
-    .health-theme .appointment-detail-page > .appointment-detail-actions,
-    .health-theme .conclusion-editor .appointment-detail-actions {
+    .health-theme .appointment-detail-page > .appointment-detail-actions {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
         margin-top: 10px;
         padding-top: 8px;
     }
-    .health-theme .appointment-detail-page > .appointment-detail-actions a,
-    .health-theme .conclusion-editor .appointment-detail-actions > :is(a, button) {
+    .health-theme .appointment-detail-page > .appointment-detail-actions a {
+        width: 100%;
         min-width: 0;
         min-height: 40px;
         padding: 4px 6px;
@@ -1775,6 +1798,28 @@ body.health-theme {
     .health-theme .appointment-detail-page > .appointment-detail-actions a:last-child:nth-child(odd) {
         grid-column: 1 / -1;
     }
+}
+
+@media (min-width: 701px) and (max-width: 768px) {
+    .health-theme .main-content:has(.appointment-detail-page) > .top-header h1 { display: none; }
+}
+
+@media (max-width: 700px) {
+    .health-theme .conclusion-editor .appointment-detail-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 10px;
+        padding-top: 8px;
+    }
+    .health-theme .conclusion-editor .appointment-detail-actions > :is(a, button) {
+        min-width: 0;
+        min-height: 40px;
+        padding: 4px 6px;
+        font-size: 13px;
+        line-height: 1.25;
+    }
+    .health-theme .conclusion-editor .appointment-detail-actions > a { width: 100%; }
 }
 
 .health-theme .conclusion-editor .form-group {
@@ -2042,14 +2087,14 @@ body.health-theme {
 .health-theme .schedule-settings { margin-top: 20px; }
 .health-theme .schedule-settings > summary { color: #166534; font-weight: 500; cursor: pointer; }
 .health-theme .schedule-settings-content { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
-.health-theme .schedule-settings-card { min-width: 0; padding: 20px; border: 1px solid #dfe9e2; border-radius: 10px; }
+.health-theme .schedule-settings-card { min-width: 0; padding: 20px; border: 1px solid #a9beb4; border-radius: 10px; }
 .health-theme .schedule-settings-card h3 { margin: 0 0 20px; font-size: 18px; font-weight: 500; }
 .health-theme .schedule-settings-field { min-width: 0; margin-bottom: 16px; }
 .health-theme .schedule-time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .health-theme .schedule-settings-hint,
 .health-theme .schedule-default-note { color: #64748b; font-size: 14px; line-height: 1.5; }
 .health-theme .schedule-current { grid-column: 1 / -1; }
-.health-theme .schedule-setting-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px 0; border-bottom: 1px solid #dfe9e2; font-size: 14px; }
+.health-theme .schedule-setting-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px 0; border-bottom: 1px solid #a9beb4; font-size: 14px; }
 .health-theme .schedule-setting-row p { margin: 8px 0 0; }
 .health-theme .doctor-schedule :is(a, input, button):focus-visible,
 .health-theme .schedule-settings :is(summary, input, select, button):focus-visible { outline: 2px solid #217568; outline-offset: 3px; }
@@ -2151,6 +2196,15 @@ body.health-theme {
     color: #64748b;
     font-size: 14px;
 }
+.health-theme .patient-card-identity-heading {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+}
+.health-theme .patient-card-identity-heading > div {
+    text-align: end;
+    overflow-wrap: anywhere;
+}
 
 .health-theme .patient-card-personal {
     display: grid;
@@ -2193,6 +2247,13 @@ body.health-theme {
 
 .health-theme .patient-card-page .patient-card-primary:hover { background: #12532b; }
 .health-theme .patient-card-empty { margin: 0; padding: 16px; border-radius: 10px; background: #f7f9f8; color: #64748b; font-size: 14px; }
+.health-theme .patient-card-journal .patient-card-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 12px;
+    text-align: start;
+}
 .health-theme .patient-card-recent-records { display: grid; gap: 16px; }
 .health-theme .patient-card-panel > h2 { margin-bottom: 20px; }
 .health-theme .patient-card-record { padding: 16px; border: 1px solid #dfe9e2; border-radius: 10px; }
@@ -2260,8 +2321,6 @@ body.health-theme {
     .health-theme .patient-card-links { margin-top: 10px; }
     .health-theme .patient-card-links > a { width: 100%; }
     .health-theme .patient-card-journal .patient-card-heading {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
         gap: 6px;
         margin-bottom: 8px;
     }
@@ -2325,16 +2384,17 @@ body.health-theme {
     .health-theme .doctor-patients-list dd { margin: 0; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 }
 @media (max-width: 1100px) {
-    .health-theme .doctor-patients-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .health-theme .doctor-patients-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .health-theme .doctor-patients-filter-actions { grid-column: 1 / -1; }
 }
 @media (max-width: 600px) {
     .health-theme .doctor-patients-page { gap: 12px; }
     .health-theme .doctor-patients-panel { padding: 12px; }
     .health-theme .doctor-patients-panel > h2 { margin-bottom: 6px; font-size: 18px; }
-    .health-theme .doctor-patients-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 6px; }
+    .health-theme .doctor-patients-filters { gap: 8px 6px; }
     .health-theme .doctor-patients-filters label { margin-bottom: 3px; font-size: 12px; }
     .health-theme .doctor-patients-filters :is(input, select) { min-height: 40px; padding: 5px 6px; font-size: 14px; }
-    .health-theme .doctor-patients-filter-actions { grid-column: 1 / -1; gap: 6px; }
+    .health-theme .doctor-patients-filter-actions { gap: 6px; }
     .health-theme .doctor-patients-filter-actions :is(a, button) { min-height: 40px; padding: 4px 8px; font-size: 13px; }
     .health-theme .doctor-patients-filter-actions > * { flex: 1; }
 }
@@ -2779,7 +2839,28 @@ body.health-theme {
     background: #f0f5f1;
     overscroll-behavior: contain;
 }
+@media (min-width: 701px) and (max-width: 1100px) {
+    .health-theme .doctor-question-chat .question-thread [data-question-messages] {
+        min-height: clamp(360px, 34svh, 460px);
+    }
+}
 .health-theme .doctor-question-chat .question-message { flex-shrink: 0; }
+.health-theme .doctor-question-chat [data-question-messages] > .question-message {
+    border: 1px solid #bacddb;
+    border-radius: 4px 12px 12px;
+    background: #fff;
+}
+.health-theme .doctor-question-chat [data-question-messages] > .question-message-doctor {
+    border-color: #bad7c0;
+    border-inline-end: 3px solid #217568;
+    border-radius: 12px 4px 12px 12px;
+    background: #e1f0e4;
+}
+.health-theme .doctor-question-chat .question-message-author {
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
 .health-theme .doctor-chat-form { margin-top: 16px; }
 .health-theme .doctor-chat-form .form-group { margin-bottom: 12px; }
 .health-theme .doctor-chat-form textarea { min-height: 90px; resize: vertical; }
@@ -2849,20 +2930,6 @@ body.health-theme {
     .health-theme .doctor-question-chat [data-question-messages] > .question-message {
         max-width: 88%;
         padding: 9px 10px;
-        border: 1px solid #bacddb;
-        border-radius: 4px 12px 12px;
-        background: #fff;
-    }
-    .health-theme .doctor-question-chat [data-question-messages] > .question-message-doctor {
-        border-color: #bad7c0;
-        border-inline-end: 3px solid #217568;
-        border-radius: 12px 4px 12px 12px;
-        background: #e1f0e4;
-    }
-    .health-theme .doctor-question-chat .question-message-author {
-        margin-bottom: 4px;
-        font-size: 12px;
-        font-weight: 600;
     }
 }
 .health-theme .content-wrapper:has(> .patient-ask-question) {
@@ -3796,6 +3863,9 @@ body.health-theme::before {
     font-size: 14px;
 }
 .health-theme .booking-calendar[hidden] { display: none; }
+.health-theme .schedule-date-submit .schedule-date-control > .booking-calendar {
+    inset-inline: 0 auto;
+}
 .health-theme .booking-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
 .health-theme .booking-calendar-month { font-weight: 600; }
 .health-theme .booking-calendar-weekdays,
@@ -4295,6 +4365,12 @@ body.health-theme::before {
 .health-theme .record-section-additional .record-detail-item dt { margin-bottom: 8px; }
 .health-theme .record-section-additional .record-detail-item dd { text-align: left; }
 .health-theme .record-detail-pressure { min-width: 0; }
+.health-theme .record-detail-pressure .record-detail-item {
+    flex-direction: column;
+    align-items: start;
+    gap: 3px;
+}
+.health-theme .record-detail-pressure .record-detail-item dd { text-align: start; }
 .health-theme .record-detail-actions {
     display: flex;
     flex-wrap: wrap;
@@ -4331,6 +4407,35 @@ body.health-theme::before {
 .health-theme .record-detail-delete:focus-visible {
     outline: 3px solid #217568;
     outline-offset: 4px;
+}
+@media (min-width: 601px) and (max-width: 1100px) {
+    .health-theme .record-detail-panel { padding-block: 4px 14px; }
+    .health-theme .record-detail-pressure { display: contents; }
+    .health-theme .record-detail-pressure h4 {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+    .health-theme .record-detail-pressure .record-pressure-grid,
+    .health-theme .record-detail-pressure + .record-detail-grid {
+        display: grid;
+        align-self: stretch;
+        align-items: stretch;
+    }
+    .health-theme .record-detail-pressure + .record-detail-grid > .record-detail-item {
+        align-items: center;
+    }
+    .health-theme .record-detail-panel .record-section { padding: 12px 16px; }
+    .health-theme .record-detail-panel .record-section h3 { gap: 8px; margin-bottom: 8px; }
+    .health-theme .record-detail-panel .record-section h3 img { width: 26px; height: 26px; }
+    .health-theme .record-detail-panel :is(.record-fields-grid, .record-pressure-grid, .record-additional-fields) { gap: 8px; }
+    .health-theme .record-detail-panel .record-detail-measurements { margin-top: 8px; }
+    .health-theme .record-detail-panel .record-detail-item { padding: 8px 10px; border-width: 1px; }
+    .health-theme .record-detail-panel .record-section-additional .record-detail-item dt { margin-bottom: 4px; }
+}
+@media (min-width: 769px) and (max-width: 1100px) {
+    .health-theme .record-detail-panel .record-section { padding-block: 18px; }
+    .health-theme .record-detail-panel .record-section h3 { margin-bottom: 11px; }
+    .health-theme .record-detail-panel .record-detail-item { padding-block: 11px; }
 }
 @media (max-width: 600px) {
     .health-theme .record-create-form { padding: 4px 0 12px; }

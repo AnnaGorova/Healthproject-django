@@ -1,5 +1,5 @@
 {% load static %}
-<aside class="sidebar" id="site-sidebar">
+<aside class="sidebar{% if request.user.is_authenticated and user.userprofile.role == 'admin' %} sidebar-admin{% endif %}" id="site-sidebar">
     <div class="sidebar-header">
         <a href="{% url 'home' %}" class="brand">
             <img src="{% static 'diary/images/logo.svg' %}"

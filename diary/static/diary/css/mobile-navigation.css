@@ -228,6 +228,9 @@
 
     .health-theme .mobile-site-header { padding-block-start: 10px; }
     .health-theme .mobile-site-header + .sidebar .nav-link { font-size: 16px; }
+    .health-theme .mobile-site-header + .sidebar-admin .sidebar-nav ul {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media screen and (min-width: 769px) and (max-width: 1100px) {
